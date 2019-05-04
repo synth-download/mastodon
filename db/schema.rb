@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2020_12_18_054746) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgroonga"
   enable_extension "plpgsql"
 
   create_table "account_aliases", force: :cascade do |t|
@@ -811,6 +812,7 @@ ActiveRecord::Schema.define(version: 2020_12_18_054746) do
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
+    t.index ["text"], name: "index_statuses_on_text", using: :pgroonga
     t.index ["uri"], name: "index_statuses_on_uri", unique: true
   end
 

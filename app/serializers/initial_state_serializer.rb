@@ -14,7 +14,7 @@ class InitialStateSerializer < ActiveModel::Serializer
       domain: Rails.configuration.x.local_domain,
       title: instance_presenter.site_title,
       admin: object.admin&.id&.to_s,
-      search_enabled: Chewy.enabled?,
+      search_enabled: true,
       repository: Mastodon::Version.repository,
       source_url: Mastodon::Version.source_url,
       version: Mastodon::Version.to_s,

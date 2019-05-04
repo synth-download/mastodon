@@ -14,7 +14,7 @@ module Admin
       @registrations_enabled = Setting.registrations_mode != 'none'
       @deletions_enabled     = Setting.open_deletion
       @invites_enabled       = Setting.min_invite_role == 'user'
-      @search_enabled        = Chewy.enabled?
+      @search_enabled        = true
       @version               = Mastodon::Version.to_s
       @database_version      = ActiveRecord::Base.connection.execute('SELECT VERSION()').first['version'].match(/\A(?:PostgreSQL |)([^\s]+).*\z/)[1]
       @redis_version         = redis_info['redis_version']
