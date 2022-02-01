@@ -967,6 +967,17 @@
   }
 }
 
+.status__content__edited-label {
+  display: block;
+  cursor: default;
+  font-size: 15px;
+  line-height: 20px;
+  padding: 0;
+  padding-top: 8px;
+  color: $dark-text-color;
+  font-weight: 500;
+}
+
 .status__content__spoiler-link {
   display: inline-block;
   border-radius: 2px;
@@ -3074,17 +3085,20 @@ a.account__display-name {
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  color: $inverted-text-color;
-  background: $simple-background-color;
-  padding: 10px;
+  color: $darker-text-color;
+  background: transparent;
+  padding: 7px 0;
   font-family: inherit;
   font-size: 14px;
   resize: vertical;
   border: 0;
+  border-bottom: 2px solid $ui-primary-color;
   outline: 0;
-  border-radius: 4px;
 
-  &:focus {
+  &:focus,
+  &:active {
+    color: $primary-text-color;
+    border-bottom-color: $ui-highlight-color;
     outline: 0;
   }
 
@@ -3922,7 +3936,8 @@ a.status-card.compact:hover {
     }
 
     &__multi-value__label,
-    &__input {
+    &__input,
+    &__input-container {
       color: $darker-text-color;
     }
 
@@ -6955,7 +6970,6 @@ noscript {
     &__current {
       flex: 0 0 auto;
       font-size: 24px;
-      line-height: 36px;
       font-weight: 500;
       text-align: right;
       padding-right: 15px;
@@ -6977,6 +6991,58 @@ noscript {
         fill: none !important;
       }
     }
+
+    &--requires-review {
+      .trends__item__name {
+        color: $gold-star;
+
+        a {
+          color: $gold-star;
+        }
+      }
+
+      .trends__item__current {
+        color: $gold-star;
+      }
+
+      .trends__item__sparkline {
+        path:first-child {
+          fill: rgba($gold-star, 0.25) !important;
+        }
+
+        path:last-child {
+          stroke: lighten($gold-star, 6%) !important;
+        }
+      }
+    }
+
+    &--disabled {
+      .trends__item__name {
+        color: lighten($ui-base-color, 12%);
+
+        a {
+          color: lighten($ui-base-color, 12%);
+        }
+      }
+
+      .trends__item__current {
+        color: lighten($ui-base-color, 12%);
+      }
+
+      .trends__item__sparkline {
+        path:first-child {
+          fill: rgba(lighten($ui-base-color, 12%), 0.25) !important;
+        }
+
+        path:last-child {
+          stroke: lighten(lighten($ui-base-color, 12%), 6%) !important;
+        }
+      }
+    }
+  }
+
+  &--compact &__item {
+    padding: 10px;
   }
 }
 
