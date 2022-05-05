@@ -25,7 +25,6 @@ hr:
     following: Praćenih
     last_active: posljednja aktivnost
     media: Medijski sadržaj
-    never_active: Nikad
     nothing_here: Ovdje nema ničeg!
     people_followed_by: Ljudi koje %{name} prati
     people_who_follow: Ljudi koji prate %{name}
@@ -268,7 +267,6 @@ hr:
       tips: Savjeti
   users:
     invalid_otp_token: Nevažeći dvo-faktorski kôd
-    invalid_sign_in_token: Nevažeći sigurnosni kôd
     signed_in_as: 'Prijavljeni kao:'
   verification:
     verification: Verifikacija

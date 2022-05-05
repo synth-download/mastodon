@@ -146,7 +146,7 @@ const startWorker = async (workerId) => {
 
   const app = express();
 
-  app.set('trusted proxy', process.env.TRUSTED_PROXY_IP || 'loopback,uniquelocal');
+  app.set('trust proxy', process.env.TRUSTED_PROXY_IP ? process.env.TRUSTED_PROXY_IP.split(/(?:\s*,\s*|\s+)/) : 'loopback,uniquelocal');
 
   const pgPool = new pg.Pool(Object.assign(pgConfigs[env], dbUrlToConfig(process.env.DATABASE_URL)));
   const server = http.createServer(app);
@@ -166,6 +166,11 @@ const startWorker = async (workerId) => {
   }
 
   const redisPrefix = redisNamespace ? `${redisNamespace}:` : '';
+
+  /**
+   * @type {Object.<string, Array.<function(string): void>>}
+   */
+  const subs = {};
 
   const redisSubscribeClient = await redisUrlToClient(redisParams, process.env.REDIS_URL);
   const redisClient = await redisUrlToClient(redisParams, process.env.REDIS_URL);
@@ -191,23 +196,55 @@ const startWorker = async (workerId) => {
   };
 
   /**
+   * @param {string} message
    * @param {string} channel
-   * @param {function(string): void} callback
    */
-  const subscribe = (channel, callback) => {
-    log.silly(`Adding listener for ${channel}`);
+  const onRedisMessage = (message, channel) => {
+    const callbacks = subs[channel];
 
-    redisSubscribeClient.subscribe(channel, callback);
+    log.silly(`New message on channel ${channel}`);
+
+    if (!callbacks) {
+      return;
+    }
+
+    callbacks.forEach(callback => callback(message));
   };
 
   /**
    * @param {string} channel
    * @param {function(string): void} callback
    */
+  const subscribe = (channel, callback) => {
+    log.silly(`Adding listener for ${channel}`);
+
+    subs[channel] = subs[channel] || [];
+
+    if (subs[channel].length === 0) {
+      log.verbose(`Subscribe ${channel}`);
+      redisSubscribeClient.subscribe(channel, onRedisMessage);
+    }
+
+    subs[channel].push(callback);
+  };
+
+  /**
+   * @param {string} channel
+   */
   const unsubscribe = (channel, callback) => {
     log.silly(`Removing listener for ${channel}`);
 
-    redisSubscribeClient.unsubscribe(channel, callback);
+    if (!subs[channel]) {
+      return;
+    }
+
+    subs[channel] = subs[channel].filter(item => item !== callback);
+
+    if (subs[channel].length === 0) {
+      log.verbose(`Unsubscribe ${channel}`);
+      redisSubscribeClient.unsubscribe(channel);
+      delete subs[channel];
+    }
   };
 
   const FALSE_VALUES = [

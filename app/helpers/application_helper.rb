@@ -9,9 +9,9 @@ module ApplicationHelper
 
   RTL_LOCALES = %i(
     ar
+    ckb
     fa
     he
-    ku
   ).freeze
 
   def friendly_number_to_human(number, **options)
@@ -19,8 +19,11 @@ module ApplicationHelper
     # is looked up from the locales definition, and rails-i18n comes with
     # values that don't seem to make much sense for many languages, so
     # override these values with a default of 3 digits of precision.
-    options[:precision] = 3
-    options[:strip_insignificant_zeros] = true
+    options = options.merge(
+      precision: 3,
+      strip_insignificant_zeros: true,
+      significant: true
+    )
 
     number_to_human(number, **options)
   end
@@ -223,5 +226,24 @@ module ApplicationHelper
     # rubocop:disable Rails/OutputSafety
     content_tag(:script, json_escape(json).html_safe, id: 'initial-state', type: 'application/json')
     # rubocop:enable Rails/OutputSafety
+  end
+
+  def grouped_scopes(scopes)
+    scope_parser      = ScopeParser.new
+    scope_transformer = ScopeTransformer.new
+
+    scopes.each_with_object({}) do |str, h|
+      scope = scope_transformer.apply(scope_parser.parse(str))
+
+      if h[scope.key]
+        h[scope.key].merge!(scope)
+      else
+        h[scope.key] = scope
+      end
+    end.values
+  end
+
+  def prerender_custom_emojis(html, custom_emojis)
+    EmojiFormatter.new(html, custom_emojis, animate: prefers_autoplay?).to_s
   end
 end

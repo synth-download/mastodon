@@ -37,8 +37,7 @@ zh-TW:
         current_password: 因安全因素，請輸入目前帳戶的密碼
         current_username: 請輸入目前帳戶的使用者名稱以確認
         digest: 僅在你長時間未登入且在未登入期間收到私訊時傳送
-        discoverable: 加入個人資料目錄能接觸更多閱聽眾
-        discoverable_no_directory: 允許陌生人透過推薦與其他功能發現您的帳號
+        discoverable: 允許陌生人透過推薦、熱門趨勢及其他功能發現您的帳號
         email: 您將收到一封確認電子郵件
         fields: 您可在個人資料上有至多 4 個以表格形式顯示的項目
         header: 支援 PNG, GIF 或 JPG 圖片，檔案最大為 %{size}，會按比例縮小成 %{dimensions} 像素
@@ -50,6 +49,7 @@ zh-TW:
         phrase: 無論是嘟文的本文或是內容警告都會被過濾
         scopes: 允許讓應用程式存取的 API。 若您選擇最高階範圍，則無須選擇個別項目。
         setting_aggregate_reblogs: 請勿顯示最近已被轉嘟之嘟文的最新轉嘟（只影響最新收到的嘟文）
+        setting_always_send_emails: 一般情況下若您活躍使用 Mastodon ，我們不會寄送 e-mail 通知
         setting_default_sensitive: 敏感媒體預設隱藏，且按一下即可重新顯示
         setting_display_media_default: 隱藏標為敏感的媒體
         setting_display_media_hide_all: 總是隱藏所有媒體
@@ -64,7 +64,7 @@ zh-TW:
       domain_allow:
         domain: 此域名將能夠攫取本站資料，而自域名該發出的資料也會於本站處理和留存。
       email_domain_block:
-        domain: 這裡可以是電子郵件地址中的域名、域名解析到的 MX 記錄、或 MX 記錄解析到的伺服器 IP 地址。新使用者註冊時會比對上述資料，如果相符時將拒絕相關註冊。
+        domain: 這可以是顯示在電子郵件中的網域名稱，或是其使用的 MX 紀錄。其將在註冊時檢查。
         with_dns_records: Mastodon 會嘗試解析所給域名的 DNS 記錄，解析結果一致者將一併封鎖
       featured_tag:
         name: 您可能想使用其中一個：
@@ -152,6 +152,7 @@ zh-TW:
         phrase: 關鍵字或片語
         setting_advanced_layout: 啟用進階網頁介面
         setting_aggregate_reblogs: 時間軸中的群組轉嘟
+        setting_always_send_emails: 總是發送 e-mail 通知
         setting_auto_play_gif: 自動播放 GIF 動畫
         setting_boost_modal: 在轉嘟前先詢問我
         setting_crop_images: 將未展開嘟文中的圖片裁剪至 16x9

@@ -71,15 +71,7 @@ class ActivityPub::Activity
   end
 
   def object_uri
-    @object_uri ||= begin
-      str = value_or_id(@object)
-
-      if str&.start_with?('bear:')
-        Addressable::URI.parse(str).query_values['u']
-      else
-        str
-      end
-    end
+    @object_uri ||= uri_from_bearcap(value_or_id(@object))
   end
 
   def unsupported_object_type?
@@ -172,7 +164,7 @@ class ActivityPub::Activity
   end
 
   def lock_or_fail(key, expire_after = 15.minutes.seconds)
-    RedisLock.acquire({ redis: Redis.current, key: key, autorelease: expire_after }) do |lock|
+    RedisLock.acquire({ redis: redis, key: key, autorelease: expire_after }) do |lock|
       if lock.acquired?
         yield
       else

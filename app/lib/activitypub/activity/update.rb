@@ -8,6 +8,8 @@ class ActivityPub::Activity::Update < ActivityPub::Activity
       update_account
     elsif equals_or_includes_any?(@object['type'], %w(Note Question))
       update_status
+    elsif converted_object_type?
+      Status.find_by(uri: object_uri, account_id: @account.id)
     end
   end
 
@@ -20,17 +22,12 @@ class ActivityPub::Activity::Update < ActivityPub::Activity
   end
 
   def update_status
-    return reject_payload! if invalid_origin?(@object['id'])
+    return reject_payload! if invalid_origin?(object_uri)
 
     @status = Status.find_by(uri: object_uri, account_id: @account.id)
 
     return if @status.nil?
 
-    forwarder.forward! if forwarder.forwardable?
     ActivityPub::ProcessStatusUpdateService.new.call(@status, @object)
-  end
-
-  def forwarder
-    @forwarder ||= ActivityPub::Forwarder.new(@account, @json, @status)
   end
 end

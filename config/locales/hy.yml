@@ -18,7 +18,7 @@ hy:
     contact_unavailable: Ոչինչ չկա
     discover_users: Գտնել օգտատերներ
     documentation: Փաստաթղթեր
-    federation_hint_html: "«%{instance}»-ում հաշիւ բացելով դու կը կարողանաք հետեւել մարդկանց Մաստադոնի ցանկացած հանգոյցից և ոչ միայն։"
+    federation_hint_html: "«%{instance}»-ում հաշիւ բացելով դուք կը կարողանաք հետեւել մարդկանց Մաստադոնի ցանկացած հանգոյցից և ոչ միայն։"
     get_apps: Փորձեք բջջային հավելվածը
     hosted_on: Մաստոդոնը տեղակայուած է %{domain}ում
     instance_actor_flash: "Այս հաշիւ վիրտուալ դերասան է, օգտագործուում է սպասարկիչը, այլ ոչ անհատ օգտատիրոջը ներկայացնելու, համար։ Օգտագործուում է ֆեդերացիայի նպատակով, ու չպէտք է արգելափակուի, եթէ չէք ցանկանում արգելափակել ողջ հանգոյցը, որի դէպքում պէտք է օգտագործէք տիրոյթի արգելափակումը։ \n"
@@ -67,7 +67,6 @@ hy:
     media: Մեդիա
     moved_html: "%{name} տեղափոխուել է %{new_profile_link}"
     network_hidden: Այս տուեալը հասանելի չէ
-    never_active: Երբեք
     nothing_here: Այստեղ բան չկայ
     people_followed_by: Մարդիկ, որոնց %{name}ը հետեւում է
     people_who_follow: Մարդիկ, որոնք հետեւում են %{name}ին
@@ -188,7 +187,6 @@ hy:
       security_measures:
         only_password: Միայն ծածկագիր
         password_and_2fa: Ծածկագիր եւ 2FA
-        password_and_sign_in_token: ծածկագիր եւ էլ. նամակով բանալի
       sensitive: Զգայուն
       sensitized: նշուեց որպէս դիւրազգաց
       shared_inbox_url: Ընդհանուր մուտքային URL
@@ -296,7 +294,6 @@ hy:
       enable: Միացնել
       enabled: Միացուած
       enabled_msg: Յաջողութեամբ միացուեց էմոջին
-      image_hint: PNG մինչեւ 50KB
       list: Ցանկ
       listed: Ցուցակագրուած
       new:
@@ -337,24 +334,13 @@ hy:
       public_comment: Հրապարակային մեկնաբանութիւն
       reject_media: Մերժել մեդիա ֆայլերը
       reject_reports: Մերժել բողոքները
-      rejecting_media: մերժուում են մեդիա ֆայլեր
-      rejecting_reports: մերժուում են բողոքներ
-      severity:
-        silence: լռեցուած
-        suspend: կասեցուած
-      show:
-        title: Ետարկել տիրոյթի արգելափակումը %{domain}ի համար
-        undo: Ետարկել
       undo: Ետարկել տիրոյթի արգելափակումը
       view: Տեսնել տիրոյթի արգելափակումը
     email_domain_blocks:
       add_new: Ավելացնել նորը
       created_msg: Բարեյաջող արգելափակուեց էլ․ փոստի տիրոյթ
       delete: Ջնջել
-      destroyed_msg: Բարեյաջող ապաարգելափակուեց էլ․ փոստի տիրոյթ
       domain: Դոմեն
-      empty: Ոչ մի էլ․ փոստի տիրոյթ այժմ արգելափակուած չէ։
-      from_html: "%{domain}ից"
       new:
         create: Ավելացնել դոմեն
         title: Արգելափակել էլ․ փոստի նոր տիրոյթ
@@ -370,7 +356,6 @@ hy:
       delivery:
         all: Բոլորը
         unavailable: Անհասանելի է
-        warning: Զգուշացում
       empty: Դոմեյնները չեն գտնուել
       moderation:
         all: Բոլորը
@@ -915,6 +900,7 @@ hy:
       '2629746': 1 ամիս
       '31556952': 1 տարի
       '5259492': 2 ամիս
+      '604800': 1 week
       '63113904': 2 տարի
       '7889238': 3 ամիս
   stream_entries:
@@ -1029,8 +1015,6 @@ hy:
     recovery_codes_regenerated: Վերականգման կոդերը հաջողութեամբ ստեղծուել են
     webauthn: Անվտանգութեան բանալիներ
   user_mailer:
-    sign_in_token:
-      title: Մուտքի փորձ
     warning:
       subject:
         disable: Քո %{acct} հաշիւը սառեցուել է
@@ -1053,7 +1037,6 @@ hy:
       title: Բարի գալուստ նաւամատոյց, %{name}
   users:
     invalid_otp_token: Անվաւեր 2F կոդ
-    invalid_sign_in_token: Անվաւեր անվտանգութեան կոդ
     signed_in_as: Մոտք գործել որպէս․
   verification:
     explanation_html: Պիտակների յղումների հեղինակութիւնը կարելի է վաւերացնել։ Անհրաժեշտ է որ յղուած կայքը պարունակի յետադարձ յղում ձեր մաստադոնի էջին, որը <strong>պէտք է</strong> ունենայ <code>rel="me"</code> նիշքը։ Յղման բովանդակութիւնը կարևոր չէ։ Օրինակ՝

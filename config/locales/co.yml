@@ -69,7 +69,6 @@ co:
     media: Media
     moved_html: "%{name} hà cambiatu di contu, avà hè nant’à %{new_profile_link}:"
     network_hidden: St'infurmazione ùn hè micca dispunibule
-    never_active: Mai
     nothing_here: Ùn c’hè nunda quì!
     people_followed_by: Seguitati da %{name}
     people_who_follow: Seguitanu %{name}
@@ -192,7 +191,6 @@ co:
       security_measures:
         only_password: Solu a chjave d'accessu
         password_and_2fa: Chjave d’accessu è A2F
-        password_and_sign_in_token: Chjave d’accessu è codice da l'e-mail
       sensitive: Sensibile
       sensitized: indicatu cum’è sensibile
       shared_inbox_url: URL di l’inbox spartuta
@@ -349,7 +347,6 @@ co:
       enable: Attivà
       enabled: Attivate
       enabled_msg: L’emoji hè stata attivata
-      image_hint: PNG di 50Ko o menu
       list: Listà
       listed: Listata
       new:
@@ -409,27 +406,13 @@ co:
       reject_media_hint: Sguassa tutti i media caricati è ricusa caricamenti futuri. Inutile per una suspensione
       reject_reports: Righjittà i riporti
       reject_reports_hint: Ignurà tutti i signalamenti chì venenu d'issu duminiu. Senz'oghjettu pè e suspensione
-      rejecting_media: righjettu di i fugliali media
-      rejecting_reports: righjettu di i signalamenti
-      severity:
-        silence: silenzatu
-        suspend: suspesu
-      show:
-        retroactive:
-          silence: Ùn silenzà più i conti affettati di stu duminiu
-          suspend: Ùn suspende più i conti affettati di stu duminiu
-        title: Ùn bluccà più u duminiu %{domain}
-        undo: Annullà
       undo: Annullà u blucchime di duminiu
       view: Vede blucchime di duminiu
     email_domain_blocks:
       add_new: Aghjunghje
       created_msg: U blucchime di u duminiu d’e-mail hè attivu
       delete: Toglie
-      destroyed_msg: U blucchime di u duminiu d’e-mail ùn hè più attivu
       domain: Duminiu
-      empty: Ùn c'hè manc'un duminiu d'email in lista nera.
-      from_html: da %{domain}
       new:
         create: Creà un blucchime
         title: Nova iscrizzione nant’a lista nera e-mail
@@ -451,13 +434,7 @@ co:
         clear: Sguassà l'errori di distribuzione
         restart: Riprincipià a distribuzione
         stop: Firmà a distribuzione
-        title: Distribuzione
         unavailable: Indispunibule
-        unavailable_message: Distribuzione micca dispunibule
-        warning: Avertimentu
-        warning_message:
-          one: Errore di distribuzione per %{count} ghjornu
-          other: Errore di distribuzione per %{count} ghjorni
       delivery_available: Distribuzione dispunibule
       delivery_error_days: Ghjorni d'errori di a distribuzione
       delivery_error_hint: S'ellu ùn si pò distribuì à u duminiu per %{count} ghjorni, sarà autumaticamente marcatu cum'è indistribuibile.
@@ -1010,9 +987,6 @@ co:
       new_followers_summary:
         one: Avete ancu un’abbunatu novu!
         other: Avete ancu %{count} abbunati novi!
-      subject:
-        one: "Una nutificazione nova dapoi à a vostr’ultima visita \U0001F418"
-        other: "%{count} nutificazione nove dapoi à a vostr’ultima visita \U0001F418"
       title: Dapoi l’ultima volta…
     favourite:
       body: "%{name} hà aghjuntu u vostru statutu à i so favuriti :"
@@ -1254,6 +1228,7 @@ co:
       '2629746': 1 mese
       '31556952': 1 annu
       '5259492': 2 mesi
+      '604800': 1 week
       '63113904': 2 anni
       '7889238': 3 mesi
     min_age_label: Età minima
@@ -1378,12 +1353,6 @@ co:
       explanation: Avete dumandatu un’archiviu cumpletu di u vostru contu Mastodon. Avà hè prontu per scaricà!
       subject: U vostru archiviu hè prontu à scaricà
       title: Archiviu prontu
-    sign_in_token:
-      details: 'Ditagli di u tentativu quì sottu:'
-      explanation: 'Avemu ditettatu un tentativu di cunnessione nant''à u vostru contu da un''indirizzu IP ch''ùn avemu micca ricunisciutu. S''ellu era voi, vi pricuremu d''entrà u codice di sicurità quì sottu nant''à a pagina di cunfirmazione di cunnessione:'
-      further_actions: 'S''ellu ùn era micca voi, duvete cambià a vostra chjave d''accessu è attivà l''identificazione à dui fattori nant''à u vostru contu. Pudete fà quessi quì:'
-      subject: Cunfirmate u tentativu di cunnessione
-      title: Tentativu di cunnessione
     warning:
       subject:
         disable: U vostru contu %{acct} hè statu ghjacciatu
@@ -1414,13 +1383,10 @@ co:
       title: Benvenutu·a, %{name}!
   users:
     follow_limit_reached: Ùn pidete seguità più di %{limit} conti
-    generic_access_help_html: Prublemi d'accessu à u vostru contu? Pudete cuntattà %{email} per ottene aiutu
     invalid_otp_token: U codice d’identificazione ùn hè currettu
-    invalid_sign_in_token: Codice di sicurità micca validu
     otp_lost_help_html: S’è voi avete persu i dui, pudete cuntattà %{email}
     seamless_external_login: Site cunnettatu·a dapoi un serviziu esternu, allora i parametri di chjave d’accessu è d’indirizzu e-mail ùn so micca dispunibili.
     signed_in_as: 'Cunnettatu·a cum’è:'
-    suspicious_sign_in_confirmation: Ci pare ch'ùn vi site mai cunnettatu·a da quess'apparechju, è ùn vi site micca cunnettatu·a dapoi una stonda, allora vi mandemu un codice di sicurità à u vostr'indirizzu e-mail per cunfirmà chì site voi.
   verification:
     explanation_html: 'Pudete <strong>verificavi cum''è u pruprietariu di i ligami in i metadati di u vostru prufile</strong>. Per quessa, u vostru situ deve avè un ligame versu a vostra pagina Mastodon. U ligame <strong>deve</strong> avè un''attributu <code>rel="me"</code>. U cuntenutu di u testu di u ligame ùn hè micca impurtante. Eccu un''esempiu:'
     verification: Verificazione

@@ -41,6 +41,8 @@ sl:
         whole_word: Ko je ključna beseda ali fraza samo alfanumerična, se bo uporabljala le, če se bo ujemala s celotno besedo
       domain_allow:
         domain: Ta domena bo lahko prejela podatke s tega strežnika, dohodni podatki z nje pa bodo obdelani in shranjeni
+      email_domain_block:
+        domain: To je lahko ime domene, ki se pokaže v e-poštnem naslovu, ali zapis MX, ki ga uporablja. Ob prijavi bo preverjeno.
       featured_tag:
         name: 'Morda boste želeli uporabiti eno od teh:'
       form_challenge:
@@ -72,6 +74,7 @@ sl:
         text: Prednastavljeno besedilo
         title: Naslov
       admin_account_action:
+        include_statuses: Vključi omenjene objave v e-sporočilo
         send_email_notification: Obvesti uporabnika po e-pošti
         text: Opozorilo po meri
         type: Dejanje
@@ -88,6 +91,8 @@ sl:
         scheduled_at: Načrtuj čas objave
         starts_at: Začetek dogodka
         text: Objava
+      appeal:
+        text: Razložite, zakaj bi morali to odločitev spremeniti
       defaults:
         autofollow: Povabite, da sledi vašemu računu
         avatar: Podoba

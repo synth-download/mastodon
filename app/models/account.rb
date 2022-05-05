@@ -128,13 +128,13 @@ class Account < ApplicationRecord
            :approved?,
            :pending?,
            :disabled?,
+           :unconfirmed?,
            :unconfirmed_or_pending?,
            :role,
            :admin?,
            :moderator?,
            :staff?,
            :locale,
-           :hides_network?,
            :shows_application?,
            to: :user,
            prefix: true,
@@ -349,11 +349,11 @@ class Account < ApplicationRecord
   end
 
   def hides_followers?
-    hide_collections? || user_hides_network?
+    hide_collections?
   end
 
   def hides_following?
-    hide_collections? || user_hides_network?
+    hide_collections?
   end
 
   def object_type
@@ -558,6 +558,12 @@ class Account < ApplicationRecord
   before_validation :prepare_contents, if: :local?
   before_validation :prepare_username, on: :create
   before_destroy :clean_feed_manager
+
+  def ensure_keys!
+    return unless local? && private_key.blank? && public_key.blank?
+    generate_keys
+    save!
+  end
 
   private
 

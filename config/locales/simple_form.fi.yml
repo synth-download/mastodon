@@ -37,8 +37,6 @@ fi:
         current_password: Turvallisuussyistä kirjoita nykyisen tilin salasana
         current_username: Vahvista kirjoittamalla nykyisen tilin käyttäjätunnus
         digest: Lähetetään vain pitkän poissaolon jälkeen ja vain, jos olet saanut suoria viestejä poissaolosi aikana
-        discoverable: Profiilihakemisto on toinen tapa, jolla tilisi voi tavoittaa laajemman yleisön
-        discoverable_no_directory: Salli tuntemattomien löytää tilisi suositusten ja muiden ominaisuuksien kautta
         email: Sinulle lähetetään vahvistussähköposti
         fields: Sinulla voi olla korkeintaan 4 asiaa profiilissasi taulukossa
         header: PNG, GIF tai JPG. Enintään %{size}. Skaalataan kokoon %{dimensions} px
@@ -64,7 +62,7 @@ fi:
       domain_allow:
         domain: Tämä verkkotunnus voi noutaa tietoja tältä palvelimelta ja sieltä saapuvat tiedot käsitellään ja tallennetaan
       email_domain_block:
-        domain: Tämä voi olla se verkkotunnus, joka näkyy sähköpostiosoitteessa, MX-tietue, johon verkkotunnus ratkaistaan tai IP-osoitteessa, johon MX tietue päättää. Ne tarkistetaan käyttäjän kirjautumisen yhteydessä ja kirjautuminen hylätään.
+        domain: Tämä voi olla se verkkotunnus, joka näkyy sähköpostiosoitteessa tai MX tietueessa jota se käyttää. Ne tarkistetaan rekisteröitymisen yhteydessä.
         with_dns_records: Annetun verkkotunnuksen DNS-tietueet yritetään ratkaista ja tulokset myös estetään
       featured_tag:
         name: 'Voit halutessasi käyttää jotakin näistä:'

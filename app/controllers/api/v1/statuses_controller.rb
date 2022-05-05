@@ -10,6 +10,7 @@ class Api::V1::StatusesController < Api::BaseController
   before_action :set_thread, only:       [:create]
 
   override_rate_limit_headers :create, family: :statuses
+  override_rate_limit_headers :update, family: :statuses
 
   # This API was originally unlimited, pagination cannot be introduced without
   # breaking backwards-compatibility. Arbitrarily high number to cover most
@@ -76,10 +77,12 @@ class Api::V1::StatusesController < Api::BaseController
     authorize @status, :destroy?
 
     @status.discard
-    RemovalWorker.perform_async(@status.id, { 'redraft' => true })
     @status.account.statuses_count = @status.account.statuses_count - 1
+    json = render_to_body json: @status, serializer: REST::StatusSerializer, source_requested: true
 
-    render json: @status, serializer: REST::StatusSerializer, source_requested: true
+    RemovalWorker.perform_async(@status.id, { 'redraft' => true })
+
+    render json: json
   end
 
   private
@@ -92,8 +95,9 @@ class Api::V1::StatusesController < Api::BaseController
   end
 
   def set_thread
-    @thread = status_params[:in_reply_to_id].blank? ? nil : Status.find(status_params[:in_reply_to_id])
-  rescue ActiveRecord::RecordNotFound
+    @thread = Status.find(status_params[:in_reply_to_id]) if status_params[:in_reply_to_id].present?
+    authorize(@thread, :show?) if @thread.present?
+  rescue ActiveRecord::RecordNotFound, Mastodon::NotPermittedError
     render json: { error: I18n.t('statuses.errors.in_reply_not_found') }, status: 404
   end
 

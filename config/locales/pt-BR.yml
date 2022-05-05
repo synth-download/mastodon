@@ -25,6 +25,8 @@ pt-BR:
       Esta conta é um ator virtual usado para representar o próprio servidor e não qualquer usuário individual.
       É usado para propósitos de federação e não deve ser bloqueado a menos que queira bloquear toda a instância, o que no caso devia usar um bloqueio de domínio.
     learn_more: Saiba mais
+    logged_in_as_html: Você está atualmente logado como %{username}.
+    logout_before_registering: Já está logado.
     privacy_policy: Política de Privacidade
     rules: Regras do servidor
     rules_html: 'Abaixo está um resumo das regras que você precisa seguir se você quer ter uma conta neste servidor do Mastodon:'
@@ -69,7 +71,6 @@ pt-BR:
     media: Mídia
     moved_html: "%{name} se mudou para %{new_profile_link}:"
     network_hidden: Informação indisponível
-    never_active: Nunca
     nothing_here: Nada aqui!
     people_followed_by: Pessoas que %{name} segue
     people_who_follow: Pessoas que seguem %{name}
@@ -193,7 +194,6 @@ pt-BR:
       security_measures:
         only_password: Somente senha
         password_and_2fa: Senha e 2FA
-        password_and_sign_in_token: Token de senha e e-mail
       sensitive: Sensíveis
       sensitized: marcadas como sensíveis
       shared_inbox_url: Link da caixa de entrada compartilhada
@@ -255,6 +255,7 @@ pt-BR:
         enable_user: Ativar usuário
         memorialize_account: Converter conta em memorial
         promote_user: Promover usuário
+        reject_appeal: Rejeitar recurso
         reject_user: Rejeitar Usuário
         remove_avatar_user: Remover Avatar
         reopen_report: Reabrir Relatório
@@ -273,6 +274,7 @@ pt-BR:
         update_domain_block: Atualizar bloqueio de domínio
         update_status: Editar Status
       actions:
+        approve_appeal_html: "%{name} aprovou o recurso de decisão de moderação de %{target}"
         assigned_to_self_report_html: "%{name} atribuiu o relatório %{target} para si"
         change_email_user_html: "%{name} alterou o endereço de e-mail do usuário %{target}"
         confirm_user_html: "%{name} confirmou o endereço de e-mail do usuário %{target}"
@@ -358,7 +360,6 @@ pt-BR:
       enable: Ativar
       enabled: Ativado
       enabled_msg: Emoji ativado com sucesso
-      image_hint: PNG de até 50KB
       list: Listar
       listed: Listado
       new:
@@ -388,6 +389,9 @@ pt-BR:
       top_languages: Línguas mais ativas
       top_servers: Servidores mais ativos
       website: Site
+    disputes:
+      appeals:
+        title: Apelações
     domain_allows:
       add_new: Permitir domínio
       created_msg: Domínio foi permitido
@@ -419,29 +423,16 @@ pt-BR:
       reject_media_hint: Remove arquivos de mídia armazenados localmente e recusa fazer download de qualquer um no futuro. Irrelevante para suspensões
       reject_reports: Rejeitar denúncias
       reject_reports_hint: Ignora todas as denúncias vindo deste domínio. Irrelevante para suspensões
-      rejecting_media: rejeitando arquivos de mídia
-      rejecting_reports: rejeitando denúncias
-      severity:
-        silence: silenciado
-        suspend: banido
-      show:
-        retroactive:
-          silence: Dessilenciar contas existentes afetadas deste domínio
-          suspend: Remover a suspensão das contas afetadas deste domínio
-        title: Desfazer bloqueio de domínio para %{domain}
-        undo: Desfazer
       undo: Desfazer bloqueio de domínio
       view: Ver domínios bloqueados
     email_domain_blocks:
       add_new: Adicionar novo
       created_msg: Domínio de e-mail adicionado à lista negra com sucesso
       delete: Excluir
-      destroyed_msg: Domínio de e-mail excluído da lista negra com sucesso
       domain: Domínio
-      empty: Nenhum domínio de e-mail atualmente bloqueado.
-      from_html: de %{domain}
       new:
         create: Adicionar domínio
+        resolve: Resolver domínio
         title: Nova entrada de lista negra de e-mail
       title: Lista de negra de e-mail
     follow_recommendations:
@@ -453,19 +444,20 @@ pt-BR:
       title: Recomendações de contas
       unsuppress: Restaurar recomendação de contas
     instances:
+      availability:
+        title: Disponibilidade
       back_to_all: Todas
       back_to_warning: Aviso
       by_domain: Domínio
       confirm_purge: Você tem certeza de que deseja excluir permanentemente os dados deste domínio?
+      content_policies:
+        policy: Políticas
       delivery:
         all: Todos
         clear: Limpar erros de entrega
         restart: Reiniciar a entrega
         stop: Parar entrega
-        title: Entrega
         unavailable: Indisponível
-        unavailable_message: Envio indisponível
-        warning: Aviso
       delivery_available: Envio disponível
       empty: Nenhum domínio encontrado.
       moderation:
@@ -715,6 +707,10 @@ pt-BR:
         rejected: Links deste editor não vão tender
         title: Editor
       rejected: Rejeitado
+      statuses:
+        allow: Permitir postagem
+        allow_account: Permitir autor
+        title: Publicações em alta
       tags:
         current_score: Pontuação atual %{score}
         dashboard:
@@ -746,10 +742,6 @@ pt-BR:
       body: "%{reporter} denunciou %{target}"
       body_remote: Alguém da instância %{domain} reportou %{target}
       subject: Nova denúncia sobre %{instance} (#%{id})
-    new_trending_links:
-      no_approved_links: Atualmente, não há links de tendência aprovados.
-    new_trending_tags:
-      body: 'As seguintes hashtags estão em alta hoje, mas não foram avaliadas anteriormente. Elas não serão exibidas publicamente, a menos que você as aprove:'
   aliases:
     add_new: Criar alias
     created_msg: Um novo alias foi criado com sucesso. Agora você pode iniciar a mudança da conta antiga.
@@ -885,6 +877,13 @@ pt-BR:
     directory: Diretório de perfis
     explanation: Descobrir usuários baseado em seus interesses
     explore_mastodon: Explore o %{title}
+  disputes:
+    strikes:
+      title_actions:
+        none: Aviso
+        sensitive: Marcar a conta como sensível
+        silence: Limitação da conta
+        suspend: Suspensão de conta
   domain_validator:
     invalid_domain: não é um nome de domínio válido
   errors:
@@ -1065,9 +1064,6 @@ pt-BR:
       new_followers_summary:
         one: Você tem um novo seguidor! Uia!
         other: Você tem %{count} novos seguidores! AÊÊÊ!
-      subject:
-        one: "Uma nova notificação desde o seu último acesso \U0001F418"
-        other: "%{count} novas notificações desde o seu último acesso \U0001F418"
       title: Enquanto você estava ausente...
     favourite:
       body: "%{name} favoritou seu toot:"
@@ -1319,6 +1315,7 @@ pt-BR:
       '2629746': 1 mês
       '31556952': 1 ano
       '5259492': 2 meses
+      '604800': 1 semana
       '63113904': 2 anos
       '7889238': 3 meses
     min_age_label: Validade
@@ -1439,23 +1436,23 @@ pt-BR:
     recovery_instructions_html: Se você perder acesso ao seu celular, você pode usar um dos códigos de recuperação abaixo para acessar a sua conta. <strong>Mantenha os códigos de recuperação em um local seguro</strong>. Por exemplo, você pode imprimi-los e guardá-los junto com outros documentos importantes.
     webauthn: Chaves de segurança
   user_mailer:
+    appeal_approved:
+      action: Acessar perfil
+      title: Contestação aprovada
+    appeal_rejected:
+      title: Contestação rejeitada
     backup_ready:
       explanation: Você pediu um backup completo da sua conta no Mastodon. E agora está pronto para ser baixado!
       subject: Seu arquivo está pronto para ser baixado
       title: Baixar arquivo
-    sign_in_token:
-      details: 'Aqui estão os detalhes da tentativa:'
-      explanation: 'Detectamos uma tentativa de acessar sua conta a partir de um endereço IP não reconhecido. Se for você, insira o código de segurança abaixo na página de desafio:'
-      further_actions: 'Se não foi você, por favor mude sua senha e ative a autenticação de dois fatores em sua conta. Você pode fazê-lo aqui:'
-      subject: Por favor, confirme a tentativa de acesso
-      title: Tentativa de acesso
     warning:
+      appeal: Enviar uma contestação
       categories:
         spam: Spam
         violation: O conteúdo viola as seguintes diretrizes da comunidade
       explanation:
+        disable: Você não poderá mais usar a sua conta, mas o seu perfil e outros dados permanecem intactos. Você pode solicitar um backup dos seus dados, mudar as configurações ou excluir sua conta.
         sensitive: A partir de agora, todos os seus arquivos de mídia enviados serão marcados como confidenciais e escondidos por trás de um aviso de clique.
-      get_in_touch: Se você acredita que isso é um erro, você pode responder a este e-mail para entrar em contato com a equipe de %{instance}.
       reason: 'Motivo:'
       subject:
         disable: Sua conta %{acct} foi bloqueada
@@ -1465,8 +1462,8 @@ pt-BR:
       title:
         delete_statuses: Publicações removidas
         disable: Conta bloqueada
+        mark_statuses_as_sensitive: Postagens marcadas como sensíveis
         none: Aviso
-        sensitive: Mídia oculta
         silence: Conta silenciada
         suspend: Conta banida
     welcome:
@@ -1488,13 +1485,10 @@ pt-BR:
       title: Boas vindas, %{name}!
   users:
     follow_limit_reached: Você não pode seguir mais de %{limit} pessoas
-    generic_access_help_html: Problemas para acessar sua conta? Você pode entrar em contato com %{email} para obter ajuda
     invalid_otp_token: Código de dois fatores inválido
-    invalid_sign_in_token: Cógido de segurança inválido
     otp_lost_help_html: Se você perder o acesso à ambos, você pode entrar em contato com %{email}
     seamless_external_login: Você entrou usando um serviço externo, então configurações de e-mail e senha não estão disponíveis.
     signed_in_as: 'Entrou como:'
-    suspicious_sign_in_confirmation: Parece que você não fez login deste dispositivo antes, e você não fez login por um tempo. Portanto, estamos enviando um código de segurança para o seu endereço de e-mail para confirmar que é você.
   verification:
     explanation_html: 'Você pode <strong>verificar os links nos metadados do seu perfil</strong>. Para isso, o site citado deve conter um link de volta para o seu perfil do Mastodon. O link de volta <strong>deve</strong> conter um atributo <code>rel="me"</code>. O conteúdo ou texto do link não importa. Aqui está um exemplo:'
     verification: Verificação

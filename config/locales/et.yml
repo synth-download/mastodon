@@ -61,7 +61,6 @@ et:
     media: Meedia
     moved_html: "%{name} kolis %{new_profile_link}:"
     network_hidden: Neid andmeid pole saadaval
-    never_active: Mitte kunagi
     nothing_here: Siin pole midagi!
     people_followed_by: Inimesed, keda %{name} jälgib
     people_who_follow: Inimesed, kes jälgivad kasutajat %{name}
@@ -259,7 +258,6 @@ et:
       enable: Luba
       enabled: Lubatud
       enabled_msg: Selle emotikoni lubamine õnnestus
-      image_hint: PNG kuni 50KB
       list: Loend
       listed: Nimekirjastatud
       new:
@@ -311,27 +309,13 @@ et:
       reject_media_hint: Kustutab kohalikult salvestatud meediafailid ja keeldub tulevikus rohkem allalaadimast. Ei puuduta peatamisi
       reject_reports: Lükka teavitused tagasi
       reject_reports_hint: Eira kõik teavitused sellelt domeenilt. Ei puuduta peatamisi
-      rejecting_media: keelan meediafaile
-      rejecting_reports: keelan teavitusi
-      severity:
-        silence: vaigistatud
-        suspend: peatatud
-      show:
-        retroactive:
-          silence: Eemalda vaigistus mõjutatud kasutajatelt sellel domeenil
-          suspend: Lõpeta mõjutatud kasutajate peatamine sellel domeenil
-        title: Eemalda domeeniblokeering %{domain}
-        undo: Võta tagasi
       undo: Võta tagasi domeeniblokeering
       view: Vaata domeeniblokeeringut
     email_domain_blocks:
       add_new: Lisa uus
       created_msg: E-posti aadressi keelunimekirja lisamine õnnestus
       delete: Kustuta
-      destroyed_msg: E-posti aadressi keelunimekirjast kustutamine õnnestus
       domain: Domeen
-      empty: Ühtegi e-postidomeeni pole blokeeritud.
-      from_html: "%{domain}-ist"
       new:
         create: Lisa domeen
         title: Uus e-posti keelunimekirja sisend
@@ -807,9 +791,6 @@ et:
       new_followers_summary:
         one: Ja veel, Te saite ühe uue jälgija kui Te olite eemal! Jee!
         other: Ja veel, Te saite %{count} uut jälgijat kui Te olite eemal! Hämmastav!
-      subject:
-        one: "1 uus teavitus peale Teie eelmist külastust \U0001F418"
-        other: "%{count} uut teavitust peale Teie eelmist külastust \U0001F418"
       title: Teie puudumisel...
     favourite:
       body: "%{name} lisas Teie staatuse lemmikutesse:"

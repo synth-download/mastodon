@@ -16,6 +16,7 @@ sq:
     contact: Kontakt
     contact_missing: I parregulluar
     contact_unavailable: N/A
+    continue_to_web: Vazhdoni te aplikacioni web
     discover_users: Zbuloni përdorues
     documentation: Dokumentim
     federation_hint_html: Me një llogari në %{instance}, do të jeni në gjendje të ndiqni persona në çfarëdo shërbyesi Mastodon dhe më tej.
@@ -25,6 +26,8 @@ sq:
       Kjo llogari është një aktor virtual i përdorur për të përfaqësuar vetë shërbyesin dhe jo ndonjë përdorues individual.
       Përdoret për qëllime federimi dhe s’duhet bllokuar, veç në daçi të bllokoni krejt instancën, me ç’rast do të duhej të përdornit bllokim përkatësie.
     learn_more: Mësoni më tepër
+    logged_in_as_html: Aktualisht jeni i futur si %{username}.
+    logout_before_registering: Jeni i futur tashmë.
     privacy_policy: Rregulla privatësie
     rules: Rregulla shërbyesi
     rules_html: 'Më poshtë keni një përmbledhje të rregullave që duhet të ndiqni, nëse doni të keni një llogari në këtë shërbyes Mastodon:'
@@ -45,7 +48,7 @@ sq:
       rejecting_media_title: Media e filtruar
       silenced: 'Postimet prej këtyre shërbyesve do të jenë të fshehura në rrjedha kohore dhe biseda publike, dhe prej ndërveprimeve të përdoruesve të tyre s’do të prodhohen njoftime, veç në i ndjekshi:'
       silenced_title: Shërbyes të heshtuar
-      suspended: 'S’do të përpunohen, depozitohen apo shkëmbehen të dhëna prej këtyre shërbyesve, duke e bërë të pamundur çfarëdo ndërveprimi apo komunikimi me përdorues prej këtyre shërbyesve:'
+      suspended: 'Prej këtyre shërbyesve s’do të përpunohen, depozitohen apo shkëmbehen të dhëna, duke e bërë të pamundur çfarëdo ndërveprimi apo komunikimi me përdorues prej këtyre shërbyesve:'
       suspended_title: Shërbyes të pezulluar
     unavailable_content_html: Mastodon-i përgjithësisht ju lejon të shihni lëndë nga përdorues dhe të ndërveproni me të tillë prej cilitdo shërbyes në fedivers. Këto janë përjashtimet që janë bërë në këtë shërbyes.
     user_count_after:
@@ -69,7 +72,6 @@ sq:
     media: Media
     moved_html: "%{name} ka kaluar te %{new_profile_link}:"
     network_hidden: Këto të dhëna s’janë të passhme
-    never_active: Kurrë
     nothing_here: S’ka gjë këtu!
     people_followed_by: Persona të ndjekur nga %{name}
     people_who_follow: Persona që ndjekin %{name}
@@ -164,9 +166,8 @@ sq:
       perform_full_suspension: Pezulloje
       previous_strikes: Paralajmërime të mëparshme
       previous_strikes_description_html:
-        one: Kjo llogari ka <strong>one</strong> paralajmërim.
+        one: Kjo llogari ka <strong>një</strong> paralajmërim.
         other: Kjo llogari ka <strong>%{count}</strong> paralajmërime.
-        zero: Kjo llogari është <strong>në pozita të mira</strong>.
       promote: Promovojeni
       protocol: Protokoll
       public: Publike
@@ -198,7 +199,6 @@ sq:
       security_measures:
         only_password: Vetëm fjalëkalim
         password_and_2fa: Fjalëkalim dhe 2FA
-        password_and_sign_in_token: Fjalëkalim dhe token email-i
       sensitive: Rezervat
       sensitized: iu vu shenjë si rezervat
       shared_inbox_url: URL kutie të përbashkët mesazhesh
@@ -371,7 +371,7 @@ sq:
       enable: Aktivizoje
       enabled: I aktivizuar
       enabled_msg: Ai emoxhi u aktivizua me sukses
-      image_hint: PNG deri 50KB
+      image_hint: PNG ose GIF deri në %{size}
       list: Vëre në listë
       listed: Në listë
       new:
@@ -448,34 +448,26 @@ sq:
       reject_media_hint: Heq kartela media të depozituara lokalisht dhe nuk pranon të shkarkohen të tilla në të ardhmen. Pa peshë për pezullimet
       reject_reports: Hidh tej raportimet
       reject_reports_hint: Shpërfillini krejt raportimet e ardhura nga kjo përkatësi. Pa peshë për pezullimet
-      rejecting_media: mospranim kartelash media
-      rejecting_reports: mospranim raportimesh
-      severity:
-        silence: e heshtuar
-        suspend: e pezulluar
-      show:
-        affected_accounts:
-          one: Pat ndikim te një llogari në bazën e të dhënave
-          other: Pat ndikim te %{count} llogari në bazën e të dhënave
-          zero: S’pat ndikim te ndonjë llogari në bazën e të dhënave
-        retroactive:
-          silence: Hiqu heshtimin krejt llogarive ekzistuese nga kjo përkatësi
-          suspend: Hiqu pezullimin krejt llogarive ekzistuese nga kjo përkatësi
-        title: Zhbëje bllokimin e përkatësisë për %{domain}
-        undo: Zhbëje
       undo: Zhbëje bllokimin e përkatësisë
       view: Shihni bllokim përkatësie
     email_domain_blocks:
       add_new: Shtoni të ri
+      attempts_over_week:
+        one: "%{count} përpjekje gjatë javës së shkuar"
+        other: "%{count} përpjekje regjistrimi gjatë javës së kaluar"
       created_msg: Përkatësia email u shtua me sukses te lista e bllokimeve
       delete: Fshije
-      destroyed_msg: Përkatësia email u fshi me sukses nga lista e bllokimeve
+      dns:
+        types:
+          mx: Zë MX
       domain: Përkatësi
-      empty: S’ka përkatësi email në ndonjë listë bllokimesh.
-      from_html: nga %{domain}
       new:
         create: Shtoni përkatësi
+        resolve: Ftilloje përkatësinë
         title: Zë i ri email në listë bllokimesh
+      no_email_domain_block_selected: S’u ndryshuan blloqe përkatësish email, ngaqë s’qe përzgjedhur ndonjë
+      resolved_dns_records_hint_html: Emri i përkatësisë jep u përket përkatësive vijuese MX, që janë përgjegjëset për pranim email-esh. Bllokimi i një përkatësie MX do të bllokojë regjistrime nga çfarëdo adrese email që përdor të njëjtën përkatësi MX, edhe nëse emri i dukshëm i përkatësisë është i ndryshëm. <strong>Jini i kujdesshëm të mos bllokoni shërbime të njohur email-esh.</strong>
+      resolved_through_html: Zgjidhur përmes %{domain}
       title: Listë bllokimesh email-esh
     follow_recommendations:
       description_html: "<strong>Rekomandimet për ndjekje ndihmojnë përdoruesit e rinj të gjejnë shpejt lëndë me interes</strong>. Kur një përdorues nuk ka ndërvepruar mjaftueshëm me të tjerët, që të formohen rekomandime të personalizuara ndjekjeje, rekomandohen këto llogari. Ato përzgjidhen çdo ditë, prej një përzierje llogarish me shkallën më të lartë të angazhimit dhe numrin më të lartë të ndjekësve vendorë për një gjuhë të dhënë."
@@ -486,23 +478,47 @@ sq:
       title: Rekomandime ndjekjeje
       unsuppress: Rikthe rekomandime ndjekjeje
     instances:
+      availability:
+        description_html:
+          one: Nëse dhënia e mesazheve te përkatësia dështon për <strong>%{count} ditë</strong> pa sukses, s’do të bëhen përpjekje të tjera për dhënie, veç në u marrtë një dërgim <em>prej</em> përkatësisë.
+          other: Nëse dhënia e mesazheve te përkatësia dështon për <strong>%{count} ditë</strong> pa sukses, s’do të bëhen përpjekje të tjera për dhënie, veç në u marrtë një dërgim <em>prej</em> përkatësisë.
+        failure_threshold_reached: U mbërrit në prag dështimesh më %{date}.
+        failures_recorded:
+          one: Përpjekje e dështuar në %{count} ditë.
+          other: Përpjekje e dështuar në %{count} ditë të ndryshme.
+        no_failures_recorded: S’ka dështime të regjistruara.
+        warning: Përpjekja e fundit për t’u lidhur me këtë shërbyes ka qenë e pasuksesshme
       back_to_all: Krejt
       back_to_limited: E kufizuar
       back_to_warning: Kujdes
       by_domain: Përkatësi
       confirm_purge: Jeni i sigurt se doni të fshihen përgjithmonë të dhënat prej kësaj përkatësie?
+      content_policies:
+        comment: Shënim i brendshëm
+        description_html: Mund të përkufizoni rregulla lënde që do të zbatohen mbi krejt llogaritë prej kësaj përkatësie dhe cilësdo nënpërkatësi të saj.
+        policies:
+          reject_media: Mos prano media
+          reject_reports: Hidh tej raportimet
+          silence: Kufizoje
+          suspend: Pezulloje
+        policy: Rregulla
+        reason: Arsye publike
+        title: Rregulla lënde
+      dashboard:
+        instance_accounts_dimension: Llogaritë më të ndjekura
+        instance_accounts_measure: llogari të depozituara
+        instance_followers_measure: ndjekës tanët atje
+        instance_follows_measure: ndjekës të tyre këtu
+        instance_languages_dimension: Gjuhë kryesuese
+        instance_media_attachments_measure: bashkëngjitje media të depozituara
+        instance_reports_measure: raportime rreth tyre
+        instance_statuses_measure: postime të depozituara
       delivery:
         all: Krejt
         clear: Spastro gabime dërgimi
         restart: Rinis dërgimin
         stop: Ndale dërgimin
-        title: Dërgim
         unavailable: Jo i passhëm
-        unavailable_message: Dërgim jo i passhëm
-        warning: Kujdes
-        warning_message:
-          one: Dështim dërgimi %{count} ditë
-          other: Dështim dërgimi %{count} ditë
       delivery_available: Ka shpërndarje të mundshme
       delivery_error_days: Ditë gabimi dështimi
       delivery_error_hint: Nëse dërgimi s’është i mundshëm për %{count} ditë, do t’i vihet shenjë automatikisht si i padërgueshëm.
@@ -511,7 +527,6 @@ sq:
       known_accounts:
         one: "%{count} llogari e njohur"
         other: "%{count} llogari të njohura"
-        zero: Pa llogari të njohur
       moderation:
         all: Krejt
         limited: Të kufizuarat
@@ -519,12 +534,14 @@ sq:
       private_comment: Koment privat
       public_comment: Koment publik
       purge: Spastroje
+      purge_description_html: Nëse besoni se kjo përkatësi është përgjithnjë e mbyllur, mund të fshini prej hapësirës tuaj të depozitimit krejt regjistrimet dhe të dhëna të përshoqëruara me llogarinë. Kjo mund të zgjasë ca.
       title: Federim
       total_blocked_by_us: Bllokuar nga ne
       total_followed_by_them: Ndjekur prej tyre
       total_followed_by_us: Ndjekur nga ne
       total_reported: Raportime rreth tyre
       total_storage: Bashkëngjitje media
+      totals_time_period_hint_html: Vlerat e shfaqura më poshtë përfshijnë të dhënat për krejt kohën.
     invites:
       deactivate_all: Çaktivizoji krejt
       filter:
@@ -579,6 +596,7 @@ sq:
       action_taken_by: Veprimi i ndërmarrë nga
       actions:
         delete_description_html: Postimet e raportuara do të fshihen dhe do të regjistrohet një paralajmërim, për t’ju ndihmuar të përshkallëzoni hapat në rast shkeljesh të ardhme nga e njëjta llogari.
+        mark_as_sensitive_description_html: Medias te postimet e raportuara do t’i vihet shenjë si me spec dhe për të do të regjistrohet një paralajmërim, për t’ju ndihmuar të përshkallëzoni masat tuaja mbi shkelje të ardhshme nga e njëjta llogari.
         other_description_html: Shihni më tepër mundësi për kontroll të sjelljes së një llogari dhe përshtatni komunikimin me llogarinë e raportuar.
         resolve_description_html: Ndaj llogarisë së raportuar nuk do të ndërmerret ndonjë veprim, s’do të regjistrohet ndonjë paralajmërim dhe raporti do të mbyllet.
         silence_description_html: Profili do të jetë i dukshëm vetëm për ata që e ndjekin tashmë, ose që e kërkojnë dorazi, duke reduktuar rëndë përhapjen e tij. Mundet përherë të prapakthehet.
@@ -599,6 +617,7 @@ sq:
       forwarded: U përcoll
       forwarded_to: U përcoll te %{domain}
       mark_as_resolved: Vëri shenjë si i zgjidhur
+      mark_as_sensitive: Vëri shenjë si rezervat
       mark_as_unresolved: Vëri shenjë si të pazgjidhur
       no_one_assigned: Askush
       notes:
@@ -610,6 +629,7 @@ sq:
         title: Shënime
       notes_description_html: Shihni dhe lini shënime për moderatorët e tjerë dhe për veten në të ardhmen
       quick_actions_description_html: 'Kryeni një veprim të shpejtë, ose rrëshqitni poshtë për të parë lëndën e raportuar:'
+      remote_user_placeholder: përdoruesi i largët prej %{instance}
       reopen: Rihape raportimin
       report: 'Raportim #%{id}'
       reported_account: Llogari e raportuar
@@ -741,6 +761,7 @@ sq:
       actions:
         delete_statuses: "%{name} fshiu postime të %{target}"
         disable: "%{name} ngriu postime të %{target}"
+        mark_statuses_as_sensitive: "%{name} u vuri shenjë postimeve të %{target} si rezervat"
         none: "%{name} dërgoi një sinjalizim për %{target}"
         sensitive: "%{name} i vuri shenjë llogarisë së %{target} si rezervat"
         silence: "%{name} e kufizoi llogarinë %{target}"
@@ -750,6 +771,11 @@ sq:
     system_checks:
       database_schema_check:
         message_html: Ka migrime bazash të dhënash pezull. Ju lutemi, kryejini, për të qenë të sigurt se aplikacioni sillet siç priteet
+      elasticsearch_running_check:
+        message_html: S’u lidh dot me Elasticsearch. Ju lutemi, kontrolloni nëse ky xhiron, ose çaktivizoni kërkimin në tërë tekstin
+      elasticsearch_version_check:
+        message_html: 'Version Elasticsearch i papërputhshëm: %{value}'
+        version_comparison: Xhiron Elasticsearch %{running_version}, ndërkohë që është i domosdoshëm %{required_version}
       rules_check:
         action: Administroni rregulla shërbyesi
         message_html: S’keni përcaktuar ndonjë rregull shërbyesi.
@@ -766,20 +792,32 @@ sq:
       links:
         allow: Lejoje lidhjen
         allow_provider: Lejoje botuesin
+        description_html: Këto janë lidhje që ndahen aktualisht shumë me llogari prej të cilave shërbyesi juaj sheh postime. Mund të ndihmojë përdoruesit tuaj të gjejnë se ç’po ndodh në botë. S’shfaqen lidhje publikisht, deri sa të miratoni botuesin. Mundeni edhe të lejoni ose hidhni poshtë lidhje individuale.
         disallow: Hiq lejimin e lidhjes
         disallow_provider: Mos e lejo botuesin
         shared_by_over_week:
-          one: Ndarë nga një person javën e kaluar
-          other: Ndarë nga %{count} persona javën e kaluar
-          zero: E pandarë nga njeri gjatë javës së kaluar
+          one: Ndarë me të tjerë nga një person gjatë javës së kaluar
+          other: Ndarë me të tjerë nga %{count} vetë gjatë javës së kaluar
         title: Lidhje në modë
         usage_comparison: Ndarë %{today} herë sot, kundrejt %{yesterday} dje
       pending_review: Në pritje të shqyrtimit
       preview_card_providers:
         allowed: Lidhje prej këtij botuesi mund të përdoren
+        description_html: Këto janë përkatësi prej të cilave ndahen shpesh lidhje në shërbyesin tuaj. Lidhjet nuk do të ofrohen publikisht, veç në u miratoftë përkatësia e lidhjes. Miratimi (ose hedhja poshtë) shtrihet edhe te nënpërkatësitë.
         rejected: Lidhje prej këtij botuesi s’do të përdoren
         title: Botues
       rejected: Hedhur poshtë
+      statuses:
+        allow: Lejo postim
+        allow_account: Lejo autor
+        description_html: Këto janë postime të cilat shërbyesi juaj di se po ndahen shumë dhe po zgjidhen si të parapëlqyera për çastin. Mund të ndihmojnë përdoruesit tuaj të rinj dhe të riardhur të gjejnë më tepër vetë për të ndjekur. S’shfaqen postime publikisht, pa miratuar ju autorin dhe autori lejon që llogaria e tij t’u sugjerohet të tjerëve. Mundeni edhe të lejoni, ose hidhni, poshtë postime individuale.
+        disallow: Mos lejo postim
+        disallow_account: Mos lejo autor
+        not_discoverable: Autori s’ka zgjedhur të jetë i zbulueshëm
+        shared_by:
+          one: Ndarë me të tjerë, ose shënuar si e parapëlqyer një herë
+          other: Ndarë me të tjerë, ose shënuar si e parapëlqyer %{friendly_count} herë
+        title: Postime në modë
       tags:
         dashboard:
           tag_accounts_measure: përdorime unike
@@ -787,6 +825,7 @@ sq:
           tag_servers_dimension: Shërbyes kryesues
           tag_servers_measure: shërbyes të ndryshëm
           tag_uses_measure: përdorime gjithsej
+        description_html: Këta hashtag-ë aktualisht po shfaqen në një numër të madh postimesh që sheh shërbyesi juaj. Kjo mund të ndihmojë përdoruesit tuaj të gjejnë se për çfarë po flasin më shumë njerëzit aktualisht. Pa i miratuar ju, nuk shfaqen publikisht hashtag-ë.
         listable: Mund të sugjerohet
         not_listable: S’do të sugjerohet
         not_trendable: S’do të shfaqet nën të modës
@@ -797,9 +836,8 @@ sq:
         usable: Mund të përdoret
         usage_comparison: Përdorur %{today} herë sot, krahasuar me %{yesterday} dje
         used_by_over_week:
-          one: Përdorur nga një persona gjatë javës së kaluar
-          other: Përdorur nga %{count} persona gjatë javës së kaluar
-          zero: E papërdorur nga njeri gjatë javës së kaluar
+          one: Përdorur nga një person gjatë javës së kaluar
+          other: Përdorur nga %{count} vetë gjatë javës së kaluar
       title: Në modë
     warning_presets:
       add_new: Shtoni të ri
@@ -812,6 +850,7 @@ sq:
       actions:
         delete_statuses: fshirje e postimeve të tij
         disable: ngrirje e llogarisë së tij
+        mark_statuses_as_sensitive: për ’i vënë shenjë postimeve të tyre si rezervat
         none: një vërejtje
         sensitive: vënie shenjë llogarisë së tij si rezervat
         silence: kufizim i llogarisë së tij
@@ -826,14 +865,18 @@ sq:
       body: "%{reporter} ka raportuar %{target}"
       body_remote: Dikush nga %{domain} ka raportuar %{target}
       subject: Raportim i ri për %{instance} (#%{id})
-    new_trending_links:
-      body: Lidhjet vijuese janë në modë sot, por botuesit e tyre nuk janë shqyrtuar më herët. Nuk do të shfaqen publikisht, veç në i miratofshi. S’do të prodhohen njoftime të mëtejshme për të njëjtë botues.
-      no_approved_links: Aktualisht nuk ka lidhje në modë të miratuara.
-      subject: Lidhje të reja në modë për shqyrtim te %{instance}
-    new_trending_tags:
-      body: 'Hashtag-ët vijues janë në modë sot, por nuk janë miratuar më herët. S’do të shfaqen publikisht, veç në i miratofshi:'
-      no_approved_tags: Aktualisht nuk ka hashtag-ë në modë të miratuar.
-      subject: Hashtag-ë të rinj në modë për t’u shqyrtuar në %{instance}
+    new_trends:
+      body: 'Gjërat vijuese lypin një shqyrtim, përpara se të mund të shfaqen publikisht:'
+      new_trending_links:
+        no_approved_links: Aktualisht s’ka lidhje në modë të miratuara.
+        title: Lidhje në modë
+      new_trending_statuses:
+        no_approved_statuses: Aktualisht s’ka postime në modë të miratuar.
+        title: Postime në modë
+      new_trending_tags:
+        no_approved_tags: Aktualisht s’ka hashtag-ë në modë të miratuar.
+        title: Hashtag-ë në modë
+      subject: Gjëra të reja në modë për shqyrtim te %{instance}
   aliases:
     add_new: Krijo alias
     created_msg: U krijua me sukses alias i ri. Tani mund të filloni lëvizjen prej llogarisë së vjetër.
@@ -907,8 +950,10 @@ sq:
     status:
       account_status: Gjendje llogarie
       confirming: Po pritet që të plotësohet ripohimi i email-it.
+      functional: Llogaria juaj është tërësisht funksionale.
       pending: Aplikimi juaj është në pritje të shqyrtimit nga stafi ynë. Kjo mund të dojë ca kohë. Nëse aplikimi juaj miratohet, do të merrni një email.
       redirecting_to: Llogaria juaj është joaktive, ngaqë aktualisht ridrejton te %{acct}.
+      view_strikes: Shihni paralajmërime të dikurshme kundër llogarisë tuaj
     too_fast: Formulari u parashtrua shumë shpejt, riprovoni.
     trouble_logging_in: Probleme me hyrjen?
     use_security_key: Përdor kyç sigurie
@@ -984,6 +1029,7 @@ sq:
         submit: Parashtroni apelim
       associated_report: Raportimi i përshoqëruar
       created_at: Datuar
+      description_html: Këto janë veprime të ndërmara kundër llogarisë tuaj dhe sinjalizime që ju janë dërguar nga stafi i %{instance}.
       recipient: Drejtuar
       status: "#%{id} postimi"
       status_removed: Postim i hequr tashmë nga sistemi
@@ -991,8 +1037,9 @@ sq:
       title_actions:
         delete_statuses: Heqje postimi
         disable: Ngrirje e llogarisë
+        mark_statuses_as_sensitive: Vënie shenjë postimeve si me spec
         none: Vërejtje
-        sensitive: Vënie shenjë llogarisë si rezervat
+        sensitive: Vënie shenjë llogarive si me spec
         silence: Kufizim llogarie
         suspend: Pezullim llogarie
       your_appeal_approved: Apelimi juaj u miratua
@@ -1172,6 +1219,9 @@ sq:
     carry_mutes_over_text: Ky përdorues lëvizi prej %{acct}, që e keni heshtuar.
     copy_account_note_text: 'Ky përdorues ka ikur prej %{acct}, ja ku janë shënimet tuaja të mëparshme mbi të:'
   notification_mailer:
+    admin:
+      sign_up:
+        subject: "%{name} u regjistrua"
     digest:
       action: Shihini krejt njoftimet
       body: Ja një përmbledhje e shkurtër e mesazheve që keni humbur që nga vizita juaj e fundit më %{since}
@@ -1180,8 +1230,8 @@ sq:
         one: Veç kësaj, u bëtë me një ndjekës të ri, teksa s’ishit këtu! Ëhë!
         other: Veç kësaj, u bëtë me %{count} ndjekës të rinj, teksa s’ishit këtu! Shkëlqyeshëm!
       subject:
-        one: "1 njoftim i ri që nga vizita juaj e fundit \U0001F418"
-        other: "%{count} njoftime të reja që nga vizita juaj e fundit \U0001F418"
+        one: "1 njoftim i ri që nga vizita juaj e fundit 🐘"
+        other: "%{count} njoftime të reja që nga vizita juaj e fundit 🐘"
       title: Gjatë mungesës tuaj…
     favourite:
       body: 'Gjendja juaj u parapëlqye nga %{name}:'
@@ -1361,6 +1411,7 @@ sq:
     profile: Profil
     relationships: Ndjekje dhe ndjekës
     statuses_cleanup: Fshirje e automatizuar postimesh
+    strikes: Paralajmërime nga moderimi
     two_factor_authentication: Mirëfilltësim Dyfaktorësh
     webauthn_authentication: Kyçe sigurie
   statuses:
@@ -1381,7 +1432,7 @@ sq:
     disallowed_hashtags:
       one: 'përmbante një hashtag të palejuar: %{tags}'
       other: 'përmbante hashtag-ë të palejuar: %{tags}'
-    edited_at: Përpunuar më %{date}
+    edited_at_html: Përpunuar më %{date}
     errors:
       in_reply_not_found: Gjendja të cilës po provoni t’i përgjigjeni s’duket se ekziston.
     open_in_web: Hape në internet
@@ -1440,6 +1491,7 @@ sq:
       '2629746': 1 muaj
       '31556952': 1 vit
       '5259492': 2 muaj
+      '604800': 1 javë
       '63113904': 2 vjet
       '7889238': 3 muaj
     min_age_label: Prag moshe
@@ -1574,12 +1626,13 @@ sq:
       explanation: Kërkuat një kopjeruajtje të plotë të llogarisë tuaj Mastodon. E keni gati për shkarkim!
       subject: Arkivi juaj është gati për shkarkim
       title: Marrje arkivi me vete
-    sign_in_token:
-      details: 'Ja hollësitë e përpjekjes:'
-      explanation: 'Pikasëm një përpjekje për të bërë hyrje në llogarinë tuaj nga një adresë IP jo e pranuar. Nëse ky jeni ju, ju lutemi jepni kodin e sigurisë më poshtë te faqja e pyetjes për hyrje:'
-      further_actions: 'Nëse ky s’qetë ju, ju lutemi, ndryshoni fjalëkalimin tuaj dhe aktivizoni në llogarinë tuaj mirëfilltësim dyfaktorësh. Këtë mund ta bëni këtu:'
-      subject: Ju lutemi, ripohoni përpjekje hyrjeje
-      title: Përpjekje hyrjeje
+    suspicious_sign_in:
+      change_password: ndryshoni fjalëkalimin tuaj
+      details: 'Ja hollësitë për hyrjen:'
+      explanation: Kemi pikasur një hyrje në llogarinë tuaj që nga adresë e re IP.
+      further_actions_html: Nëse s’ishit ju, këshillojmë të %{action} menjëherë dhe të aktivizoni mirëfilltësim dyfaktorësh, për ta mbajtur llogarinë tuaj të sigurt.
+      subject: Llogaria juaj është përdorur që nga një adresë e re IP
+      title: Hyrje e re
     warning:
       appeal: Parashtroni një apelim
       appeal_description: Nëse besoni se është gabim, mund t’i parashtroni një apelim stafit të %{instance}.
@@ -1587,26 +1640,28 @@ sq:
         spam: I padëshiruar
         violation: Lënda cenon udhëzimet vijuese të bashkësisë
       explanation:
-        delete_statuses: Për disa nga postimet tuaja është parë se cenojnë një ose më tepër udhëzime të bashkësisë dhe për pasojë janë hequr nga moderatorët e %{instance}. Cenime të ardhshme mund të sjellin veprime ndëshkimore më të ashpra kundër llogarisë tuaj.
+        delete_statuses: Disa nga postimet tuaja janë parë të cenojnë një ose më tepër udhëzime të bashkësisë dhe për pasojë janë hequr nga moderatorët e %{instance}.
         disable: S’mund të përdorni më llogarinë tuaj, por profili juaj dhe të dhëna të tjera mbeten të paprekura. Mund të kërkoni një kopjeruajtje të të dhënave tuaja, të ndryshoni rregullime llogarie, ose të fshini llogarinë tuaj.
+        mark_statuses_as_sensitive: Disave nga postimet tuaj u është vënë shenjë si me spec nga moderatorët e %{instance}. Kjo do të thotë se njerëzve do t’u duhet të prekin median te postimet, para se të shfaqet një paraparje. Mund t’i vini vetë shenjë medias si me spec, kur postoni në të ardhmen.
         sensitive: Nga sot e tutje, krejt kartelave media të ngarkuara do t’u vihet shenjë si me spec dhe do të fshihen pas një sinjalizimi “klikojeni”.
         silence: Mundeni ende të përdorni llogarinë tuaj, por vetëm personat që tashmë ju ndjekin do të shohin postimet tuaja në këtë shërbyes dhe mund të përjashtoheni nga veçori të ndryshme për zbulim lënde. Sidoqoftë, të tjerët mund t’ju ndjekin dorazi.
         suspend: S’mund të përdorni më llogarinë tuaj dhe profili juaj, si dhe të dhëna të tjera, s’janë më të përdorshëm. Mundeni ende të bëni hyrjen në llogarinë tuaj për të kërkuar një kopjeruajtje të të dhënave tuaja, deri para se të dhënat tuaja të hiqen plotësisht brenda afërsisht 30 ditësh, por do të mbajmë ca të dhëna elementare, për t’ju penguar t’i bëni bisht pezullimin.
-      get_in_touch: Nëse besoni se këtu ka gabim, mund t’i përgjigjeni këtij email-i për t’u lidhur me stafin e %{instance}.
       reason: 'Arsye:'
-      statuses: 'Postime që janë gjetur me cenime:'
+      statuses: 'Postime të cituar:'
       subject:
         delete_statuses: Postimet tuaja në %{acct} janë hequr
         disable: Llogaria juaj %{acct} është ngrirë
+        mark_statuses_as_sensitive: Postimeve tuaj në %{acct} u është vënë shenjë si me spec
         none: Sinjalizim për %{acct}
-        sensitive: Nga sot e tutje, kartelave tuaja media në %{acct} do t’u vihet shenjë si me spec
+        sensitive: Tani e tutje, postimeve tuaj në %{acct} do t’u vihet shenjë si me spec
         silence: Llogaria juaj %{acct} është kufizuar
         suspend: Llogaria juaj %{acct} është pezulluar
       title:
         delete_statuses: Postime të hequra
         disable: Llogari e ngrirë
+        mark_statuses_as_sensitive: Postimeve iu vu shenjë si me spec
         none: Sinjalizim
-        sensitive: Me media të fshehur
+        sensitive: Llogarice iu vu shenjë si me spec
         silence: Llogari e kufizuar
         suspend: Llogari e pezulluar
     welcome:
@@ -1628,13 +1683,10 @@ sq:
       title: Mirë se vini, %{name}!
   users:
     follow_limit_reached: S’mund të ndiqni më tepër se %{limit} persona
-    generic_access_help_html: Problem me hyrjen në llogarinë tuaj? Për asistencë mund të lidheni me %{email}
     invalid_otp_token: Kod dyfaktorësh i pavlefshëm
-    invalid_sign_in_token: Kod sigurie i pavlefshëm
     otp_lost_help_html: Nëse humbët hyrjen te të dy, mund të lidheni me %{email}
     seamless_external_login: Jeni futur përmes një shërbimi të jashtëm, ndaj s’ka rregullime fjalëkalimi dhe email.
     signed_in_as: 'I futur si:'
-    suspicious_sign_in_confirmation: Duket se s’keni hyrë më parë nga kjo pajisje, dhe se keni kohë pa bërë hyrje, ndaj po ju dërgojmë një kod sigurie te adresa juaj email, që të ripohoni se jeni ju.
   verification:
     explanation_html: 'Mundeni <strong>të verifikoni veten si i zoti i lidhjeve te tejtëdhënat e profilit tuaj</strong>. Për këtë, sajti i lidhur duhet të përmbajë një lidhje për te profili juaj Mastodon. Lidhje për te ajo <strong>duhet</strong> të ketë një atribut <code>rel="me"</code>. Lënda tekst e lidhjes nuk ngre peshë. Ja një shembull:'
     verification: Verifikim
