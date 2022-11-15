@@ -283,6 +283,7 @@ is:
         update_ip_block_html: "%{name} breytti reglu fyrir IP-vistfangið %{target}"
         update_status_html: "%{name} uppfærði færslu frá %{target}"
         update_user_role_html: "%{name} breytti hlutverki %{target}"
+      deleted_account: eyddur notandaaðgangur
       empty: Engar atvikaskrár fundust.
       filter_by_action: Sía eftir aðgerð
       filter_by_user: Sía eftir notanda
@@ -607,7 +608,7 @@ is:
         other: "%{count} notendur"
       categories:
         administration: Stjórnun
-        devops: Kerfisstjórar
+        devops: DevOps
         invites: Boðsgestir
         moderation: Umsjón
         special: Sérstakt
@@ -658,7 +659,7 @@ is:
         view_audit_log_description: Leyfir notendum að skoða feril stjórnunaraðgerða á netþjóninum
         view_dashboard: Skoða stjórnborð
         view_dashboard_description: Leyfir notendum að skoða stjórnborðið og sjá ýmsar mælingar
-        view_devops: Kerfisstjórar
+        view_devops: DevOps
         view_devops_description: Leyfir notendum að skoða Sidekiq og pgHero stjórnborð
       title: Hlutverk
     rules:
@@ -1386,7 +1387,7 @@ is:
       phantom_js: PhantomJS
       qq: QQ vafri
       safari: Safari
-      uc_browser: UCBrowser
+      uc_browser: UC-vafrinn
       weibo: Weibo
     current_session: Núverandi seta
     description: "%{browser} á %{platform}"

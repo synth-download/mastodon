@@ -203,6 +203,7 @@ el:
         destroy_instance_html: Ο/Η %{name} εκκαθάρισε τον τομέα %{target}
         reject_user_html: "%{name} απορρίφθηκε εγγραφή από %{target}"
         unblock_email_account_html: "%{name} ξεμπλόκαρε τη διεύθυνση ηλεκτρονικού ταχυδρομείου του %{target}"
+      deleted_account: διαγραμμένος λογαριασμός
       empty: Δεν βρέθηκαν αρχεία καταγραφής.
       filter_by_action: Φιλτράρισμα ανά ενέργεια
       filter_by_user: Φιλτράρισμα ανά χρήστη
@@ -437,6 +438,8 @@ el:
         devops: Devops
         invites: Προσκλήσεις
       delete: Διαγραφή
+      privileges:
+        view_devops: DevOps
     rules:
       add_new: Προσθήκη κανόνα
       delete: Διαγραφή
@@ -935,11 +938,15 @@ el:
     activity: Τελευταία δραστηριότητα
     browser: Φυλλομετρητής (Browser)
     browsers:
+      blackberry: BlackBerry
       generic: Άγνωστος φυλλομετρητής
+      uc_browser: UC Browser
     current_session: Τρέχουσα σύνδεση
     description: "%{browser} σε %{platform}"
     explanation: Αυτοί είναι οι φυλλομετρητές (browsers) που είναι συνδεδεμένοι στον λογαριασμό σου στο Mastodon αυτή τη στιγμή.
     platforms:
+      blackberry: BlackBerry
+      chrome_os: ChromeOS
       mac: Mac
       other: άγνωστη πλατφόρμα
     revoke: Ανακάλεσε
