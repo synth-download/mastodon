@@ -2,12 +2,13 @@
 
 class SearchService < BaseService
   def call(query, account, limit, options = {})
-    @query   = query&.strip
-    @account = account
-    @options = options
-    @limit   = limit.to_i
-    @offset  = options[:type].blank? ? 0 : options[:offset].to_i
-    @resolve = options[:resolve] || false
+    @query     = query&.strip
+    @account   = account
+    @options   = options
+    @limit     = limit.to_i
+    @offset    = options[:type].blank? ? 0 : options[:offset].to_i
+    @resolve   = options[:resolve] || false
+    @following = options[:following] || false
 
     default_results.tap do |results|
       next if @query.blank? || @limit.zero?
@@ -30,34 +31,36 @@ class SearchService < BaseService
       @account,
       limit: @limit,
       resolve: @resolve,
-      offset: @offset
+      offset: @offset,
+      use_searchable_text: true,
+      following: @following
     )
   end
 
   def perform_statuses_search!
     results = Status.where(visibility: :public)
-          .where("statuses.text &@~ ?", @query)
-          .limit(@limit)
-          .offset(@offset)
+                    .where('statuses.text &@~ ?', @query)
+                    .limit(@limit)
+                    .offset(@offset)
 
     if @options[:account_id].present?
       results = results
-            .where(account_id: @options[:account_id])
+                .where(account_id: @options[:account_id])
     end
 
     if @options[:min_id].present?
       results = results
-            .where("statuses.id > ?", @options[:min_id])
+                .where('statuses.id > ?', @options[:min_id])
     end
 
     if @options[:max_id].present?
       results = results
-            .where("statuses.id < ?", @options[:max_id])
+                .where('statuses.id < ?', @options[:max_id])
     end
 
     account_ids         = results.map(&:account_id)
     account_domains     = results.map(&:account_domain)
-    preloaded_relations = relations_map_for_account(@account, account_ids, account_domains)
+    preloaded_relations = @account.relations_map(account_ids, account_domains)
 
     results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
   end
@@ -76,7 +79,7 @@ class SearchService < BaseService
   end
 
   def url_query?
-    @resolve && /\Ahttps?:\/\//.match?(@query)
+    @resolve && %r{\Ahttps?://}.match?(@query)
   end
 
   def url_resource_results
@@ -113,16 +116,6 @@ class SearchService < BaseService
 
   def statuses_search?
     @options[:type].blank? || @options[:type] == 'statuses'
-  end
-
-  def relations_map_for_account(account, account_ids, domains)
-    {
-      blocking: Account.blocking_map(account_ids, account.id),
-      blocked_by: Account.blocked_by_map(account_ids, account.id),
-      muting: Account.muting_map(account_ids, account.id),
-      following: Account.following_map(account_ids, account.id),
-      domain_blocking_by_domain: Account.domain_blocking_map_by_domain(domains, account.id),
-    }
   end
 
   def parsed_query

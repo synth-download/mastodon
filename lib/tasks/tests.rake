@@ -25,7 +25,7 @@ namespace :tests do
       end
 
       if Account.where(domain: Rails.configuration.x.local_domain).exists?
-        puts 'Faux remote accounts not properly claned up'
+        puts 'Faux remote accounts not properly cleaned up'
         exit(1)
       end
 
@@ -41,6 +41,26 @@ namespace :tests do
 
       unless Account.find_by(username: 'user', domain: nil).custom_filters.map { |filter| filter.keywords.pluck(:keyword) } == [['test'], ['take']]
         puts 'CustomFilterKeyword records not created as expected'
+        exit(1)
+      end
+
+      unless Admin::ActionLog.find_by(target_type: 'DomainBlock', target_id: 1).human_identifier == 'example.org'
+        puts 'Admin::ActionLog domain block records not updated as expected'
+        exit(1)
+      end
+
+      unless Admin::ActionLog.find_by(target_type: 'EmailDomainBlock', target_id: 1).human_identifier == 'example.org'
+        puts 'Admin::ActionLog email domain block records not updated as expected'
+        exit(1)
+      end
+
+      unless User.find(1).settings['notification_emails.favourite'] == true && User.find(1).settings['notification_emails.mention'] == false
+        puts 'User settings not kept as expected'
+        exit(1)
+      end
+
+      unless Account.find_remote('bob', 'ActivityPub.com').domain == 'activitypub.com'
+        puts 'Account domains not properly normalized'
         exit(1)
       end
     end
@@ -84,16 +104,21 @@ namespace :tests do
         VALUES
           (1, 'destroy', 'Account', 1, now(), now()),
           (1, 'destroy', 'User', 1, now(), now()),
-          (1, 'destroy', 'DomainBlock', 1312, now(), now()),
-          (1, 'destroy', 'EmailDomainBlock', 1312, now(), now()),
+          (1, 'destroy', 'DomainBlock', 1, now(), now()),
+          (1, 'destroy', 'EmailDomainBlock', 1, now(), now()),
           (1, 'destroy', 'Status', 1, now(), now()),
           (1, 'destroy', 'CustomEmoji', 3, now(), now());
+
+        INSERT INTO "settings"
+          (id, thing_type, thing_id, var, value, created_at, updated_at)
+        VALUES
+          (3, 'User', 1, 'notification_emails', E'--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess\nfollow: false\nreblog: true\nfavourite: true\nmention: false\nfollow_request: true\ndigest: true\nreport: true\npending_account: false\ntrending_tag: true\nappeal: true\n', now(), now());
       SQL
     end
 
     desc 'Populate the database with test data for 2.4.0'
     task populate_v2_4: :environment do # rubocop:disable Naming/VariableNumber
-      ActiveRecord::Base.connection.execute(<<~SQL)
+      ActiveRecord::Base.connection.execute(<<~SQL.squish)
         INSERT INTO "settings"
           (id, thing_type, thing_id, var, value, created_at, updated_at)
         VALUES
@@ -140,7 +165,7 @@ namespace :tests do
         INSERT INTO "accounts"
           (id, username, domain, private_key, public_key, created_at, updated_at, protocol, inbox_url, outbox_url, followers_url)
         VALUES
-          (6, 'bob', 'activitypub.com', NULL, #{remote_public_key_ap}, now(), now(),
+          (6, 'bob', 'ActivityPub.com', NULL, #{remote_public_key_ap}, now(), now(),
            1, 'https://activitypub.com/users/bob/inbox', 'https://activitypub.com/users/bob/outbox', 'https://activitypub.com/users/bob/followers');
 
         INSERT INTO "accounts"
