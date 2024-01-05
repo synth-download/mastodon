@@ -82,8 +82,7 @@ class Status < ApplicationRecord
 
   has_and_belongs_to_many :tags
 
-  # Because of a composite primary key, the `dependent` option cannot be used on this association
-  has_one :preview_cards_status, inverse_of: :status # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_one :preview_cards_status, inverse_of: :status, dependent: :delete
 
   has_one :notification, as: :activity, dependent: :destroy
   has_one :status_stat, inverse_of: :status, dependent: nil
@@ -146,7 +145,6 @@ class Status < ApplicationRecord
   # The `prepend: true` option below ensures this runs before
   # the `dependent: destroy` callbacks remove relevant records
   before_destroy :unlink_from_conversations!, prepend: true
-  before_destroy :reset_preview_card!
 
   cache_associated :application,
                    :media_attachments,
@@ -279,7 +277,9 @@ class Status < ApplicationRecord
 
   def ordered_media_attachments
     if ordered_media_attachment_ids.nil?
-      media_attachments
+      # NOTE: sort Ruby-side to avoid hitting the database when the status is
+      # not persisted to database yet
+      media_attachments.sort_by(&:id)
     else
       map = media_attachments.index_by(&:id)
       ordered_media_attachment_ids.filter_map { |media_attachment_id| map[media_attachment_id] }
