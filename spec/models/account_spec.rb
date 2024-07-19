@@ -678,7 +678,7 @@ RSpec.describe Account do
   end
 
   describe 'MENTION_RE' do
-    subject { Account::MENTION_RE }
+    subject { described_class::MENTION_RE }
 
     it 'matches usernames in the middle of a sentence' do
       expect(subject.match('Hello to @alice from me')[1]).to eq 'alice'
@@ -768,20 +768,20 @@ RSpec.describe Account do
         expect(account).to model_have_error_on_field(:username)
       end
 
-      it 'is invalid if the username is longer than 30 characters' do
-        account = Fabricate.build(:account, username: Faker::Lorem.characters(number: 31))
+      it 'is invalid if the username is longer than the character limit' do
+        account = Fabricate.build(:account, username: username_over_limit)
         account.valid?
         expect(account).to model_have_error_on_field(:username)
       end
 
-      it 'is invalid if the display name is longer than 30 characters' do
-        account = Fabricate.build(:account, display_name: Faker::Lorem.characters(number: 31))
+      it 'is invalid if the display name is longer than the character limit' do
+        account = Fabricate.build(:account, display_name: username_over_limit)
         account.valid?
         expect(account).to model_have_error_on_field(:display_name)
       end
 
-      it 'is invalid if the note is longer than 500 characters' do
-        account = Fabricate.build(:account, note: Faker::Lorem.characters(number: 501))
+      it 'is invalid if the note is longer than the character limit' do
+        account = Fabricate.build(:account, note: account_note_over_limit)
         account.valid?
         expect(account).to model_have_error_on_field(:note)
       end
@@ -814,23 +814,31 @@ RSpec.describe Account do
         expect(account).to model_have_error_on_field(:username)
       end
 
-      it 'is valid even if the username is longer than 30 characters' do
-        account = Fabricate.build(:account, domain: 'domain', username: Faker::Lorem.characters(number: 31))
+      it 'is valid even if the username is longer than the character limit' do
+        account = Fabricate.build(:account, domain: 'domain', username: username_over_limit)
         account.valid?
         expect(account).to_not model_have_error_on_field(:username)
       end
 
-      it 'is valid even if the display name is longer than 30 characters' do
-        account = Fabricate.build(:account, domain: 'domain', display_name: Faker::Lorem.characters(number: 31))
+      it 'is valid even if the display name is longer than the character limit' do
+        account = Fabricate.build(:account, domain: 'domain', display_name: username_over_limit)
         account.valid?
         expect(account).to_not model_have_error_on_field(:display_name)
       end
 
-      it 'is valid even if the note is longer than 500 characters' do
-        account = Fabricate.build(:account, domain: 'domain', note: Faker::Lorem.characters(number: 501))
+      it 'is valid even if the note is longer than the character limit' do
+        account = Fabricate.build(:account, domain: 'domain', note: account_note_over_limit)
         account.valid?
         expect(account).to_not model_have_error_on_field(:note)
       end
+    end
+
+    def username_over_limit
+      'a' * described_class::USERNAME_LENGTH_LIMIT * 2
+    end
+
+    def account_note_over_limit
+      'a' * described_class::NOTE_LENGTH_LIMIT * 2
     end
   end
 
@@ -888,7 +896,7 @@ RSpec.describe Account do
           { username: 'b', domain: 'b' },
         ].map(&method(:Fabricate).curry(2).call(:account))
 
-        expect(described_class.where('id > 0').alphabetic).to eq matches
+        expect(described_class.without_internal.alphabetic).to eq matches
       end
     end
 
@@ -939,7 +947,7 @@ RSpec.describe Account do
       it 'returns an array of accounts who do not have a domain' do
         local_account = Fabricate(:account, domain: nil)
         _account_with_domain = Fabricate(:account, domain: 'example.com')
-        expect(described_class.where('id > 0').local).to contain_exactly(local_account)
+        expect(described_class.without_internal.local).to contain_exactly(local_account)
       end
     end
 
@@ -950,14 +958,14 @@ RSpec.describe Account do
           matches[index] = Fabricate(:account, domain: matches[index])
         end
 
-        expect(described_class.where('id > 0').partitioned).to match_array(matches)
+        expect(described_class.without_internal.partitioned).to match_array(matches)
       end
     end
 
     describe 'recent' do
       it 'returns a relation of accounts sorted by recent creation' do
         matches = Array.new(2) { Fabricate(:account) }
-        expect(described_class.where('id > 0').recent).to match_array(matches)
+        expect(described_class.without_internal.recent).to match_array(matches)
       end
     end
 
@@ -1007,21 +1015,26 @@ RSpec.describe Account do
 
   context 'when is local' do
     it 'generates keys' do
-      account = described_class.create!(domain: nil, username: Faker::Internet.user_name(separators: ['_']))
-      expect(account.keypair).to be_private
-      expect(account.keypair).to be_public
+      account = described_class.create!(domain: nil, username: 'user_without_keys')
+
+      expect(account)
+        .to be_private_key
+        .and be_public_key
+      expect(account.keypair)
+        .to be_private
+        .and be_public
     end
   end
 
   context 'when is remote' do
     it 'does not generate keys' do
       key = OpenSSL::PKey::RSA.new(1024).public_key
-      account = described_class.create!(domain: 'remote', uri: 'https://remote/actor', username: Faker::Internet.user_name(separators: ['_']), public_key: key.to_pem)
+      account = described_class.create!(domain: 'remote', uri: 'https://remote/actor', username: 'remote_user_with_public', public_key: key.to_pem)
       expect(account.keypair.params).to eq key.params
     end
 
     it 'normalizes domain' do
-      account = described_class.create!(domain: 'にゃん', uri: 'https://xn--r9j5b5b/actor', username: Faker::Internet.user_name(separators: ['_']))
+      account = described_class.create!(domain: 'にゃん', uri: 'https://xn--r9j5b5b/actor', username: 'remote_user_with_idn_domain')
       expect(account.domain).to eq 'xn--r9j5b5b'
     end
   end

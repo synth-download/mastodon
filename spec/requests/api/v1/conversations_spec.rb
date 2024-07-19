@@ -10,8 +10,9 @@ RSpec.describe 'API V1 Conversations' do
 
   let(:other) { Fabricate(:user) }
 
-  describe 'GET /api/v1/conversations', :sidekiq_inline do
+  describe 'GET /api/v1/conversations', :inline_jobs do
     before do
+      user.account.follow!(other.account)
       PostStatusService.new.call(other.account, text: 'Hey @alice', visibility: 'direct')
       PostStatusService.new.call(user.account, text: 'Hey, nobody here', visibility: 'direct')
     end
@@ -19,8 +20,12 @@ RSpec.describe 'API V1 Conversations' do
     it 'returns pagination headers', :aggregate_failures do
       get '/api/v1/conversations', params: { limit: 1 }, headers: headers
 
-      expect(response).to have_http_status(200)
-      expect(response.headers['Link'].links.size).to eq(2)
+      expect(response)
+        .to have_http_status(200)
+        .and include_pagination_headers(
+          prev: api_v1_conversations_url(limit: 1, min_id: Status.first.id),
+          next: api_v1_conversations_url(limit: 1, max_id: Status.first.id)
+        )
     end
 
     it 'returns conversations', :aggregate_failures do

@@ -1,9 +1,7 @@
 name: JavaScript Linting
 on:
+  merge_group:
   push:
-    branches-ignore:
-      - 'dependabot/**'
-      - 'renovate/**'
     paths:
       - 'package.json'
       - 'yarn.lock'

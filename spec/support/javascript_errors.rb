@@ -1,8 +1,15 @@
 # frozen_string_literal: true
 
 RSpec.configure do |config|
-  config.after(:each, type: :system) do
-    errors = page.driver.browser.logs.get(:browser)
+  config.after(:each, :js, type: :system) do
+    # Classes of intermittent ignorable errors
+    ignored_errors = [
+      /Error while trying to use the following icon from the Manifest/, # https://github.com/mastodon/mastodon/pull/30793
+    ]
+    errors = page.driver.browser.logs.get(:browser).reject do |error|
+      ignored_errors.any? { |pattern| pattern.match(error.message) }
+    end
+
     if errors.present?
       aggregate_failures 'javascript errrors' do
         errors.each do |error|

@@ -58,7 +58,7 @@ class SearchService < BaseService
 
     if @options[:max_id].present?
       results = results
-                .where('statuses.id < ?', @options[:max_id])
+                .where(statuses: { id: ...(@options[:max_id]) })
     end
 
     account_ids         = results.map(&:account_id)
