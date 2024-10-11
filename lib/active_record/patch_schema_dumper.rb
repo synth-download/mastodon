@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_record/connection_adapters/abstract_adapter'
-require 'active_record/connection_adapters/postgresql_adapter'
-
 module ActiveRecord
   module ConnectionAdapters
     module PostgreSQL

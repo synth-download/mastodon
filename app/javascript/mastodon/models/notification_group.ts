@@ -14,14 +14,14 @@ import type { ApiReportJSON } from 'mastodon/api_types/reports';
 export const NOTIFICATIONS_GROUP_MAX_AVATARS = 8;
 
 interface BaseNotificationGroup
-  extends Omit<BaseNotificationGroupJSON, 'sample_accounts'> {
+  extends Omit<BaseNotificationGroupJSON, 'sample_account_ids'> {
   sampleAccountIds: string[];
 }
 
 interface BaseNotificationWithStatus<Type extends NotificationWithStatusType>
   extends BaseNotificationGroup {
   type: Type;
-  statusId: string;
+  statusId: string | undefined;
 }
 
 interface BaseNotification<Type extends NotificationType>
@@ -115,8 +115,7 @@ function createAccountRelationshipSeveranceEventFromJSON(
 export function createNotificationGroupFromJSON(
   groupJson: ApiNotificationGroupJSON,
 ): NotificationGroup {
-  const { sample_accounts, ...group } = groupJson;
-  const sampleAccountIds = sample_accounts.map((account) => account.id);
+  const { sample_account_ids: sampleAccountIds, ...group } = groupJson;
 
   switch (group.type) {
     case 'favourite':
@@ -125,9 +124,9 @@ export function createNotificationGroupFromJSON(
     case 'mention':
     case 'poll':
     case 'update': {
-      const { status, ...groupWithoutStatus } = group;
+      const { status_id: statusId, ...groupWithoutStatus } = group;
       return {
-        statusId: status.id,
+        statusId: statusId ?? undefined,
         sampleAccountIds,
         ...groupWithoutStatus,
       };
@@ -184,7 +183,7 @@ export function createNotificationGroupFromNotificationJSON(
     case 'mention':
     case 'poll':
     case 'update':
-      return { ...group, statusId: notification.status.id };
+      return { ...group, statusId: notification.status?.id };
     case 'admin.report':
       return { ...group, report: createReportFromJSON(notification.report) };
     case 'severed_relationships':
