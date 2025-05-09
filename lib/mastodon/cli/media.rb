@@ -6,6 +6,8 @@ module Mastodon::CLI
   class Media < Base
     include ActionView::Helpers::NumberHelper
 
+    class UnrecognizedOrphanType < StandardError; end
+
     VALID_PATH_SEGMENTS_SIZE = [7, 10].freeze
 
     option :days, type: :numeric, default: 7, aliases: [:d]
@@ -120,23 +122,10 @@ module Mastodon::CLI
             object.acl.put(acl: s3_permissions) if options[:fix_permissions] && !dry_run?
 
             path_segments = object.key.split('/')
-            path_segments.delete('cache')
-
-            unless VALID_PATH_SEGMENTS_SIZE.include?(path_segments.size)
-              progress.log(pastel.yellow("Unrecognized file found: #{object.key}"))
-              next
-            end
-
-            model_name      = path_segments.first.classify
-            attachment_name = path_segments[1].singularize
-            record_id       = path_segments[2...-2].join.to_i
-            file_name       = path_segments.last
-            record          = record_map.dig(model_name, record_id)
-            attachment      = record&.public_send(attachment_name)
 
             progress.increment
 
-            next unless attachment.blank? || !attachment.variant?(file_name)
+            next unless orphaned_file?(path_segments, record_map)
 
             begin
               object.delete unless dry_run?
@@ -148,6 +137,8 @@ module Mastodon::CLI
             rescue => e
               progress.log(pastel.red("Error processing #{object.key}: #{e}"))
             end
+          rescue UnrecognizedOrphanType
+            progress.log(pastel.yellow("Unrecognized file found: #{object.key}"))
           end
         end
       when :fog
@@ -165,26 +156,10 @@ module Mastodon::CLI
           key = path.gsub("#{root_path}#{File::SEPARATOR}", '')
 
           path_segments = key.split(File::SEPARATOR)
-          path_segments.delete('cache')
-
-          unless VALID_PATH_SEGMENTS_SIZE.include?(path_segments.size)
-            progress.log(pastel.yellow("Unrecognized file found: #{key}"))
-            next
-          end
-
-          model_name      = path_segments.first.classify
-          record_id       = path_segments[2...-2].join.to_i
-          attachment_name = path_segments[1].singularize
-          file_name       = path_segments.last
-
-          next unless PRELOADED_MODELS.include?(model_name)
-
-          record     = model_name.constantize.find_by(id: record_id)
-          attachment = record&.public_send(attachment_name)
 
           progress.increment
 
-          next unless attachment.blank? || !attachment.variant?(file_name)
+          next unless orphaned_file?(path_segments)
 
           begin
             size = File.size(path)
@@ -205,6 +180,8 @@ module Mastodon::CLI
           rescue => e
             progress.log(pastel.red("Error processing #{key}: #{e}"))
           end
+        rescue UnrecognizedOrphanType
+          progress.log(pastel.yellow("Unrecognized file found: #{path}"))
         end
       end
 
@@ -312,6 +289,15 @@ module Mastodon::CLI
       fail_with_message 'Invalid URL'
     end
 
+    PRELOADED_MODELS = %w(
+      Account
+      Backup
+      CustomEmoji
+      MediaAttachment
+      PreviewCard
+      SiteUpload
+    ).freeze
+
     private
 
     def object_storage_summary
@@ -322,7 +308,6 @@ module Mastodon::CLI
         [:headers, Account.sum(:header_file_size), Account.local.sum(:header_file_size)],
         [:preview_cards, PreviewCard.sum(:image_file_size), nil],
         [:backups, Backup.sum(:dump_file_size), nil],
-        [:imports, Import.sum(:data_file_size), nil],
         [:settings, SiteUpload.sum(:file_file_size), nil],
       ].map { |label, total, local| [label.to_s.titleize, number_to_human_size(total), local.present? ? number_to_human_size(local) : nil] }
     end
@@ -332,16 +317,6 @@ module Mastodon::CLI
         COALESCE(file_file_size, 0) + COALESCE(thumbnail_file_size, 0)
       SQL
     end
-
-    PRELOADED_MODELS = %w(
-      Account
-      Backup
-      CustomEmoji
-      Import
-      MediaAttachment
-      PreviewCard
-      SiteUpload
-    ).freeze
 
     def preload_records_from_mixed_objects(objects)
       preload_map = Hash.new { |hash, key| hash[key] = [] }
@@ -363,6 +338,24 @@ module Mastodon::CLI
       preload_map.each_with_object({}) do |(model_name, record_ids), model_map|
         model_map[model_name] = model_name.constantize.where(id: record_ids).index_by(&:id)
       end
+    end
+
+    def orphaned_file?(path_segments, record_map = nil)
+      path_segments.delete('cache')
+
+      raise UnrecognizedOrphanType unless VALID_PATH_SEGMENTS_SIZE.include?(path_segments.size)
+
+      model_name      = path_segments.first.classify
+      record_id       = path_segments[2...-2].join.to_i
+      attachment_name = path_segments[1].singularize
+      file_name       = path_segments.last
+
+      raise UnrecognizedOrphanType unless PRELOADED_MODELS.include?(model_name)
+
+      record     = record_map.present? ? record_map.dig(model_name, record_id) : model_name.constantize.find_by(id: record_id)
+      attachment = record&.public_send(attachment_name)
+
+      attachment.blank? || !attachment.variant?(file_name)
     end
   end
 end

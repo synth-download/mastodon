@@ -1,9 +1,9 @@
-%tr
+%tr{ id: dom_id(invite) }
   %td
     .input-copy
       .input-copy__wrapper
         = copyable_input value: public_invite_url(invite_code: invite.code)
-      %button{ type: :button }= t('generic.copy')
+      %button.button{ type: :button }= t('generic.copy')
 
   %td
     .name-tag

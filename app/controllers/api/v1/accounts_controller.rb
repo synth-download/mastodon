@@ -106,8 +106,8 @@ class Api::V1::AccountsController < Api::BaseController
     render json: { error: I18n.t('accounts.self_follow_error') }, status: 403 if current_user.account.id == @account.id
   end
 
-  def relationships(**options)
-    AccountRelationshipsPresenter.new([@account], current_user.account_id, **options)
+  def relationships(**)
+    AccountRelationshipsPresenter.new([@account], current_user.account_id, **)
   end
 
   def account_ids
@@ -119,7 +119,7 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def account_params
-    params.permit(:username, :email, :password, :agreement, :locale, :reason, :time_zone, :invite_code)
+    params.permit(:username, :email, :password, :agreement, :locale, :reason, :time_zone, :invite_code, :date_of_birth)
   end
 
   def invite

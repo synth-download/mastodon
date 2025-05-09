@@ -34,10 +34,11 @@ require_relative '../lib/paperclip/transcoder'
 require_relative '../lib/paperclip/type_corrector'
 require_relative '../lib/paperclip/response_with_limit_adapter'
 require_relative '../lib/terrapin/multi_pipe_extensions'
+require_relative '../lib/mastodon/middleware/public_file_server'
+require_relative '../lib/mastodon/middleware/socket_cleanup'
+require_relative '../lib/mastodon/feature'
 require_relative '../lib/mastodon/snowflake'
 require_relative '../lib/mastodon/version'
-require_relative '../lib/mastodon/rack_middleware'
-require_relative '../lib/public_file_server_middleware'
 require_relative '../lib/devise/strategies/two_factor_ldap_authenticatable'
 require_relative '../lib/devise/strategies/two_factor_pam_authenticatable'
 require_relative '../lib/elasticsearch/client_extensions'
@@ -52,8 +53,6 @@ require_relative '../lib/action_dispatch/remote_ip_extensions'
 require_relative '../lib/stoplight/redis_data_store_extensions'
 require_relative '../lib/active_record/database_tasks_extensions'
 require_relative '../lib/active_record/batches'
-require_relative '../lib/active_record/with_recursive'
-require_relative '../lib/arel/union_parenthesizing'
 require_relative '../lib/simple_navigation/item_extensions'
 
 Bundler.require(:pam_authentication) if ENV['PAM_ENABLED'] == 'true'
@@ -61,10 +60,7 @@ Bundler.require(:pam_authentication) if ENV['PAM_ENABLED'] == 'true'
 module Mastodon
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
-
-    # Explicitly set the cache format version to align with Rails version
-    config.active_support.cache_format_version = 7.1
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -92,9 +88,9 @@ module Mastodon
     # We use our own middleware for this
     config.public_file_server.enabled = false
 
-    config.middleware.use PublicFileServerMiddleware if Rails.env.local? || ENV['RAILS_SERVE_STATIC_FILES'] == 'true'
+    config.middleware.use Mastodon::Middleware::PublicFileServer if Rails.env.local? || ENV['RAILS_SERVE_STATIC_FILES'] == 'true'
     config.middleware.use Rack::Attack
-    config.middleware.use Mastodon::RackMiddleware
+    config.middleware.use Mastodon::Middleware::SocketCleanup
 
     config.before_configuration do
       require 'mastodon/redis_configuration'
@@ -109,13 +105,21 @@ module Mastodon
       end
     end
 
+    config.x.captcha = config_for(:captcha)
+    config.x.mastodon = config_for(:mastodon)
+    config.x.translation = config_for(:translation)
+
+    if ENV.fetch('QUERY_LOG_TAGS_ENABLED', 'false') == 'true'
+      config.active_record.query_log_tags_enabled = ENV.fetch('QUERY_LOG_TAGS_ENABLED', 'false') == 'true'
+      config.active_record.query_log_tags = [:namespaced_controller, :action, :sidekiq_job_class]
+    end
+
     config.to_prepare do
       Doorkeeper::AuthorizationsController.layout 'modal'
       Doorkeeper::AuthorizedApplicationsController.layout 'admin'
       Doorkeeper::Application.include ApplicationExtension
       Doorkeeper::AccessGrant.include AccessGrantExtension
       Doorkeeper::AccessToken.include AccessTokenExtension
-      Doorkeeper::OAuth::PreAuthorization.include OauthPreAuthorizationExtension
       Devise::FailureApp.include AbstractController::Callbacks
       Devise::FailureApp.include Localized
     end
