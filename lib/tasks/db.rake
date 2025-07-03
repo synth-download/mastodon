@@ -73,4 +73,10 @@ namespace :db do
   end
 
   Rake::Task['db:migrate'].enhance(['db:pre_migration_check'])
+
+  task patch_schema_dumper: :environment do
+    require_relative '../active_record/patch_schema_dumper'
+  end
+
+  Rake::Task['db:schema:dump'].enhance(['db:patch_schema_dumper'])
 end
