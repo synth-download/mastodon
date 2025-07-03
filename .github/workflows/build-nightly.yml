@@ -9,7 +9,7 @@ permissions:
 jobs:
   compute-suffix:
     runs-on: ubuntu-latest
-    if: github.repository == 'TheEssem/mastodon'
+    if: github.repository == 'melontini/mastodon'
     steps:
       - id: version_vars
         env:
