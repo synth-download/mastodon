@@ -1,3 +1,13 @@
+# <img src="https://synth.download/assets/synth.download/synth.png" height="128"> Merpstodon
+
+A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very minor changes that runs on [our Mastodon intsance](https://merping.synth.download).
+
+Changes currently including
+- Patches for PGroonga full text search support, over Elasticsearch
+- Custom Synth.download theme
+
+---
+
 # <img src="https://github.com/TheEssem/mastodon/raw/main/public/chuckya.svg" width="128"> Chuckya
 
 Chuckya is a close-to-upstream soft fork of Mastodon Glitch Edition (more commonly known as glitch-soc) that aims to introduce more experimental features/fixes with the goal of making the overall experience more enjoyable. Although it's mainly developed for and used on the [wetdry.world](https://wetdry.world) instance, it can be deployed by any server admin as a drop-in, backwards-compatible replacement for Mastodon.
