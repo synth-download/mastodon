@@ -121,7 +121,7 @@ class InitialStateSerializer < ActiveModel::Serializer
       profile_directory: Setting.profile_directory,
       registrations_open: Setting.registrations_mode != 'none' && !Rails.configuration.x.single_user_mode,
       repository: Mastodon::Version.repository,
-      search_enabled: Chewy.enabled?,
+      search_enabled: true,
       single_user_mode: Rails.configuration.x.single_user_mode,
       source_url: instance_presenter.source_url,
       sso_redirect: sso_redirect,

@@ -3,9 +3,6 @@ name: Historical data migration test
 on:
   merge_group:
   push:
-    branches:
-      - 'main'
-      - 'stable-*'
     paths:
       - 'Gemfile*'
       - '.ruby-version'
@@ -38,7 +35,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:${{ matrix.postgres}}
+        image: groonga/pgroonga:${{ matrix.postgres}}
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres

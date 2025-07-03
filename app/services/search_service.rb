@@ -43,15 +43,31 @@ class SearchService < BaseService
   end
 
   def perform_statuses_search!
-    StatusesSearchService.new.call(
-      @query,
-      @account,
-      limit: @limit,
-      offset: @offset,
-      account_id: @options[:account_id],
-      min_id: @options[:min_id],
-      max_id: @options[:max_id]
-    )
+    results = Status.where(visibility: :public)
+                    .where('statuses.text &@~ ?', @query)
+                    .limit(@limit)
+                    .offset(@offset)
+
+    if @options[:account_id].present?
+      results = results
+                .where(account_id: @options[:account_id])
+    end
+
+    if @options[:min_id].present?
+      results = results
+                .where('statuses.id > ?', @options[:min_id])
+    end
+
+    if @options[:max_id].present?
+      results = results
+                .where(statuses: { id: ...(@options[:max_id]) })
+    end
+
+    account_ids         = results.map(&:account_id)
+    account_domains     = results.map(&:account_domain)
+    preloaded_relations = @account.relations_map(account_ids, account_domains)
+
+    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
   end
 
   def perform_hashtags_search!
@@ -84,7 +100,7 @@ class SearchService < BaseService
   end
 
   def status_searchable?
-    Chewy.enabled? && status_search? && @account.present?
+    status_search? && @account.present?
   end
 
   def account_searchable?
