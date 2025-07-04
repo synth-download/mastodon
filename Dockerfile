@@ -29,7 +29,7 @@ FROM ${BASE_REGISTRY}/ruby:${RUBY_VERSION}-slim-${DEBIAN_VERSION} AS ruby
 # Overwrite existence of 'alpha.X' in version.rb [--build-arg MASTODON_VERSION_PRERELEASE="nightly.2023.11.09"]
 ARG MASTODON_VERSION_PRERELEASE=""
 # Append build metadata or fork information to version.rb [--build-arg MASTODON_VERSION_METADATA="pr-123456"]
-ARG MASTODON_VERSION_METADATA="synthdownload"
+ARG MASTODON_VERSION_METADATA=""
 # Will be available as Mastodon::Version.source_commit
 ARG SOURCE_COMMIT=""
 

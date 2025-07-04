@@ -1,6 +1,6 @@
 # <img src="https://synth.download/assets/synth.download/synth.png" height="128"> Merpstodon
 
-A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very minor changes that runs on [our Mastodon intsance](https://merping.synth.download).
+A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very minor changes that runs on [our Mastodon instance](https://merping.synth.download).
 
 Changes currently including
 - Patches for PGroonga full text search support, over Elasticsearch

@@ -1,6 +1,9 @@
 name: Build nightly container image
 on:
   workflow_dispatch:
+  push:
+    paths-ignore: # don't rebuild if only documentation has changed
+      - "**.md"
 
 permissions:
   contents: read
