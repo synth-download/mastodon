@@ -1,0 +1,237 @@
+// Once again, this is made and treated like a custom userstyle. As in this entire theme was made using stylus and inspect element.
+// Probably could have made this theme "natively" or better, but it's way easier for me to do it like this lol
+
+body {
+    background: linear-gradient(var(--synth-background), color-mix(in srgb, var(--synth-accent) 25%, var(--synth-background))) !important;
+    background-attachment: fixed !important;
+    color: var(--synth-foreground);
+    font-family: monospace,mastodon-font-sans-serif,sans-serif;
+}
+
+/* synth accent borders on various elements */
+.compose-form__highlightable,
+.search__input,
+.column-header, .column-header__collapsible, .column > .scrollable,
+.dropdown-menu,
+.notification__filter-bar, .account__section-headline {
+    border-color: var(--synth-accent) !important;
+}
+
+/* setting foreground colors to various elements */
+.featured-carousel__header,
+.character-counter,
+.status__info__icons > .icons, .display-name__account, .status__relative-time, .hashtag-bar > a, .link-button {
+    color: var(--synth-foreground);
+}
+/* for more muted colors */
+.featured-carousel__header,
+.character-counter,
+.status__info__icons > .icons, .display-name__account, .status__relative-time, .link-button {
+    opacity: .75;
+}
+/* for more muted colors */
+.status__relative-time {
+    opacity: .5;
+}
+
+/* keep status icons visible */
+.hicolor-privacy-icons {
+    opacity: 1 !important;
+}
+
+/* icons */
+.icon {
+    color: var(--synth-foreground-tinted);
+}
+
+/* buttons */
+.button {
+    background-color: var(--synth-accent);
+    color: var(--synth-background);
+    border-radius: var(--round-border-radius);
+    
+    &:hover {
+        background-color: color-mix(in srgb, var(--synth-accent) 70%, white);
+    }
+}
+
+/* search */
+.search .search__input {
+    border-radius: var(--round-border-radius);
+}
+
+/* compose box */
+.compose-form__highlightable {
+    border-radius: var(--border-radius);
+}
+.dropdown-button {
+    color: var(--synth-foreground-tinted) !important;
+    border-color: var(--synth-accent) !important;
+    
+    .icon {
+        color: var(--synth-accent);
+    }
+}
+
+/* active sidebar links */
+.column-link.active {
+    color: var(--synth-accent);
+}
+
+/* badges */
+.icon-with-badge__badge {
+    background-color: var(--synth-accent);
+    color: var(--synth-background);
+}
+
+/* main center column */
+.columns-area__panels__main {
+    background: transparent;
+    
+    .column {
+        background: var(--synth-background);
+    }
+    
+    .column-header {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+}
+
+/* loading column */
+.columns-area__panels__main:has(.loading-indicator) {
+    .column {
+        border-radius: var(--border-radius);
+    }
+}
+
+.loading-indicator {
+    color: var(--synth-foreground);
+    
+    .circular-progress {
+        color: var(--synth-foreground);
+    }
+}
+
+/* posts */
+.status {
+    border-color: var(--synth-border);
+}
+
+/* posts: when they're open edition */
+.detailed-status {
+    border-color: var(--synth-border);
+    
+    .detailed-status__meta {
+        color: color-mix(in srgb, var(--synth-foreground) 60%, transparent);
+        
+    }
+    
+    .detailed-status__meta__line {
+        border-color: var(--synth-border);
+    }
+}
+
+/* boosted posts */
+.status__prepend:has(.icon-retweet) {
+    color: var(--synth-sky) !important;
+    .icon {
+        color: var(--synth-sky) !important;
+    }
+}
+
+/* emoji reactions */
+.reactions-bar {
+    .reactions-bar__item {
+        color: var(--synth-foreground);
+        background-color: color-mix(in srgb, var(--synth-accent) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--synth-accent) 30%, transparent);
+        margin: 2px 3px;
+        &.active {
+            background-color: color-mix(in srgb, var(--synth-accent) 35%, transparent) !important;
+            border: 1px solid var(--synth-accent);
+        }
+        .reactions-bar__item__emoji {
+            width: unset !important;
+            height: 28px;
+            transition: 0.2s;
+            &:hover {
+                scale: 2.5;
+                transition: 0.2s;
+            }
+        }
+    }
+}
+
+/* footer buttons */
+.detailed-status__action-bar, .status__action-bar {
+    .status__action-bar__button-wrapper, .detailed-status__button {
+        .icon-button {
+            opacity: .7;
+            transition: 0.1s;
+        }
+        .icon-button.star-icon.active {
+            opacity: 1 !important;
+                .icon {
+                    color: var(--synth-accent) !important;
+                }
+            }
+        .icon-button.disabled {
+            opacity: .5 !important;
+            transform: scale(1) !important;
+            cursor: not-allowed;
+        }
+        &:hover {
+            .icon-button {
+                opacity: 1;
+                transition: 0.1s;
+            }
+            .icon-button.disabled {
+                transform: scale(1) !important;
+                opacity: .5 !important;
+                transition: 0.1s;
+                .icon {
+                    color: var(--synth-foreground-tinted);
+                }
+            }
+            .icon-button {
+                background-color: unset !important;
+                transform: scale(1.3) translateY(.11rem);
+                transition: 0.1s;
+                .icon {
+                    color: var(--synth-accent);
+                }
+            }
+        }
+    }
+}
+
+/* dropdown menus */
+.dropdown-menu__item--dangerous {
+    color: var(--synth-red);
+}
+
+/* about in bottom left of page */
+.link-footer {
+    padding: 10px !important;
+    opacity: .5;
+    background-color: var(--synth-background);
+    border-radius: var(--border-radius);
+    transition: 0.2s;
+    margin-bottom: 10px;
+    p {
+        color: var(--synth-foreground);
+        a {
+            color: var(--synth-link);
+        }
+    }
+    p:first-child {
+        margin-bottom: 20px;
+    }
+    p:last-child {
+        margin-bottom: 0 !important;
+    }
+    &:hover {
+        transition: 0.2s;
+        opacity: 1 !important;
+    }
+}

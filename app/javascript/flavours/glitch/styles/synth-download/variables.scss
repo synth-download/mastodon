@@ -1,0 +1,62 @@
+// Colors and variables - mostly stolen from our site
+
+:root {
+    /* base colors */
+    --synth-background: #0a0e14;
+    --synth-foreground: #d8d6d2;
+    --synth-selection: #253340;
+    --synth-comment: #5c6773;
+    --synth-accent: #e6b450;
+    --synth-link: var(--synth-accent);
+
+    /* original ayu colors */
+    --synth-orange: #ffb454;
+    --synth-green: #aad94c;
+    --synth-blue: #59c2ff;
+    --synth-purple: #d2a6ff;
+    --synth-red: #f0646b;
+
+    /* extended catppuccin based colors */
+    --synth-flamingo: #f2cdcd;
+    --synth-rosewater: #f5e0dc;
+    --synth-pink: #ffc9e3;
+    --synth-mauve: #cba6f7;
+    --synth-maroon: #eba0ac;
+    --synth-peach: #ffcca8;
+    --synth-yellow: #f9e2af;
+    --synth-teal: #8ddedc;
+    --synth-sky: #89dceb;
+    --synth-sapphire: #74c7ec;
+    --synth-lavender: #b4befe;
+
+    /* ui accent colors */
+    --synth-ui-orange: #e6b450;
+    --synth-ui-green: #aad94c;
+    --synth-ui-blue: #39bae6;
+    --synth-ui-purple: #a37acc;
+    --synth-ui-teal: #7adbd3;
+    --synth-ui-lavender: #ada0f3;
+
+    /* misc. */
+    --synth-border: #1a1f29;
+    --synth-shadow: rgba(0, 0, 0, 0.4);
+    --synth-hover: rgba(255, 255, 255, 0.05);
+    --synth-active: rgba(255, 255, 255, 0.1);
+    --synth-focus: #ffb454;
+    --synth-foreground-tinted: color-mix(in srgb, var(--synth-accent) 20%, var(--synth-foreground));
+    
+    /* replace default mastodon colors */
+    --dropdown-border-color: var(--synth-border);
+    --modal-border-color: var(--synth-border);
+    --background-border-color: var(--synth-border);
+    --background-color: var(--synth-background);
+    --input-background-color: var(--synth-background);
+    --dropdown-background-color: color-mix(in srgb, var(--synth-background) 85%, transparent);
+    --surface-variant-background-color: color-mix(in srgb, var(--synth-accent) 25%, transparent);
+    --surface-variant-active-background-color: color-mix(in srgb, var(--synth-accent) 50%, transparent);
+    
+    /* extra variables */
+    --border-radius: .8rem;
+    --medium-border-thickness: .2rem;
+    --round-border-radius: 999px;
+}
