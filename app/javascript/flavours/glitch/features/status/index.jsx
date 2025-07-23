@@ -10,11 +10,10 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
 
-import { HotKeys } from 'react-hotkeys';
-
 import ChatIcon from '@/material-icons/400-24px/chat.svg?react';
 import VisibilityIcon from '@/material-icons/400-24px/visibility.svg?react';
 import VisibilityOffIcon from '@/material-icons/400-24px/visibility_off.svg?react';
+import { Hotkeys }  from 'flavours/glitch/components/hotkeys';
 import { Icon }  from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import { TimelineHint } from 'flavours/glitch/components/timeline_hint';
@@ -65,7 +64,7 @@ import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from
 
 import ActionBar from './components/action_bar';
 import { DetailedStatus } from './components/detailed_status';
-
+import { RefreshController } from './components/refresh_controller';
 
 const messages = defineMessages({
   revealAll: { id: 'status.show_more_all', defaultMessage: 'Show more for all' },
@@ -588,7 +587,7 @@ class Status extends ImmutablePureComponent {
 
   render () {
     let ancestors, descendants, remoteHint;
-    const { isLoading, status, settings, ancestorsIds, descendantsIds, intl, domain, multiColumn, pictureInPicture } = this.props;
+    const { isLoading, status, settings, ancestorsIds, descendantsIds, refresh, intl, domain, multiColumn, pictureInPicture } = this.props;
     const { fullscreen } = this.state;
 
     if (isLoading) {
@@ -620,11 +619,9 @@ class Status extends ImmutablePureComponent {
 
     if (!isLocal) {
       remoteHint = (
-        <TimelineHint
-          className={classNames(!!descendants && 'timeline-hint--with-descendants')}
-          url={status.get('url')}
-          message={<FormattedMessage id='hints.threads.replies_may_be_missing' defaultMessage='Replies from other servers may be missing.' />}
-          label={<FormattedMessage id='hints.threads.see_more' defaultMessage='See more replies on {domain}' values={{ domain: <strong>{status.getIn(['account', 'acct']).split('@')[1]}</strong> }} />}
+        <RefreshController
+          statusId={status.get('id')}
+          withBorder={!!descendants}
         />
       );
     }
@@ -662,7 +659,7 @@ class Status extends ImmutablePureComponent {
           <div className={classNames('scrollable', { fullscreen })} ref={this.setContainerRef}>
             {ancestors}
 
-            <HotKeys handlers={handlers}>
+            <Hotkeys handlers={handlers}>
               <div className={classNames('focusable', 'detailed-status__wrapper', `detailed-status__wrapper-${status.get('visibility')}`)} tabIndex={0} aria-label={textForScreenReader(intl, status, false, isExpanded)} ref={this.setStatusRef}>
                 <DetailedStatus
                   key={`details-${status.get('id')}`}
@@ -701,7 +698,7 @@ class Status extends ImmutablePureComponent {
                   onEmbed={this.handleEmbed}
                 />
               </div>
-            </HotKeys>
+            </Hotkeys>
 
             {descendants}
             {remoteHint}
