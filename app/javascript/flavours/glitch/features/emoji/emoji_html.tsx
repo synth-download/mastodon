@@ -5,8 +5,8 @@ import type { List as ImmutableList } from 'immutable';
 import { isList } from 'immutable';
 
 import type { ApiCustomEmojiJSON } from '@/flavours/glitch/api_types/custom_emoji';
-import { isFeatureEnabled } from '@/flavours/glitch/initial_state';
 import type { CustomEmoji } from '@/flavours/glitch/models/custom_emoji';
+import { isModernEmojiEnabled } from '@/flavours/glitch/utils/environment';
 
 import { useEmojiAppState } from './hooks';
 import { emojifyElement } from './render';
@@ -25,7 +25,7 @@ export const EmojiHTML: React.FC<EmojiHTMLProps> = ({
   extraEmojis,
   ...props
 }) => {
-  if (isFeatureEnabled('modern_emojis')) {
+  if (isModernEmojiEnabled()) {
     return (
       <ModernEmojiHTML
         htmlString={htmlString}

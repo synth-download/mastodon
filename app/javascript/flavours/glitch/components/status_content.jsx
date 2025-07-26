@@ -13,9 +13,10 @@ import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react'
 import { Icon } from 'flavours/glitch/components/icon';
 import { Poll } from 'flavours/glitch/components/poll';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
-import { autoPlayGif, isFeatureEnabled, languages as preloadedLanguages } from 'flavours/glitch/initial_state';
+import { autoPlayGif, languages as preloadedLanguages } from 'flavours/glitch/initial_state';
 import { decode as decodeIDNA } from 'flavours/glitch/utils/idna';
 import { EmojiHTML } from '../features/emoji/emoji_html';
+import { isModernEmojiEnabled } from '../utils/environment';
 
 const MAX_HEIGHT = 706; // 22px * 32 (+ 2px padding at the top)
 
@@ -80,7 +81,7 @@ const isLinkMisleading = (link) => {
  * @returns {string}
  */
 export function getStatusContent(status) {
-  if (isFeatureEnabled('modern_emojis')) {
+  if (isModernEmojiEnabled()) {
     return status.getIn(['translation', 'content']) || status.get('content');
   }
   return status.getIn(['translation', 'contentHtml']) || status.get('contentHtml');

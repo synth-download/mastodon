@@ -4,16 +4,16 @@ import { Globals } from '@react-spring/web';
 
 import { setupBrowserNotifications } from 'flavours/glitch/actions/notifications';
 import Mastodon from 'flavours/glitch/containers/mastodon';
-import {
-  isFeatureEnabled,
-  me,
-  reduceMotion,
-} from 'flavours/glitch/initial_state';
+import { me, reduceMotion } from 'flavours/glitch/initial_state';
 import * as perf from 'flavours/glitch/performance';
 import ready from 'flavours/glitch/ready';
 import { store } from 'flavours/glitch/store';
 
-import { isProduction, isDevelopment } from './utils/environment';
+import {
+  isProduction,
+  isDevelopment,
+  isModernEmojiEnabled,
+} from './utils/environment';
 
 function main() {
   perf.start('main()');
@@ -33,7 +33,7 @@ function main() {
       });
     }
 
-    if (isFeatureEnabled('modern_emojis')) {
+    if (isModernEmojiEnabled()) {
       const { initializeEmoji } = await import(
         '@/flavours/glitch/features/emoji'
       );
