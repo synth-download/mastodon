@@ -48,13 +48,13 @@ class TranslateButton extends PureComponent {
 
       return (
         <div className='translate-button'>
-          <div className='translate-button__meta'>
-            <FormattedMessage id='status.translated_from_with' defaultMessage='Translated from {lang} using {provider}' values={{ lang: languageName, provider }} />
-          </div>
-
           <button className='link-button' onClick={onClick}>
             <FormattedMessage id='status.show_original' defaultMessage='Show original' />
           </button>
+
+          <div className='translate-button__meta'>
+            <FormattedMessage id='status.translated_from_with' defaultMessage='Translated from {lang} using {provider}' values={{ lang: languageName, provider }} />
+          </div>
         </div>
       );
     }
@@ -137,6 +137,16 @@ class StatusContent extends PureComponent {
           && status.get('spoiler_text').length === 0;
 
       onCollapsedToggle(collapsed);
+    }
+
+    // Remove quote fallback link from the DOM so it doesn't
+    // mess with paragraph margins
+    if (!!status.get('quote')) {
+      const inlineQuote = node.querySelector('.quote-inline');
+
+      if (inlineQuote) {
+        inlineQuote.remove();
+      }
     }
   }
 
