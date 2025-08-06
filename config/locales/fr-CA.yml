@@ -1853,7 +1853,9 @@ fr-CA:
       ownership: Vous ne pouvez pas épingler un message ne vous appartenant pas
       reblog: Un partage ne peut pas être épinglé
     quote_policies:
-      followers: Abonné·e·s et utilisateur·trice·s mentionné·e·s
+      followers: Vos abonné·es seulement
+      nobody: Personne
+      public: Tout le monde
     title: "%{name} : « %{quote} »"
     visibilities:
       direct: Direct

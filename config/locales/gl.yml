@@ -1687,6 +1687,10 @@ gl:
       title: Nova mención
     poll:
       subject: A enquisa de %{name} rematou
+    quote:
+      body: 'A túa publicación foi citada por %{name}:'
+      subject: "%{name} citou a túa publicación"
+      title: Nova cita
     reblog:
       body: 'A túa publicación promovida por %{name}:'
       subject: "%{name} promoveu a túa publicación"
@@ -1905,8 +1909,8 @@ gl:
       ownership: Non podes fixar a publicación doutra usuaria
       reblog: Non se poden fixar as mensaxes promovidas
     quote_policies:
-      followers: Seguidoras e usuarias mencionadas
-      nobody: Só usuarias mencionadas
+      followers: Só para seguidoras
+      nobody: Ninguén
       public: Calquera
     title: '%{name}: "%{quote}"'
     visibilities:

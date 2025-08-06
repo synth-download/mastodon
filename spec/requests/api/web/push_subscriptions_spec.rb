@@ -30,6 +30,7 @@ RSpec.describe 'API Web Push Subscriptions' do
           mention: false,
           poll: true,
           status: false,
+          quote: true,
         },
       },
     }

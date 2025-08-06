@@ -1687,6 +1687,10 @@ es-AR:
       title: Nueva mención
     poll:
       subject: Terminó una encuesta de %{name}
+    quote:
+      body: 'Tu mensaje fue citado por %{name}:'
+      subject: "%{name} citó tu mensaje"
+      title: Nueva cita
     reblog:
       body: "%{name} adhirió a tu mensaje:"
       subject: "%{name} adhirió a tu mensaje"
@@ -1905,8 +1909,8 @@ es-AR:
       ownership: No se puede fijar el mensaje de otra cuenta
       reblog: No se puede fijar una adhesión
     quote_policies:
-      followers: Seguidores y usuarios mencionados
-      nobody: Solo usuarios mencionados
+      followers: Solo tus seguidores
+      nobody: Nadie
       public: Todos
     title: '%{name}: "%{quote}"'
     visibilities:

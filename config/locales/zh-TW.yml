@@ -1650,6 +1650,10 @@ zh-TW:
       title: 新的提及
     poll:
       subject: 由 %{name} 發起的投票已結束
+    quote:
+      body: 您的嘟文被 %{name} 引用：
+      subject: "%{name} 已引用您的嘟文"
+      title: 新引用
     reblog:
       body: 您的嘟文被 %{name} 轉嘟：
       subject: "%{name} 已轉嘟您的嘟文"
@@ -1864,8 +1868,8 @@ zh-TW:
       ownership: 不能釘選他人的嘟文
       reblog: 不能釘選轉嘟
     quote_policies:
-      followers: 跟隨者與已提及使用者
-      nobody: 僅限已提及使用者
+      followers: 僅限您之跟隨者
+      nobody: 禁止任何人
       public: 任何人
     title: "%{name}：「%{quote}」"
     visibilities:

@@ -1708,6 +1708,10 @@ en:
       title: New mention
     poll:
       subject: A poll by %{name} has ended
+    quote:
+      body: 'Your post was quoted by %{name}:'
+      subject: "%{name} quoted your post"
+      title: New quote
     reblog:
       body: 'Your post was boosted by %{name}:'
       subject: "%{name} boosted your post"
@@ -1927,8 +1931,8 @@ en:
       ownership: Someone else's post cannot be pinned
       reblog: A boost cannot be pinned
     quote_policies:
-      followers: Followers and mentioned users
-      nobody: Only mentioned users
+      followers: Only your followers
+      nobody: Nobody
       public: Everyone
     title: '%{name}: "%{quote}"'
     visibilities:

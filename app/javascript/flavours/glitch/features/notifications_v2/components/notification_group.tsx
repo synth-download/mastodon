@@ -15,6 +15,7 @@ import { NotificationFollowRequest } from './notification_follow_request';
 import { NotificationMention } from './notification_mention';
 import { NotificationModerationWarning } from './notification_moderation_warning';
 import { NotificationPoll } from './notification_poll';
+import { NotificationQuote } from './notification_quote';
 import { NotificationReaction } from './notification_reaction';
 import { NotificationReblog } from './notification_reblog';
 import { NotificationSeveredRelationships } from './notification_severed_relationships';
@@ -98,6 +99,11 @@ export const NotificationGroup: React.FC<{
     case 'mention':
       content = (
         <NotificationMention unread={unread} notification={notificationGroup} />
+      );
+      break;
+    case 'quote':
+      content = (
+        <NotificationQuote unread={unread} notification={notificationGroup} />
       );
       break;
     case 'follow':
