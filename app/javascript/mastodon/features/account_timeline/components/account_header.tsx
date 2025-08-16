@@ -138,6 +138,18 @@ const messages = defineMessages({
     id: 'account.add_or_remove_from_list',
     defaultMessage: 'Add or Remove from lists',
   },
+  add_or_remove_from_antenna: {
+    id: 'account.add_or_remove_from_antenna',
+    defaultMessage: 'Add or Remove from antennas',
+  },
+  add_or_remove_from_exclude_antenna: {
+    id: 'account.add_or_remove_from_exclude_antenna',
+    defaultMessage: 'Add or Remove from antennas as exclusion',
+  },
+  add_or_remove_from_circle: {
+    id: 'account.add_or_remove_from_circle',
+    defaultMessage: 'Add or Remove from circles',
+  },
   admin_account: {
     id: 'status.admin_account',
     defaultMessage: 'Open moderation interface for @{name}',
@@ -328,6 +340,38 @@ export const AccountHeader: React.FC<{
     );
   }, [dispatch, account]);
 
+  const handleAddToAntenna = useCallback(() => {
+    if (!account) {
+      return;
+    }
+
+    dispatch(
+      openModal({
+        modalType: 'ANTENNA_ADDER',
+        modalProps: {
+          accountId: account.id,
+          isExclude: false,
+        },
+      }),
+    );
+  }, [dispatch, account]);
+
+  const handleAddToExcludeAntenna = useCallback(() => {
+    if (!account) {
+      return;
+    }
+
+    dispatch(
+      openModal({
+        modalType: 'ANTENNA_ADDER',
+        modalProps: {
+          accountId: account.id,
+          isExclude: true,
+        },
+      }),
+    );
+  }, [dispatch, account]);
+
   const handleChangeLanguages = useCallback(() => {
     if (!account) {
       return;
@@ -479,8 +523,16 @@ export const AccountHeader: React.FC<{
           text: intl.formatMessage(messages.add_or_remove_from_list),
           action: handleAddToList,
         });
-        arr.push(null);
       }
+      arr.push({
+        text: intl.formatMessage(messages.add_or_remove_from_antenna),
+        action: handleAddToAntenna,
+      });
+      arr.push({
+        text: intl.formatMessage(messages.add_or_remove_from_exclude_antenna),
+        action: handleAddToExcludeAntenna,
+      });
+      arr.push(null);
 
       if (relationship?.followed_by) {
         const handleRemoveFromFollowers = () => {
@@ -621,6 +673,8 @@ export const AccountHeader: React.FC<{
     remoteDomain,
     intl,
     signedIn,
+    handleAddToAntenna,
+    handleAddToExcludeAntenna,
     handleAddToList,
     handleBlock,
     handleBlockDomain,

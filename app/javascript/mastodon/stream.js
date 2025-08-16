@@ -109,6 +109,8 @@ const sharedCallbacks = {
         return channelName === streamChannelName && params.tag === streamIdentifier;
       } else if (channelName === 'list') {
         return channelName === streamChannelName && params.list === streamIdentifier;
+      } else if (channelName === 'antenna') {
+        return channelName === streamChannelName && params.antenna === streamIdentifier;
       }
 
       return false;

@@ -2,6 +2,7 @@
 
 class FanOutOnWriteService < BaseService
   include Redisable
+  include DtlHelper
 
   # Push a status into home and mentions feeds
   # @param [Status] status
@@ -49,6 +50,9 @@ class FanOutOnWriteService < BaseService
     when :public, :unlisted, :private
       deliver_to_all_followers!
       deliver_to_lists!
+      deliver_to_antennas!
+      deliver_to_stl_antennas!
+      deliver_to_ltl_antennas!
     when :limited
       deliver_to_mentioned_followers!
     else
@@ -125,6 +129,18 @@ class FanOutOnWriteService < BaseService
         [@status.id, list.id, 'list', { 'update' => update? }]
       end
     end
+  end
+
+  def deliver_to_stl_antennas!
+    DeliveryAntennaService.new.call(@status, @options[:update], mode: :stl)
+  end
+
+  def deliver_to_ltl_antennas!
+    DeliveryAntennaService.new.call(@status, @options[:update], mode: :ltl)
+  end
+
+  def deliver_to_antennas!
+    DeliveryAntennaService.new.call(@status, @options[:update], mode: :home)
   end
 
   def deliver_to_mentioned_followers!

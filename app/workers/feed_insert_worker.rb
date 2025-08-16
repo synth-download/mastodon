@@ -9,6 +9,8 @@ class FeedInsertWorker
       @type      = type.to_sym
       @status    = Status.find(status_id)
       @options   = options.symbolize_keys
+      @antenna   = Antenna.find(@options[:antenna_id]) if @options[:antenna_id].present?
+      @pushed    = false
 
       case @type
       when :home, :tags
@@ -16,6 +18,9 @@ class FeedInsertWorker
       when :list
         @list     = List.find(id)
         @follower = @list.account
+      when :antenna
+        @antenna  = Antenna.find(id)
+        @follower = @antenna.account
       when :direct
         @account  = Account.find(id)
       end
@@ -44,7 +49,7 @@ class FeedInsertWorker
 
   def feed_filter
     case @type
-    when :home
+    when :home, :antenna
       FeedManager.instance.filter(:home, @status, @follower)
     when :tags
       FeedManager.instance.filter(:tags, @status, @follower)
@@ -63,14 +68,20 @@ class FeedInsertWorker
   end
 
   def perform_push
-    case @type
-    when :home, :tags
-      FeedManager.instance.push_to_home(@follower, @status, update: update?)
-    when :list
-      FeedManager.instance.push_to_list(@list, @status, update: update?)
-    when :direct
-      FeedManager.instance.push_to_direct(@account, @status, update: update?)
+    if @antenna.nil? || @antenna.insert_feeds
+      case @type
+      when :home, :tags
+        FeedManager.instance.push_to_home(@follower, @status, update: update?)
+      when :list
+        FeedManager.instance.push_to_list(@list, @status, update: update?)
+      when :direct
+        FeedManager.instance.push_to_direct(@account, @status, update: update?)
+      end
     end
+
+    return if @antenna.nil?
+
+    FeedManager.instance.push_to_antenna(@antenna, @status, update: update?)
   end
 
   def perform_unpush
@@ -82,6 +93,10 @@ class FeedInsertWorker
     when :direct
       FeedManager.instance.unpush_from_direct(@account, @status, update: true)
     end
+
+    return if @antenna.nil?
+
+    FeedManager.instance.unpush_from_antenna(@antenna, @status, update: true)
   end
 
   def perform_notify

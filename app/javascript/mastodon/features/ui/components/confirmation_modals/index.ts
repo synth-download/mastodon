@@ -1,6 +1,7 @@
 export { ConfirmationModal } from './confirmation_modal';
 export { ConfirmDeleteStatusModal } from './delete_status';
 export { ConfirmDeleteListModal } from './delete_list';
+export { ConfirmDeleteAntennaModal } from './delete_antenna';
 export {
   ConfirmReplyModal,
   ConfirmEditStatusModal,

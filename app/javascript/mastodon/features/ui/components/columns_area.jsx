@@ -18,6 +18,8 @@ import {
   BookmarkedStatuses,
   ListTimeline,
   Directory,
+  AntennaSetting,
+  AntennaTimeline,
 } from '../util/async-components';
 import { useColumnsContext } from '../util/columns_context';
 
@@ -38,6 +40,8 @@ const componentMap = {
   'DIRECT': DirectTimeline,
   'FAVOURITES': FavouritedStatuses,
   'BOOKMARKS': BookmarkedStatuses,
+  'ANTENNA': AntennaSetting,
+  'ANTENNA_TIMELINE': AntennaTimeline,
   'LIST': ListTimeline,
   'DIRECTORY': Directory,
 };
