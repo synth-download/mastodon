@@ -50,6 +50,7 @@ import {
   Favourites,
   DirectTimeline,
   HashtagTimeline,
+  AntennaTimeline,
   Notifications,
   NotificationRequests,
   NotificationRequest,
