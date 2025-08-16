@@ -5,6 +5,7 @@
 # - Have alternative format representations
 
 %w(
+  /antennas/(*any)
   /blocks
   /bookmarks
   /conversations

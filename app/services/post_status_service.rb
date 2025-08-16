@@ -19,6 +19,7 @@ class PostStatusService < BaseService
   # @option [String] :text Message
   # @option [Status] :thread Optional status to reply to
   # @option [Status] :quoted_status Optional status to quote
+  # @option [String] :quote_approval_policy Approval policy for quotes, one of `public`, `followers` or `nobody`
   # @option [Boolean] :sensitive
   # @option [String] :visibility
   # @option [String] :spoiler_text
@@ -232,6 +233,7 @@ class PostStatusService < BaseService
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
       rate_limit: @options[:with_rate_limit],
+      quote_approval_policy: @options[:quote_approval_policy],
     }.compact
   end
 

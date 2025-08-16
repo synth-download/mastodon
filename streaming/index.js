@@ -424,6 +424,8 @@ const startServer = async () => {
       return 'direct';
     case '/api/v1/streaming/list':
       return 'list';
+    case '/api/v1/streaming/antenna':
+      return 'antenna';
     default:
       return undefined;
     }
@@ -596,6 +598,43 @@ const startServer = async () => {
       throw new AuthenticationError('List not found');
     }
   };
+
+  /**
+   * @param {string} antennaId
+   * @param {any} req
+   * @returns {Promise.<void>}
+   */
+  const authorizeAntennaAccess = (antennaId, req) =>
+    new Promise((resolve, reject) => {
+      const { accountId } = req;
+
+      pgPool.connect((err, client, done) => {
+        if (err) {
+          reject();
+          return;
+        }
+
+        // @ts-ignore
+        client.query(
+          'SELECT id, account_id FROM antennas WHERE id = $1 LIMIT 1',
+          [antennaId],
+          (err, result) => {
+            done();
+
+            if (
+              err ||
+              result.rows.length === 0 ||
+              result.rows[0].account_id !== accountId
+            ) {
+              reject();
+              return;
+            }
+
+            resolve();
+          },
+        );
+      });
+    });
 
   /**
    * @param {string[]} channelIds
@@ -982,6 +1021,7 @@ const startServer = async () => {
    * @typedef StreamParams
    * @property {string} [tag]
    * @property {string} [list]
+   * @property {string} [antenna]
    * @property {string} [only_media]
    */
 
@@ -1136,6 +1176,19 @@ const startServer = async () => {
       });
 
       break;
+    case 'antenna':
+      // @ts-ignore
+      authorizeAntennaAccess(params.antenna, req).then(() => {
+        resolve({
+          channelIds: [`timeline:antenna:${params.antenna}`],
+          options: { needsFiltering: false },
+        });
+      })
+      .catch(() => {
+        reject('Not authorized to stream this antenna');
+      });
+
+      break;
     default:
       reject(new RequestError('Unknown stream type'));
     }
@@ -1149,6 +1202,8 @@ const startServer = async () => {
   const streamNameFromChannelName = (channelName, params) => {
     if (channelName === 'list' && params.list) {
       return [channelName, params.list];
+    } else if (channelName === 'antenna' && params.antenna) {
+      return [channelName, params.antenna];
     } else if (['hashtag', 'hashtag:local'].includes(channelName) && params.tag) {
       return [channelName, params.tag];
     } else {

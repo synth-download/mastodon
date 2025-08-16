@@ -12,6 +12,7 @@ import {
   ReportModal,
   EmbedModal,
   ListAdder,
+  AntennaAdder,
   CompareHistoryModal,
   FilterModal,
   InteractionModal,
@@ -30,6 +31,7 @@ import {
   ConfirmationModal,
   ConfirmDeleteStatusModal,
   ConfirmDeleteListModal,
+  ConfirmDeleteAntennaModal,
   ConfirmReplyModal,
   ConfirmEditStatusModal,
   ConfirmUnfollowModal,
@@ -37,6 +39,7 @@ import {
   ConfirmLogOutModal,
   ConfirmFollowToListModal,
   ConfirmMissingAltTextModal,
+  ConfirmRevokeQuoteModal,
 } from './confirmation_modals';
 import { ImageModal } from './image_modal';
 import MediaModal from './media_modal';
@@ -52,6 +55,7 @@ export const MODAL_COMPONENTS = {
   'CONFIRM': () => Promise.resolve({ default: ConfirmationModal }),
   'CONFIRM_DELETE_STATUS': () => Promise.resolve({ default: ConfirmDeleteStatusModal }),
   'CONFIRM_DELETE_LIST': () => Promise.resolve({ default: ConfirmDeleteListModal }),
+  'CONFIRM_DELETE_ANTENNA': () => Promise.resolve({ default: ConfirmDeleteAntennaModal }),
   'CONFIRM_REPLY': () => Promise.resolve({ default: ConfirmReplyModal }),
   'CONFIRM_EDIT_STATUS': () => Promise.resolve({ default: ConfirmEditStatusModal }),
   'CONFIRM_UNFOLLOW': () => Promise.resolve({ default: ConfirmUnfollowModal }),
@@ -59,6 +63,7 @@ export const MODAL_COMPONENTS = {
   'CONFIRM_LOG_OUT': () => Promise.resolve({ default: ConfirmLogOutModal }),
   'CONFIRM_FOLLOW_TO_LIST': () => Promise.resolve({ default: ConfirmFollowToListModal }),
   'CONFIRM_MISSING_ALT_TEXT': () => Promise.resolve({ default: ConfirmMissingAltTextModal }),
+  'CONFIRM_REVOKE_QUOTE': () => Promise.resolve({ default: ConfirmRevokeQuoteModal }),
   'MUTE': MuteModal,
   'BLOCK': BlockModal,
   'DOMAIN_BLOCK': DomainBlockModal,
@@ -67,6 +72,7 @@ export const MODAL_COMPONENTS = {
   'EMBED': EmbedModal,
   'FOCAL_POINT': () => Promise.resolve({ default: AltTextModal }),
   'LIST_ADDER': ListAdder,
+  'ANTENNA_ADDER': AntennaAdder,
   'COMPARE_HISTORY': CompareHistoryModal,
   'FILTER': FilterModal,
   'SUBSCRIBED_LANGUAGES': SubscribedLanguagesModal,

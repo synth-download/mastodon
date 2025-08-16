@@ -12,6 +12,8 @@ module Account::Associations
         has_many :account_pins
         has_many :account_warnings
         has_many :aliases, class_name: 'AccountAlias'
+        has_many :antenna_accounts
+        has_many :antennas
         has_many :bookmarks
         has_many :conversations, class_name: 'AccountConversation'
         has_many :custom_filters
@@ -57,6 +59,9 @@ module Account::Associations
 
     # List records the account has been added to (not owned by the account)
     has_many :lists, through: :list_accounts
+
+    # Account list items
+    has_many :joined_antennas, class_name: 'Antenna', through: :antenna_accounts, source: :antenna
 
     # Account record where account has been migrated
     belongs_to :moved_to_account, class_name: 'Account', optional: true

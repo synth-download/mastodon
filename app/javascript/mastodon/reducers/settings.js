@@ -1,5 +1,7 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
+import { ANTENNA_DELETE_SUCCESS, ANTENNA_FETCH_FAIL } from 'mastodon/actions/antennas';
+
 import { COLUMN_ADD, COLUMN_REMOVE, COLUMN_MOVE, COLUMN_PARAMS_CHANGE } from '../actions/columns';
 import { COMPOSE_LANGUAGE_CHANGE } from '../actions/compose';
 import { EMOJI_USE } from '../actions/emojis';
@@ -36,6 +38,7 @@ const initialState = ImmutableMap({
       follow_request: false,
       favourite: false,
       reblog: false,
+      quote: false,
       mention: false,
       poll: false,
       status: false,
@@ -59,6 +62,7 @@ const initialState = ImmutableMap({
       follow_request: false,
       favourite: true,
       reblog: true,
+      quote: true,
       mention: true,
       poll: true,
       status: true,
@@ -72,6 +76,7 @@ const initialState = ImmutableMap({
       follow_request: false,
       favourite: true,
       reblog: true,
+      quote: true,
       mention: true,
       poll: true,
       status: true,
@@ -157,6 +162,8 @@ const updateFrequentLanguages = (state, language) => state.update('frequentlyUse
 
 const filterDeadListColumns = (state, listId) => state.update('columns', columns => columns.filterNot(column => column.get('id') === 'LIST' && column.get('params').get('id') === listId));
 
+const filterDeadAntennaColumns = (state, antennaId) => state.update('columns', columns => columns.filterNot(column => (column.get('id') === 'ANTENNA' || column.get('id') === 'ANTENNA_TIMELINE') && column.get('params').get('id') === antennaId));
+
 export default function settings(state = initialState, action) {
   switch(action.type) {
   case STORE_HYDRATE:
@@ -188,6 +195,10 @@ export default function settings(state = initialState, action) {
     return action.error.response.status === 404 ? filterDeadListColumns(state, action.id) : state;
   case LIST_DELETE_SUCCESS:
     return filterDeadListColumns(state, action.id);
+  case ANTENNA_FETCH_FAIL:
+    return action.error.response.status === 404 ? filterDeadAntennaColumns(state, action.id) : state;
+  case ANTENNA_DELETE_SUCCESS:
+    return filterDeadAntennaColumns(state, action.id);
   default:
     return state;
   }

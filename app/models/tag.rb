@@ -32,6 +32,7 @@ class Tag < ApplicationRecord
   has_many :featured_tags, dependent: :destroy, inverse_of: :tag
   has_many :followers, through: :passive_relationships, source: :account
 
+  has_one :antenna_tag, dependent: :destroy, inverse_of: :tag
   has_one :trend, class_name: 'TagTrend', inverse_of: :tag, dependent: :destroy
 
   HASHTAG_SEPARATORS = "_\u00B7\u30FB\u200c"

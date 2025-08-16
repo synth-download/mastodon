@@ -113,11 +113,17 @@ class ListTimeline extends PureComponent {
     dispatch(openModal({ modalType: 'CONFIRM_DELETE_LIST', modalProps: { listId: id, columnId } }));
   };
 
+  handleEditAntennaClick = (e) => {
+    const id = e.currentTarget.getAttribute('data-id');
+    this.props.history.push(`/antennas/${id}/edit`);
+  };
+
   render () {
     const { hasUnread, columnId, multiColumn, list } = this.props;
     const { id } = this.props.params;
     const pinned = !!columnId;
     const title  = list ? list.get('title') : id;
+    const antennas = list ? (list.get('antennas') ?? []) : [];
 
     if (typeof list === 'undefined') {
       return (
@@ -156,6 +162,22 @@ class ListTimeline extends PureComponent {
                 <Icon id='trash' icon={DeleteIcon} /> <FormattedMessage id='lists.delete' defaultMessage='Delete list' />
               </button>
             </section>
+
+            { antennas.length > 0 && (
+              <section aria-labelledby={`list-${id}-antenna`}>
+                <h3><FormattedMessage id='lists.antennas' defaultMessage='Related antennas:' /></h3>
+
+                <ul className='column-settings__row'>
+                  { antennas.map(antenna => (
+                    <li key={antenna.id} className='column-settings__row__antenna'>
+                      <button type='button' className='text-btn column-header__setting-btn' data-id={antenna.id} onClick={this.handleEditAntennaClick}>
+                        <Icon id='pencil' icon={EditIcon} /> {antenna.title}{antenna.stl && ' [STL]'}{antenna.ltl && ' [LTL]'}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
         </ColumnHeader>
 
