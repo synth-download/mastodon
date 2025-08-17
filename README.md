@@ -4,6 +4,7 @@ A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very m
 
 Changes currently including
 - Patches for PGroonga full text search support, over Elasticsearch
+- Advanced lists. Listen to keywords, exclude boosts, only include posts with media.
 - Custom Synth.download theme
 
 ---
