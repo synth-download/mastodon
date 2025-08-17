@@ -2,7 +2,6 @@
 
 class FanOutOnWriteService < BaseService
   include Redisable
-  include DtlHelper
 
   # Push a status into home and mentions feeds
   # @param [Status] status

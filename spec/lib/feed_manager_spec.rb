@@ -225,16 +225,6 @@ RSpec.describe FeedManager do
       end
     end
 
-    context 'with stl list feed' do
-      let(:list) { Fabricate(:list, account: bob) }
-
-      it "returns false for followee's status" do
-        status = Fabricate(:status, text: 'Hello world', account: alice, visibility: :unlisted)
-
-        expect(subject.filter?(:list, status, list, stl_home: true)).to be false
-      end
-    end
-
     context 'with mentions feed' do
       it 'returns true for status that mentions blocked account' do
         bob.block!(jeff)
