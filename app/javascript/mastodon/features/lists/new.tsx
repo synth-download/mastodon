@@ -102,26 +102,19 @@ const NewList: React.FC<{
     if (id && list) {
       setTitle(list.title);
       setKeywords(list.include_keywords.map(g => g.join(' ')).join('\n'));
-      setExcludeKeywords(list.exclude_keywords.map(g => g.join(' ')).join('\n'))
-      setWithMediaOnly(list.media_only);
+      setExcludeKeywords(list.exclude_keywords.map(g => g.join(' ')).join('\n'));
+      setWithMediaOnly(list.with_media_only);
       setIgnoreReblog(list.ignore_reblog);
       setExclusive(list.exclusive);
       setRepliesPolicy(list.replies_policy);
     }
-  }, [setTitle, setWithMediaOnly, setIgnoreReblog, setExclusive, setRepliesPolicy, id, list]);
+  }, [id, list]);
 
   const handleTitleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
       setTitle(value);
     },
     [setTitle],
-  );
-
-  const handleWithMediaOnlyChange = useCallback(
-    ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
-      setWithMediaOnly(checked);
-    },
-    [setWithMediaOnly],
   );
 
   const handleKeywordsChange = useCallback(
@@ -136,6 +129,13 @@ const NewList: React.FC<{
       setExcludeKeywords(value);
     },
     [setExcludeKeywords],
+  );
+
+  const handleWithMediaOnlyChange = useCallback(
+    ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
+      setWithMediaOnly(checked);
+    },
+    [setWithMediaOnly],
   );
 
   const handleIgnoreReblogChange = useCallback(
@@ -358,13 +358,13 @@ const NewList: React.FC<{
               <div className='app-form__toggle__label'>
                 <strong>
                   <FormattedMessage
-                    id='lists.media_only'
+                    id='lists.with_media_only'
                     defaultMessage='Media only'
                   />
                 </strong>
                 <span className='hint'>
                   <FormattedMessage
-                    id='lists.media_only_hint'
+                    id='lists.with_media_only_hint'
                     defaultMessage='Only posts with media will be added to the list.'
                   />
                 </span>

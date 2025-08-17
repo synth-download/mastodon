@@ -5,7 +5,7 @@ export type RepliesPolicyType = 'list' | 'followed' | 'none';
 export interface ApiListJSON {
   id: string;
   title: string;
-  media_only: boolean;
+  with_media_only: boolean;
   ignore_reblog: boolean;
   exclusive: boolean;
   replies_policy: RepliesPolicyType;
