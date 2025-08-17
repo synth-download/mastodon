@@ -138,10 +138,6 @@ const messages = defineMessages({
     id: 'account.add_or_remove_from_list',
     defaultMessage: 'Add or Remove from lists',
   },
-  add_or_remove_from_circle: {
-    id: 'account.add_or_remove_from_circle',
-    defaultMessage: 'Add or Remove from circles',
-  },
   admin_account: {
     id: 'status.admin_account',
     defaultMessage: 'Open moderation interface for @{name}',
@@ -483,8 +479,8 @@ export const AccountHeader: React.FC<{
           text: intl.formatMessage(messages.add_or_remove_from_list),
           action: handleAddToList,
         });
+        arr.push(null);
       }
-      arr.push(null);
 
       if (relationship?.followed_by) {
         const handleRemoveFromFollowers = () => {
