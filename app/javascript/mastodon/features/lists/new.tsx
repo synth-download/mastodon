@@ -84,6 +84,10 @@ const NewList: React.FC<{
     id ? state.lists.get(id) : undefined,
   );
   const [title, setTitle] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [excludeKeywords, setExcludeKeywords] = useState('');
+  const [withMediaOnly, setWithMediaOnly] = useState(false);
+  const [ignoreReblog, setIgnoreReblog] = useState(false);
   const [exclusive, setExclusive] = useState(false);
   const [repliesPolicy, setRepliesPolicy] = useState<RepliesPolicyType>('list');
   const [submitting, setSubmitting] = useState(false);
@@ -97,16 +101,48 @@ const NewList: React.FC<{
   useEffect(() => {
     if (id && list) {
       setTitle(list.title);
+      setKeywords(list.include_keywords.map(g => g.join(' ')).join('\n'));
+      setExcludeKeywords(list.exclude_keywords.map(g => g.join(' ')).join('\n'))
+      setWithMediaOnly(list.media_only);
+      setIgnoreReblog(list.ignore_reblog);
       setExclusive(list.exclusive);
       setRepliesPolicy(list.replies_policy);
     }
-  }, [setTitle, setExclusive, setRepliesPolicy, id, list]);
+  }, [setTitle, setWithMediaOnly, setIgnoreReblog, setExclusive, setRepliesPolicy, id, list]);
 
   const handleTitleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
       setTitle(value);
     },
     [setTitle],
+  );
+
+  const handleWithMediaOnlyChange = useCallback(
+    ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
+      setWithMediaOnly(checked);
+    },
+    [setWithMediaOnly],
+  );
+
+  const handleKeywordsChange = useCallback(
+    ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+      setKeywords(value);
+    },
+    [setKeywords],
+  );
+
+  const handleExcludeKeywordsChange = useCallback(
+    ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+      setExcludeKeywords(value);
+    },
+    [setExcludeKeywords],
+  );
+
+  const handleIgnoreReblogChange = useCallback(
+    ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
+      setIgnoreReblog(checked);
+    },
+    [setIgnoreReblog],
   );
 
   const handleExclusiveChange = useCallback(
@@ -125,13 +161,25 @@ const NewList: React.FC<{
 
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
+    const include_keywords = keywords.split('\n')
+      .map(line => line.trim())
+      .map(line => (line === '' ? [] : line.split(/\s+/).filter(Boolean)))
+      .filter(group => group.length > 0);
+    const exclude_keywords = excludeKeywords.split('\n')
+      .map(line => line.trim())
+      .map(line => (line === '' ? [] : line.split(/\s+/).filter(Boolean)))
+      .filter(group => group.length > 0);
 
     if (id) {
       void dispatch(
         updateList({
           id,
           title,
+          with_media_only: withMediaOnly,
+          ignore_reblog: ignoreReblog,
           exclusive,
+          include_keywords,
+          exclude_keywords,
           replies_policy: repliesPolicy,
         }),
       ).then(() => {
@@ -142,7 +190,11 @@ const NewList: React.FC<{
       void dispatch(
         createList({
           title,
+          with_media_only: withMediaOnly,
+          ignore_reblog: ignoreReblog,
           exclusive,
+          include_keywords,
+          exclude_keywords,
           replies_policy: repliesPolicy,
         }),
       ).then((result) => {
@@ -156,7 +208,19 @@ const NewList: React.FC<{
         return '';
       });
     }
-  }, [history, dispatch, setSubmitting, id, title, exclusive, repliesPolicy]);
+  }, [
+    history, 
+    dispatch, 
+    setSubmitting, 
+    id, 
+    title, 
+    withMediaOnly, 
+    ignoreReblog, 
+    exclusive, 
+    repliesPolicy, 
+    keywords, 
+    excludeKeywords
+  ]);
 
   return (
     <Column
@@ -243,6 +307,109 @@ const NewList: React.FC<{
               <MembersLink id={id} />
             </div>
           )}
+
+          <div className='fields-group'>
+            <div className='input with_label'>
+              <div className='label_input'>
+                <label htmlFor='include_keywords'>
+                  <FormattedMessage
+                    id='lists.include_keywords'
+                    defaultMessage='Include keywords'
+                  />
+                </label>
+
+                <div className='label_input__wrapper'>
+                  <textarea
+                    id='include_keywords'
+                    value={keywords}
+                    onChange={handleKeywordsChange}
+                    placeholder=' '
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className='fields-group'>
+            <div className='input with_label'>
+              <div className='label_input'>
+                <label htmlFor='exclude_keywords'>
+                  <FormattedMessage
+                    id='lists.exclude_keywords'
+                    defaultMessage='Exclude keywords'
+                  />
+                </label>
+
+                <div className='label_input__wrapper'>
+                  <textarea
+                    id='exclude_keywords'
+                    value={excludeKeywords}
+                    onChange={handleExcludeKeywordsChange}
+                    placeholder=' '
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className='fields-group'>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className='app-form__toggle'>
+              <div className='app-form__toggle__label'>
+                <strong>
+                  <FormattedMessage
+                    id='lists.media_only'
+                    defaultMessage='Media only'
+                  />
+                </strong>
+                <span className='hint'>
+                  <FormattedMessage
+                    id='lists.media_only_hint'
+                    defaultMessage='Only posts with media will be added to the list.'
+                  />
+                </span>
+              </div>
+
+              <div className='app-form__toggle__toggle'>
+                <div>
+                  <Toggle
+                    checked={withMediaOnly}
+                    onChange={handleWithMediaOnlyChange}
+                  />
+                </div>
+              </div>
+            </label>
+          </div>
+
+
+          <div className='fields-group'>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className='app-form__toggle'>
+              <div className='app-form__toggle__label'>
+                <strong>
+                  <FormattedMessage
+                    id='lists.ignore_reblog'
+                    defaultMessage='Exclude boosts'
+                  />
+                </strong>
+                <span className='hint'>
+                  <FormattedMessage
+                    id='lists.ignore_reblog_hint'
+                    defaultMessage='Boosts will be excluded from this list.'
+                  />
+                </span>
+              </div>
+
+              <div className='app-form__toggle__toggle'>
+                <div>
+                  <Toggle
+                    checked={ignoreReblog}
+                    onChange={handleIgnoreReblogChange}
+                   />
+                </div>
+              </div>
+            </label>
+          </div>
 
           <div className='fields-group'>
             {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}

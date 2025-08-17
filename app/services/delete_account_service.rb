@@ -8,7 +8,6 @@ class DeleteAccountService < BaseService
     account_pins
     active_relationships
     aliases
-    antennas
     block_relationships
     blocked_by_relationships
     conversation_mutes
@@ -37,7 +36,6 @@ class DeleteAccountService < BaseService
     account_notes
     account_pins
     aliases
-    antenna_accounts
     conversation_mutes
     conversations
     custom_filters
@@ -228,7 +226,6 @@ class DeleteAccountService < BaseService
 
     FeedManager.instance.clean_feeds!(:home, [@account.id])
     FeedManager.instance.clean_feeds!(:list, @account.owned_lists.pluck(:id))
-    FeedManager.instance.clean_feeds!(:antenna, @account.antennas.pluck(:id))
   end
 
   def purge_profile!

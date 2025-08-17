@@ -1,13 +1,14 @@
 // See app/serializers/rest/list_serializer.rb
 
-import type { ApiAntennaJSON } from './antennas';
-
 export type RepliesPolicyType = 'list' | 'followed' | 'none';
 
 export interface ApiListJSON {
   id: string;
   title: string;
+  media_only: boolean;
+  ignore_reblog: boolean;
   exclusive: boolean;
   replies_policy: RepliesPolicyType;
-  antennas?: ApiAntennaJSON[];
+  include_keywords: string[][];
+  exclude_keywords: string[][];
 }

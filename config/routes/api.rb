@@ -60,7 +60,6 @@ namespace :api, format: false do
       resource :link, only: :show, controller: :link
       resources :tag, only: :show
       resources :list, only: :show
-      resources :antenna, only: :show
     end
 
     with_options to: 'streaming#index' do
@@ -210,8 +209,6 @@ namespace :api, format: false do
         resources :followers, only: :index, controller: :follower_accounts
         resources :following, only: :index, controller: :following_accounts
         resources :lists, only: :index
-        resources :antennas, only: :index
-        resources :exclude_antennas, only: :index
         resources :identity_proofs, only: :index
         resources :featured_tags, only: :index
         resources :endorsements, only: :index
@@ -249,17 +246,6 @@ namespace :api, format: false do
 
     resources :lists, only: [:index, :create, :show, :update, :destroy] do
       resource :accounts, only: [:show, :create, :destroy], module: :lists
-    end
-
-    resources :antennas, only: [:index, :create, :show, :update, :destroy] do
-      resource :accounts, only: [:show, :create, :destroy], controller: 'antennas/accounts'
-      resource :domains, only: [:show, :create, :destroy], controller: 'antennas/domains'
-      resource :keywords, only: [:show, :create, :destroy], controller: 'antennas/keywords'
-      resource :tags, only: [:show, :create, :destroy], controller: 'antennas/tags'
-      resource :exclude_accounts, only: [:show, :create, :destroy], controller: 'antennas/exclude_accounts'
-      resource :exclude_domains, only: [:create, :destroy], controller: 'antennas/exclude_domains'
-      resource :exclude_keywords, only: [:create, :destroy], controller: 'antennas/exclude_keywords'
-      resource :exclude_tags, only: [:create, :destroy], controller: 'antennas/exclude_tags'
     end
 
     namespace :featured_tags do

@@ -12,7 +12,7 @@ export const toServerSideType = (columnType: string) => {
     case 'favourites':
       return 'home';
     default:
-      if (columnType.includes('list:') || columnType.includes('antenna:')) {
+      if (columnType.includes('list:')) {
         return 'home';
       } else {
         return 'public'; // community, account, hashtag

@@ -34,20 +34,12 @@ export function DirectTimeline() {
   return import('../../direct_timeline');
 }
 
-export function AntennaTimeline () {
-  return import('../../antenna_timeline');
-}
-
 export function ListTimeline () {
   return import('../../list_timeline');
 }
 
 export function Lists () {
   return import('../../lists');
-}
-
-export function Antennas () {
-  return import('../../antennas');
 }
 
 export function Status () {
@@ -158,10 +150,6 @@ export function ListAdder () {
   return import('../../list_adder');
 }
 
-export function AntennaAdder () {
-  return import('../../antenna_adder');
-}
-
 export function Tesseract () {
   return import('tesseract.js');
 }
@@ -244,16 +232,4 @@ export function ListEdit () {
 
 export function ListMembers () {
   return import('../../lists/members');
-}
-
-export function AntennaEdit () {
-  return import('../../antennas/new');
-}
-
-export function AntennaMembers () {
-  return import('../../antennas/members');
-}
-
-export function AntennaSetting () {
-  return import('../../antennas/filtering');
 }

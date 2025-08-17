@@ -10,14 +10,7 @@ class DeliveryAntennaService
     @update = update
 
     mode = options[:mode] || :home
-    case mode
-    when :home
-      delivery!
-    when :stl
-      delivery_stl!
-    when :ltl
-      delivery_ltl!
-    end
+    delivery!
   end
 
   private
@@ -54,7 +47,6 @@ class DeliveryAntennaService
     antennas = antennas.where(account: @status.mentioned_accounts) if mentioned_users_only?
     antennas = antennas.where(with_media_only: false) unless @status.with_media?
     antennas = antennas.where(ignore_reblog: false) if @status.reblog?
-    antennas = antennas.where(stl: false, ltl: false)
 
     collection = AntennaCollection.new(@status, @update)
     content = extract_status_plain_text_with_spoiler_text(@status)
@@ -71,48 +63,6 @@ class DeliveryAntennaService
         searchability = @status.compute_searchability
         next if @status.unlisted_visibility? && searchability != 'public' && follower_ids.exclude?(antenna.account_id)
         next if @status.unlisted_visibility? && searchability == 'public' && follower_ids.exclude?(antenna.account_id) && antenna.any_keywords && antenna.any_tags
-
-        collection.push(antenna)
-      end
-    end
-
-    collection.deliver!
-  end
-
-  def delivery_stl!
-    antennas = Antenna.available_stls
-    antennas = antennas.where(account_id: Account.without_suspended.joins(:user).select('accounts.id').where('users.current_sign_in_at > ?', User::ACTIVE_DURATION.ago))
-
-    home_post = !@account.domain.nil? || @status.reblog? || [:public].exclude?(@status.visibility.to_sym)
-    antennas = antennas.where(account: @account.followers).or(antennas.where(account: @account)).where('insert_feeds IS FALSE OR list_id > 0') if home_post && !@status.limited_visibility?
-    antennas = antennas.where(account: @status.mentioned_accounts).or(antennas.where(account: @account)).where('insert_feeds IS FALSE OR list_id > 0') if @status.limited_visibility?
-
-    collection = AntennaCollection.new(@status, @update, stl_home: home_post)
-
-    antennas.in_batches do |ans|
-      ans.each do |antenna|
-        next if antenna.expired?
-
-        collection.push(antenna)
-      end
-    end
-
-    collection.deliver!
-  end
-
-  def delivery_ltl!
-    return if %i(public).exclude?(@status.visibility.to_sym)
-    return unless @account.local?
-    return if @status.reblog?
-
-    antennas = Antenna.available_ltls
-    antennas = antennas.where(account_id: Account.without_suspended.joins(:user).select('accounts.id').where('users.current_sign_in_at > ?', User::ACTIVE_DURATION.ago))
-
-    collection = AntennaCollection.new(@status, @update)
-
-    antennas.in_batches do |ans|
-      ans.each do |antenna|
-        next if antenna.expired?
 
         collection.push(antenna)
       end

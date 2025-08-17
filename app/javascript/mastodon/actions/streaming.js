@@ -23,7 +23,6 @@ import {
   fillPublicTimelineGaps,
   fillCommunityTimelineGaps,
   fillListTimelineGaps,
-  fillAntennaTimelineGaps,
 } from './timelines';
 
 /**
@@ -193,10 +192,3 @@ export const connectDirectStream = () =>
  */
 export const connectListStream = listId =>
   connectTimelineStream(`list:${listId}`, 'list', { list: listId }, { fillGaps: () => fillListTimelineGaps(listId) });
-
-/**
- * @param {string} antennaId
- * @returns {function(): void}
- */
-export const connectAntennaStream = antennaId =>
-  connectTimelineStream(`antenna:${antennaId}`, 'antenna', { antenna: antennaId }, { fillGaps: () => fillAntennaTimelineGaps(antennaId) });

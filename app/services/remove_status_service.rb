@@ -27,7 +27,6 @@ class RemoveStatusService < BaseService
       remove_from_self if @account.local?
       remove_from_followers
       remove_from_lists
-      remove_from_antennas
 
       # There is no reason to send out Undo activities when the
       # cause is that the original object has been removed, since
@@ -75,18 +74,6 @@ class RemoveStatusService < BaseService
   def remove_from_lists
     @account.lists_for_local_distribution.select(:id, :account_id).includes(account: :user).reorder(nil).find_each do |list|
       FeedManager.instance.unpush_from_list(list, @status)
-    end
-  end
-
-  def remove_from_antennas
-    Antenna.availables.where.not(list_id: 0).select(:id, :list_id, :account_id).includes(account: :user).reorder(nil).find_each do |antenna|
-      FeedManager.instance.unpush_from_list(antenna.list, @status) if antenna.list.present?
-    end
-    Antenna.availables.where(list_id: 0).select(:id, :account_id).includes(account: :user).reorder(nil).find_each do |antenna|
-      FeedManager.instance.unpush_from_home(antenna.account, @status)
-    end
-    Antenna.availables.select(:id, :account_id).includes(account: :user).reorder(nil).find_each do |antenna|
-      FeedManager.instance.unpush_from_antenna(antenna, @status)
     end
   end
 
