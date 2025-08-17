@@ -125,20 +125,26 @@ class FanOutOnWriteService < BaseService
     is_reblog = @status.reblog?
     has_media = @status.media_attachments.present? && @status.media_attachments.any?
 
-    @account.lists_for_local_distribution
-        .select(:id, :ignore_reblog, :with_media_only)
-        .reorder(nil)
-        .find_in_batches do |lists|
-    
-      candidates = lists.reject do |list|
-        (list.ignore_reblog && is_reblog) ||
-        (list.with_media_only && !has_media)
+    scope = @account.lists_for_local_distribution
+            .select(:id, :exclude_keywords, :with_media_only, :ignore_reblog)
+            .reorder(nil)
+
+    scope = scope.where(ignore_reblog: false) if is_reblog
+    scope = scope.where(with_media_only: false) unless has_media
+    return unless scope.exists?
+
+    text = normalize_status_text(@status)
+
+    scope.find_in_batches do |batch|
+      candidates = batch.select do |list|
+        next false if matches_exclude_groups?(text, list.exclude_keywords)
+        true
       end
 
-      next if candidates.empty?
-
-      FeedInsertWorker.push_bulk(lists) do |list|
-        [@status.id, list.id, 'list', { 'update' => update? }]
+      unless candidates.empty?
+        FeedInsertWorker.push_bulk(candidates) do |list|
+          [@status.id, list.id, 'list', { 'update' => update? }]
+        end
       end
     end
   end
@@ -182,31 +188,23 @@ class FanOutOnWriteService < BaseService
     is_reblog = @status.reblog?
     has_media = @status.media_attachments.present? && @status.media_attachments.any?
 
-    scope = List.joins(:account).
-          where(accounts: { domain: nil }).
-          select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog).
-          reorder(nil)
+    scope = List.joins(:account)
+            .where(accounts: { domain: nil })
+            .select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog)
+            .reorder(nil)
 
     scope = scope.where(ignore_reblog: false) if is_reblog
     scope = scope.where(with_media_only: false) unless has_media
-
     scope = scope.where.not(include_keywords: [nil, []])
+    return unless scope.exists?
 
     text = normalize_status_text(@status)
 
     scope.find_in_batches(batch_size: 500) do |batch|
-      lists = List.where(id: batch.map(&:id)).
-        select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog)
-
-      candidates = []
-
-      lists.each do |list|
-        next if list.ignore_reblog && is_reblog
-        next if list.with_media_only && !has_media
-        next if list.include_keywords.blank?
-        next unless matches_include_groups?(text, list.include_keywords)
-        next if matches_exclude_groups?(text, list.exclude_keywords)
-        candidates << list
+      candidates = batch.select do |list|
+        next false unless matches_include_groups?(text, list.include_keywords)
+        next false if matches_exclude_groups?(text, list.exclude_keywords)
+        true
       end
 
       unless candidates.empty?
