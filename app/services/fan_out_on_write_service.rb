@@ -136,6 +136,7 @@ class FanOutOnWriteService < BaseService
 
     scope.find_in_batches do |batch|
       candidates = batch.select do |list|
+        next false if matches_exclude_groups?(@status.spoiler_text, list.exclude_keywords)
         next false if matches_exclude_groups?(text, list.exclude_keywords)
         true
       end
@@ -202,6 +203,7 @@ class FanOutOnWriteService < BaseService
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
         next false unless matches_include_groups?(text, list.include_keywords)
+        next false if matches_exclude_groups?(@status.spoiler_text, list.exclude_keywords)
         next false if matches_exclude_groups?(text, list.exclude_keywords)
         true
       end
