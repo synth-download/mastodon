@@ -132,12 +132,11 @@ class FanOutOnWriteService < BaseService
     scope = scope.where(with_media_only: false) unless has_media
     return unless scope.exists?
 
-    text = normalize_status_text(@status)
+    texts = [@status.spoiler_text, normalize_status_text(@status)]
 
     scope.find_in_batches do |batch|
       candidates = batch.select do |list|
-        next false if matches_exclude_groups?(@status.spoiler_text, list.exclude_keywords)
-        next false if matches_exclude_groups?(text, list.exclude_keywords)
+        next false if texts.any? { |t| matches_groups?(t, list.exclude_keywords) }
         true
       end
 
@@ -198,13 +197,12 @@ class FanOutOnWriteService < BaseService
     scope = scope.where.not(include_keywords: [nil, []])
     return unless scope.exists?
 
-    text = normalize_status_text(@status)
+    texts = [@status.spoiler_text, normalize_status_text(@status)]
 
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
-        next false unless matches_include_groups?(text, list.include_keywords)
-        next false if matches_exclude_groups?(@status.spoiler_text, list.exclude_keywords)
-        next false if matches_exclude_groups?(text, list.exclude_keywords)
+        next false unless texts.any? { |t| matches_groups?(t, list.include_keywords) }
+        next false if texts.any? { |t| matches_groups?(t, list.exclude_keywords) }
         true
       end
 
@@ -221,18 +219,11 @@ class FanOutOnWriteService < BaseService
     text = strip_tags(raw)
     text = CGI.unescapeHTML(text)
     text = text.gsub(/\s+/, ' ').strip.downcase
-    text
   end
 
-  def matches_include_groups?(text, include_groups)
-    include_groups.any? do |group|
-      group.all? { |kw| text.include?(kw.downcase) }
-    end
-  end
-
-  def matches_exclude_groups?(text, exclude_groups)
-    return false if exclude_groups.blank?
-    exclude_groups.any? do |group|
+  def matches_groups?(text, groups)
+    return false if groups.blank?
+    groups.any? do |group|
       group.all? { |kw| text.include?(kw.downcase) }
     end
   end
