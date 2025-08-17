@@ -50,9 +50,6 @@ class FanOutOnWriteService < BaseService
     when :public, :unlisted, :private
       deliver_to_all_followers!
       deliver_to_lists!
-      deliver_to_antennas!
-      deliver_to_stl_antennas!
-      deliver_to_ltl_antennas!
     when :limited
       deliver_to_mentioned_followers!
     else
@@ -69,6 +66,7 @@ class FanOutOnWriteService < BaseService
   def fan_out_to_public_streams!
     broadcast_to_hashtag_streams!
     broadcast_to_public_streams!
+    broadcast_to_listening_lists!
   end
 
   def deliver_to_self!
@@ -124,23 +122,25 @@ class FanOutOnWriteService < BaseService
   end
 
   def deliver_to_lists!
-    @account.lists_for_local_distribution.select(:id).reorder(nil).find_in_batches do |lists|
+    is_reblog = @status.reblog?
+    has_media = @status.media_attachments.present? && @status.media_attachments.any?
+
+    @account.lists_for_local_distribution
+        .select(:id, :ignore_reblog, :with_media_only)
+        .reorder(nil)
+        .find_in_batches do |lists|
+    
+      candidates = lists.reject do |list|
+        (list.ignore_reblog && is_reblog) ||
+        (list.with_media_only && !has_media)
+      end
+
+      next if candidates.empty?
+
       FeedInsertWorker.push_bulk(lists) do |list|
         [@status.id, list.id, 'list', { 'update' => update? }]
       end
     end
-  end
-
-  def deliver_to_stl_antennas!
-    DeliveryAntennaService.new.call(@status, @options[:update], mode: :stl)
-  end
-
-  def deliver_to_ltl_antennas!
-    DeliveryAntennaService.new.call(@status, @options[:update], mode: :ltl)
-  end
-
-  def deliver_to_antennas!
-    DeliveryAntennaService.new.call(@status, @options[:update], mode: :home)
   end
 
   def deliver_to_mentioned_followers!
@@ -175,6 +175,66 @@ class FanOutOnWriteService < BaseService
       redis.publish('timeline:public:media', anonymous_payload)
       redis.publish(@status.local? ? 'timeline:public:local:media' : 'timeline:public:remote:media', anonymous_payload)
       redis.publish('timeline:public:bubble:media', anonymous_payload) if @status.bubble?
+    end
+  end
+
+  def broadcast_to_listening_lists!
+    is_reblog = @status.reblog?
+    has_media = @status.media_attachments.present? && @status.media_attachments.any?
+
+    scope = List.joins(:account).
+          where(accounts: { domain: nil }).
+          select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog).
+          reorder(nil)
+
+    scope = scope.where(ignore_reblog: false) if is_reblog
+    scope = scope.where(with_media_only: false) unless has_media
+
+    scope = scope.where.not(include_keywords: [nil, []])
+
+    text = normalize_status_text(@status)
+
+    scope.find_in_batches(batch_size: 500) do |batch|
+      lists = List.where(id: batch.map(&:id)).
+        select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog)
+
+      candidates = []
+
+      lists.each do |list|
+        next if list.ignore_reblog && is_reblog
+        next if list.with_media_only && !has_media
+        next if list.include_keywords.blank?
+        next unless matches_include_groups?(text, list.include_keywords)
+        next if matches_exclude_groups?(text, list.exclude_keywords)
+        candidates << list
+      end
+
+      unless candidates.empty?
+        FeedInsertWorker.push_bulk(candidates) do |list|
+          [@status.id, list.id, 'list', { 'update' => update? }]
+        end
+      end
+    end
+  end
+
+  def normalize_status_text(status)
+    raw = status.content.to_s
+    text = strip_tags(raw)
+    text = CGI.unescapeHTML(text)
+    text = text.gsub(/\s+/, ' ').strip.downcase
+    text
+  end
+
+  def matches_include_groups?(text, include_groups)
+    include_groups.any? do |group|
+      group.all? { |kw| text.include?(kw.downcase) }
+    end
+  end
+
+  def matches_exclude_groups?(text, exclude_groups)
+    return false if exclude_groups.blank?
+    exclude_groups.any? do |group|
+      group.all? { |kw| text.include?(kw.downcase) }
     end
   end
 

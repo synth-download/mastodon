@@ -1214,8 +1214,6 @@ en:
         keywords: The maximum number of keywords that can be registered has been reached.
         tags: The maximum number of tags that can be registered has been reached.
       over_limit: You have exceeded the limit of %{limit} antennas
-      over_ltl_limit: You have exceeded the limit of %{limit} ltl antennas
-      over_stl_limit: You have exceeded the limit of %{limit} stl antennas
       too_short_keyword: Keyword is too short
   appearance:
     advanced_web_interface: Advanced web interface

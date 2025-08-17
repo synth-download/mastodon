@@ -66,8 +66,6 @@ import {
   DomainBlocks,
   Mutes,
   PinnedStatuses,
-  Antennas,
-  AntennaSetting,
   Directory,
   OnboardingProfile,
   OnboardingFollows,
@@ -75,8 +73,6 @@ import {
   Search,
   About,
   PrivacyPolicy,
-  AntennaEdit,
-  AntennaMembers,
   TermsOfService,
   AccountFeatured,
 } from './util/async-components';
@@ -187,12 +183,6 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/lists/:id/edit' component={ListEdit} content={children} />
             <WrappedRoute path='/lists/:id/members' component={ListMembers} content={children} />
             <WrappedRoute path='/lists/:id' component={ListTimeline} content={children} />
-            <WrappedRoute path='/antennas/new' component={AntennaEdit} content={children} />
-            <WrappedRoute path='/antennas/:id/edit' component={AntennaEdit} content={children} />
-            <WrappedRoute path='/antennas/:id/members' component={AntennaMembers} content={children} />
-            <WrappedRoute path='/antennas/:id/exclude_members' component={AntennaMembers} componentParams={{ isExclude: true }} content={children} />
-            <WrappedRoute path='/antennas/:id/filtering' component={AntennaSetting} content={children} />
-            <WrappedRoute path='/antennas/:id' component={AntennaTimeline} content={children} />
             <WrappedRoute path='/notifications' component={Notifications} content={children} exact />
             <WrappedRoute path='/notifications/requests' component={NotificationRequests} content={children} exact />
             <WrappedRoute path='/notifications/requests/:id' component={NotificationRequest} content={children} exact />
@@ -232,7 +222,6 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/followed_tags' component={FollowedTags} content={children} />
             <WrappedRoute path='/mutes' component={Mutes} content={children} />
             <WrappedRoute path='/lists' component={Lists} content={children} />
-            <WrappedRoute path='/antennas' component={Antennas} content={children} />
 
             <Route component={BundleColumnError} />
           </WrappedSwitch>

@@ -9,9 +9,12 @@ export type List = RecordOf<ListShape>;
 const ListFactory = Record<ListShape>({
   id: '',
   title: '',
+  include_keywords: [[]],
+  exclude_keywords: [[]],
+  with_media_only: false,
+  ignore_reblog: false,
   exclusive: false,
   replies_policy: 'list',
-  antennas: [],
 });
 
 export function createList(attributes: Partial<ListShape>) {
