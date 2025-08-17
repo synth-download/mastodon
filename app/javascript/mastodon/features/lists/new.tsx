@@ -324,6 +324,7 @@ const NewList: React.FC<{
                     value={keywords}
                     onChange={handleKeywordsChange}
                     placeholder=' '
+                    rows="8"
                   />
                 </div>
               </div>
@@ -346,6 +347,7 @@ const NewList: React.FC<{
                     value={excludeKeywords}
                     onChange={handleExcludeKeywordsChange}
                     placeholder=' '
+                    rows="8"
                   />
                 </div>
               </div>
