@@ -1,0 +1,8 @@
+.env
+.env.*
+.gitignore
+.DS_Store
+*.swp
+*~
+__pycache__/
+.venv
