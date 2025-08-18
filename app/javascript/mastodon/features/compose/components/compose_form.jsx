@@ -73,6 +73,7 @@ class ComposeForm extends ImmutablePureComponent {
     singleColumn: PropTypes.bool,
     lang: PropTypes.string,
     maxChars: PropTypes.number,
+    redirectOnSuccess: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -92,10 +93,29 @@ class ComposeForm extends ImmutablePureComponent {
     this.props.onChange(e.target.value);
   };
 
-  handleKeyDown = (e) => {
-    if (e.keyCode === 13 && (e.ctrlKey || e.metaKey)) {
-      this.handleSubmit();
+  blurOnEscape = (e) => {
+    if (['esc', 'escape'].includes(e.key.toLowerCase())) {
+      e.target.blur();
     }
+  }
+
+  handleKeyDownPost = (e) => {
+    if (e.key.toLowerCase() === 'enter' && (e.ctrlKey || e.metaKey)) {
+        this.handleSubmit();
+    }
+    this.blurOnEscape(e);
+  };
+
+  handleKeyDownSpoiler = (e) => {
+    if (e.key.toLowerCase() === 'enter') {
+      if (e.ctrlKey || e.metaKey) {
+        this.handleSubmit();
+      } else {
+        e.preventDefault();
+        this.textareaRef.current?.focus();
+      }
+    }
+    this.blurOnEscape(e);
   };
 
   getFulltextForCharacterCounting = () => {
@@ -236,62 +256,60 @@ class ComposeForm extends ImmutablePureComponent {
         <Warning />
 
         <div className={classNames('compose-form__highlightable', { active: highlighted })} ref={this.setRef}>
-          <div className='compose-form__scrollable'>
-            <EditIndicator />
+          <EditIndicator />
 
-            {this.props.spoiler && (
-              <div className='spoiler-input'>
-                <div className='spoiler-input__border' />
+          {this.props.spoiler && (
+            <div className='spoiler-input'>
+              <div className='spoiler-input__border' />
 
-                <AutosuggestInput
-                  placeholder={intl.formatMessage(messages.spoiler_placeholder)}
-                  value={this.props.spoilerText}
-                  disabled={isSubmitting}
-                  onChange={this.handleChangeSpoilerText}
-                  onKeyDown={this.handleKeyDown}
-                  ref={this.setSpoilerText}
-                  suggestions={this.props.suggestions}
-                  onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-                  onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                  onSuggestionSelected={this.onSpoilerSuggestionSelected}
-                  searchTokens={[':']}
-                  id='cw-spoiler-input'
-                  className='spoiler-input__input'
-                  lang={this.props.lang}
-                  spellCheck
-                />
+              <AutosuggestInput
+                placeholder={intl.formatMessage(messages.spoiler_placeholder)}
+                value={this.props.spoilerText}
+                disabled={isSubmitting}
+                onChange={this.handleChangeSpoilerText}
+                onKeyDown={this.handleKeyDownSpoiler}
+                ref={this.setSpoilerText}
+                suggestions={this.props.suggestions}
+                onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                onSuggestionSelected={this.onSpoilerSuggestionSelected}
+                searchTokens={[':']}
+                id='cw-spoiler-input'
+                className='spoiler-input__input'
+                lang={this.props.lang}
+                spellCheck
+              />
 
-                <div className='spoiler-input__border' />
-              </div>
-            )}
+              <div className='spoiler-input__border' />
+            </div>
+          )}
 
-            <AutosuggestTextarea
-              ref={this.textareaRef}
-              placeholder={intl.formatMessage(messages.placeholder)}
-              disabled={isSubmitting}
-              value={this.props.text}
-              onChange={this.handleChange}
-              suggestions={this.props.suggestions}
-              onFocus={this.handleFocus}
-              onKeyDown={this.handleKeyDown}
-              onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-              onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-              onSuggestionSelected={this.onSuggestionSelected}
-              onPaste={onPaste}
-              autoFocus={autoFocus}
-              lang={this.props.lang}
-            />
+          <div className='compose-form__dropdowns'>
+            <PrivacyDropdownContainer disabled={this.props.isEditing} />
+            <LanguageDropdown />
           </div>
+
+          <AutosuggestTextarea
+            ref={this.textareaRef}
+            placeholder={intl.formatMessage(messages.placeholder)}
+            disabled={isSubmitting}
+            value={this.props.text}
+            onChange={this.handleChange}
+            suggestions={this.props.suggestions}
+            onFocus={this.handleFocus}
+            onKeyDown={this.handleKeyDownPost}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+            onSuggestionSelected={this.onSuggestionSelected}
+            onPaste={onPaste}
+            autoFocus={autoFocus}
+            lang={this.props.lang}
+          />
 
           <UploadForm />
           <PollForm />
 
           <div className='compose-form__footer'>
-            <div className='compose-form__dropdowns'>
-              <PrivacyDropdownContainer disabled={this.props.isEditing} />
-              <LanguageDropdown />
-            </div>
-
             <div className='compose-form__actions'>
               <div className='compose-form__buttons'>
                 <UploadButtonContainer />
@@ -310,7 +328,7 @@ class ComposeForm extends ImmutablePureComponent {
                 >
                   {intl.formatMessage(
                     this.props.isEditing ?
-                      messages.saveChanges : 
+                      messages.saveChanges :
                       (this.props.isInReply ? messages.reply : messages.publish)
                   )}
                 </Button>
