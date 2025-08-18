@@ -7,6 +7,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 LOGGER = logging.getLogger("ingress")
 TAG_PATTERN = re.compile(r'<[^>]+>')
 TIMELINE_API = os.environ.get('INGRESS_TIMELINE_API_URL') or 'https://fedi.buzz/api/v1/streaming/public'
+TIMELINE_API_TOKEN = os.environ.get('INGRESS_TIMELINE_API_TOKEN')
 LISTS = ListCache()
 BLOCKED_DOMAINS = BlockedDomainsCache()
 
@@ -60,16 +61,22 @@ def handle_status(status: dict):
         break
 
 def run_timeline_listener():
-    with requests.get(TIMELINE_API, stream=True) as rsp:
+    headers = {}
+    if TIMELINE_API_TOKEN:
+        headers['Authorization'] = f'Bearer {TIMELINE_API_TOKEN}'
+    
+    with requests.get(TIMELINE_API, headers=headers, stream=True) as rsp:
+        if rsp.status_code != 200:
+            rsp.raise_for_status()
+
         buffer = []
         for line in rsp.iter_lines():
             if line.startswith(b'event:') and line.endswith(b'update'):
                 buffer.append(line)
             
-            if buffer:
+            if buffer and line.startswith(b'data:'):
                 buffer.pop()
-                if line.startswith(b'data:'):
-                    handle_status(json.loads(line.decode('utf-8')[5:]))
+                handle_status(json.loads(line.decode('utf-8')[5:]))
                 
 
 if __name__ == "__main__":

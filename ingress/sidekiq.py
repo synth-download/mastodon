@@ -1,4 +1,4 @@
-import redis, json, os
+import redis, time, json, os
 from redis import Sentinel
 
 def get_redis():
@@ -54,10 +54,14 @@ def get_redis():
 _r = get_redis()
 
 def enqueue_fetch(uri: str):
+    now_ms = int(time.time() * 1000)
     payload = {
         'class': 'ActivityPub::FetchStatusWorker',
+        "jid": os.urandom(12).hex(),
         'args': [uri],
         'retry': True,
+        "created_at": now_ms,
+        "enqueued_at": now_ms,
         'queue': 'pull'
     }
-    _r.rpush('queue:default', json.dumps(payload, separators=(',',':')))
+    _r.rpush('queue:pull', json.dumps(payload, separators=(',',':')))

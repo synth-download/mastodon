@@ -132,7 +132,7 @@ class FanOutOnWriteService < BaseService
     scope = scope.where(with_media_only: false) unless has_media
     return unless scope.exists?
 
-    texts = [@status.spoiler_text, normalize_status_text(@status)]
+    texts = [@status.spoiler_text.downcase, normalize_status_text(@status)]
 
     scope.find_in_batches do |batch|
       candidates = batch.select do |list|
@@ -197,7 +197,7 @@ class FanOutOnWriteService < BaseService
     scope = scope.where.not(include_keywords: [nil, []])
     return unless scope.exists?
 
-    texts = [@status.spoiler_text, normalize_status_text(@status)]
+    texts = [@status.spoiler_text.downcase, normalize_status_text(@status)]
 
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
