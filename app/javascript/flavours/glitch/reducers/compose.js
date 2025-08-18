@@ -1,6 +1,11 @@
 import { Map as ImmutableMap, List as ImmutableList, OrderedSet as ImmutableOrderedSet, fromJS } from 'immutable';
 
-import { changeUploadCompose } from 'flavours/glitch/actions/compose_typed';
+import {
+  changeUploadCompose,
+  quoteComposeByStatus,
+  quoteComposeCancel,
+  setQuotePolicy,
+} from 'flavours/glitch/actions/compose_typed';
 import { timelineDelete } from 'flavours/glitch/actions/timelines_typed';
 
 import {
@@ -118,6 +123,11 @@ const initialState = ImmutableMap({
     adaptiveStroke: true,
     smoothing: false,
   }),
+
+  // Quotes
+  quoted_status_id: null,
+  quote_policy: 'public',
+  default_quote_policy: 'public', // Set in hydration.
 });
 
 const initialPoll = ImmutableMap({
@@ -178,6 +188,8 @@ function clearAll(state) {
     map.set('progress', 0);
     map.set('poll', null);
     map.set('idempotencyKey', uuid());
+    map.set('quoted_status_id', null);
+    map.set('quote_policy', state.get('default_quote_policy'));
   });
 }
 
@@ -410,6 +422,15 @@ export const composeReducer = (state = initialState, action) => {
     return state.set('is_changing_upload', true);
   } else if (changeUploadCompose.rejected.match(action)) {
     return state.set('is_changing_upload', false);
+  } else if (quoteComposeByStatus.match(action)) {
+    const status = action.payload;
+    if (status.getIn(['quote_approval', 'current_user']) === 'automatic') {
+      return state.set('quoted_status_id', status.get('id'));
+    }
+  } else if (quoteComposeCancel.match(action)) {
+    return state.set('quoted_status_id', null);
+  } else if (setQuotePolicy.match(action)) {
+    return state.set('quote_policy', action.payload);
   }
 
   switch(action.type) {

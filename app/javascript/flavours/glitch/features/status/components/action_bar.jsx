@@ -29,6 +29,7 @@ import { IconButton } from '../../../components/icon_button';
 import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 import { me, maxReactions } from '../../../initial_state';
 import EmojiPickerDropdown from '../../compose/containers/emoji_picker_dropdown_container';
+import { isFeatureEnabled } from '@/flavours/glitch/utils/environment';
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -62,6 +63,7 @@ const messages = defineMessages({
   copy: { id: 'status.copy', defaultMessage: 'Copy link to post' },
   openOriginalPage: { id: 'account.open_original_page', defaultMessage: 'Open original page' },
   revokeQuote: { id: 'status.revoke_quote', defaultMessage: 'Remove my post from @{name}’s post' },
+  quotePolicyChange: { id: 'status.quote_policy_change', defaultMessage: 'Change who can quote' },
 });
 
 const mapStateToProps = (state, { status }) => {
@@ -83,6 +85,7 @@ class ActionBar extends PureComponent {
     onBookmark: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onRevokeQuote: PropTypes.func,
+    onQuotePolicyChange: PropTypes.func,
     onEdit: PropTypes.func.isRequired,
     onDirect: PropTypes.func.isRequired,
     onMention: PropTypes.func.isRequired,
@@ -121,7 +124,11 @@ class ActionBar extends PureComponent {
 
   handleRevokeQuoteClick = () => {
     this.props.onRevokeQuote(this.props.status);
-  }
+  };
+
+  handleQuotePolicyChange = () => {
+    this.props.onQuotePolicyChange(this.props.status);
+  };
 
   handleRedraftClick = () => {
     this.props.onDelete(this.props.status, true);
@@ -210,6 +217,9 @@ class ActionBar extends PureComponent {
         }
 
         menu.push({ text: intl.formatMessage(mutingConversation ? messages.unmuteConversation : messages.muteConversation), action: this.handleConversationMuteClick });
+        if (isFeatureEnabled('outgoing_quotes') && !['private', 'direct'].includes(status.get('visibility'))) {
+          menu.push({ text: intl.formatMessage(messages.quotePolicyChange), action: this.handleQuotePolicyChange });
+        }
         menu.push(null);
         menu.push({ text: intl.formatMessage(messages.edit), action: this.handleEditClick });
         menu.push({ text: intl.formatMessage(messages.delete), action: this.handleDeleteClick, dangerous: true });

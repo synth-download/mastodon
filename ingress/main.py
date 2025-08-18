@@ -66,9 +66,10 @@ def run_timeline_listener():
             if line.startswith(b'event:') and line.endswith(b'update'):
                 buffer.append(line)
             
-            if buffer and line.startswith(b'data:'):
+            if buffer:
                 buffer.pop()
-                handle_status(json.loads(line.decode('utf-8')[5:]))
+                if line.startswith(b'data:'):
+                    handle_status(json.loads(line.decode('utf-8')[5:]))
                 
 
 if __name__ == "__main__":
