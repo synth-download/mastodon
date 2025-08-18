@@ -1,8 +1,9 @@
-import logging, requests, json, html, re, os
+import logging, requests, json, html, sys, re, os
 from database import ListCache
 from sidekiq import enqueue_fetch
 
-LOGGER = logging.getLogger("streaming_ingress")
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+LOGGER = logging.getLogger("ingress")
 TAG_PATTERN = re.compile(r'<[^>]+>')
 TIMELINE_API = os.environ.get('INGRESS_TIMELINE_API_URL') or 'https://fedi.buzz/api/v1/streaming/public'
 LISTS = ListCache()
@@ -14,6 +15,9 @@ def matches_groups(text: str, groups: list[list[str]]) -> bool:
     return any(all(k in text for k in group) for group in groups)
 
 def handle_status(status: dict):
+    if not status.get('uri'):
+        return
+    
     lists = LISTS.get_lists(status.get('reblog') or False, status.get('media_attachments') or False)
     if not lists:
         return

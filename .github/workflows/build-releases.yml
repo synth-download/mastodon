@@ -43,12 +43,12 @@ jobs:
         type=pep440,pattern=v{{major}}.{{minor}}
     secrets: inherit
 
-  build-image-streaming-ingress:
+  build-image-ingress:
     uses: ./.github/workflows/build-container-image.yml
     with:
-      file_to_build: streaming_ingress/Dockerfile
+      file_to_build: ingress/Dockerfile
       push_to_images: |
-        ghcr.io/${{ github.repository_owner }}/mastodon-streaming-ingress
+        ghcr.io/${{ github.repository_owner }}/mastodon-ingress
       # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages
       cache: false
       # Only tag with latest when ran against the latest stable branch

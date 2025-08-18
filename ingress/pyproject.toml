@@ -1,5 +1,5 @@
 [project]
-name = "streaming-ingress"
+name = "ingress"
 version = "0.1.0"
 description = "Mastodon federated timeline list ingress service"
 requires-python = ">=3.12"

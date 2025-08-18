@@ -57,13 +57,13 @@ jobs:
         type=ref,event=pr,suffix=-${{ needs.compute-suffix.outputs.short_sha }}
     secrets: inherit
 
-  build-image-streaming-ingress:
+  build-image-ingress:
     needs: compute-suffix
     uses: ./.github/workflows/build-container-image.yml
     with:
-      file_to_build: streaming_ingress/Dockerfile
+      file_to_build: ingress/Dockerfile
       push_to_images: |
-        ghcr.io/${{ github.repository_owner }}/mastodon-streaming-ingress
+        ghcr.io/${{ github.repository_owner }}/mastodon-ingress
       version_metadata: ${{ needs.compute-suffix.outputs.metadata }}
       flavor: |
         latest=auto

@@ -83,7 +83,7 @@ ENV UV_LINK_MODE=copy
 # Set /opt/mastodon as working directory
 WORKDIR /opt/mastodon/ingress
 
-COPY ./streaming_ingress /opt/mastodon/ingress
+COPY ./ingress /opt/mastodon/ingress
 RUN --mount=type=cache,id=uv-cache-${TARGETPLATFORM},target=/var/cache/uv,sharing=locked \
     uv sync --locked --no-dev
 
@@ -91,5 +91,5 @@ ENV PATH="/opt/mastodon/ingress/.venv/bin:$PATH"
 
 # Set the running user for resulting container
 USER mastodon
-# Run streaming ingress when started
+# Run ingress when started
 CMD ["uv", "run", "main.py"]
