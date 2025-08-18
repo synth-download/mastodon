@@ -1,11 +1,14 @@
-import logging, requests, json, html, re, os
-from database import ListCache
+import logging, requests, json, html, sys, re, os
+from urllib.parse import urlparse
+from database import ListCache, BlockedDomainsCache
 from sidekiq import enqueue_fetch
 
-LOGGER = logging.getLogger("streaming_ingress")
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+LOGGER = logging.getLogger("ingress")
 TAG_PATTERN = re.compile(r'<[^>]+>')
 TIMELINE_API = os.environ.get('INGRESS_TIMELINE_API_URL') or 'https://fedi.buzz/api/v1/streaming/public'
 LISTS = ListCache()
+BLOCKED_DOMAINS = BlockedDomainsCache()
 
 def matches_groups(text: str, groups: list[list[str]]) -> bool:
     if not groups:
@@ -13,7 +16,28 @@ def matches_groups(text: str, groups: list[list[str]]) -> bool:
 
     return any(all(k in text for k in group) for group in groups)
 
+def uri_blocked(uri: str):
+    hostname = urlparse(uri).hostname
+    if not hostname:
+        return False
+    blocks = BLOCKED_DOMAINS.get_blocks()
+
+    domain = hostname.lower()
+    parts = domain.split('.')
+    for i in range(len(parts)):
+        candidate_domain = '.'.join(parts[i:])
+        if candidate_domain in blocks:
+            return True
+    return False
+
 def handle_status(status: dict):
+    uri = status.get('uri')
+    if not uri:
+        return
+    
+    if uri_blocked(uri):
+        return
+    
     lists = LISTS.get_lists(status.get('reblog') or False, status.get('media_attachments') or False)
     if not lists:
         return
@@ -31,8 +55,8 @@ def handle_status(status: dict):
         if exclude_kw and any(matches_groups(t, exclude_kw) for t in texts):
             continue
         
-        enqueue_fetch(status['uri'])
-        LOGGER.info("Pulling %s..", status['uri'])
+        enqueue_fetch(uri)
+        LOGGER.info("Pulling %s..", uri)
         break
 
 def run_timeline_listener():

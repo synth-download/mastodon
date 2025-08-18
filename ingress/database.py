@@ -17,6 +17,33 @@ else:
         password=DB_PASS,
         port=DB_PORT or '5432'
     )
+    
+class BlockedDomainsCache:
+    def __init__(self) -> None:
+        self._blocks = set()
+        self._last_refresh = 0
+    
+    def refresh(self):
+        now = time.time()
+        if now - self._last_refresh < 600:
+            return
+        
+        cur = conn.cursor()
+        cur.execute(        """
+            SELECT domain_blocks.domain
+            FROM domain_blocks
+            WHERE domain_blocks.severity = 1;
+        """)
+        rows = cur.fetchall()
+        items = set([row[0] for row in rows])
+        cur.close()
+        self._blocks = items
+        self._last_refresh = now
+    
+    def get_blocks(self) -> set[str]:
+        self.refresh()
+        return self._blocks
+
 
 class ListCache:
     def __init__(self) -> None:
