@@ -43,31 +43,79 @@ class SearchService < BaseService
   end
 
   def perform_statuses_search!
+    # select all public statuses and all statuses from the account the quried
     results = Status.where(visibility: :public)
-                    .where('statuses.text &@~ ?', @query)
-                    .limit(@limit)
-                    .offset(@offset)
+    results = results.or(Status.where(account_id: @account.id)) if @account.present?
 
-    if @options[:account_id].present?
-      results = results
-                .where(account_id: @options[:account_id])
+    flags, query = parse_search_flags
+
+    # check if authed to resolve flags.
+    if @account.present?
+      if flags[:from].present?
+        positive = flags[:from].select { |f| !f[:not] }
+        negative = flags[:from].select { |f| f[:not] }
+
+        accounts = positive.flat_map {|entry| resolve_account_ids(entry[:value]) }.uniq
+        return Status.none if positive.any? && accounts.empty?
+        results = results.where(account_id: accounts) if accounts.any?
+
+        not_accounts = negative.flat_map {|entry| resolve_account_ids(entry[:value])}.uniq
+        results = results.where.not(account_id: not_accounts) if not_accounts.any?
+      end
+
+      if flags[:has].present?
+        flags[:has].each do |entry|
+          if entry[:value].downcase == 'media'
+            if entry[:not]
+              results = results.where("COALESCE(array_length(ordered_media_attachment_ids, 1), 0) = 0")
+            else
+              results = results.where("COALESCE(array_length(ordered_media_attachment_ids, 1), 0) > 0")
+            end
+          end
+        end
+      end
     end
 
-    if @options[:min_id].present?
-      results = results
-                .where('statuses.id > ?', @options[:min_id])
-    end
-
-    if @options[:max_id].present?
-      results = results
-                .where(statuses: { id: ...(@options[:max_id]) })
-    end
+    # legacy flags
+    results = results.where(account_id: @options[:account_id]) if @options[:account_id].present?
+    results = results.where('statuses.id > ?', @options[:min_id]) if @options[:min_id].present?
+    results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
+    
+    # search query
+    results = results.where('statuses.text &@~ ?', query).limit(@limit).offset(@offset)
 
     account_ids         = results.map(&:account_id)
     account_domains     = results.map(&:account_domain)
     preloaded_relations = @account.relations_map(account_ids, account_domains)
 
     results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
+  end
+
+  def resolve_account_ids(value)
+    return Account.none if value.blank?
+    v = value.to_s.strip.downcase
+
+    if v.downcase == 'me'
+      return @account.id
+    end
+
+    if (m = v.match(/\A@?([^@]+)@(.+)\z/))
+      return Account.where(username: m[1], domain: m[2]).pluck(:id)
+    end
+
+    username = v.sub(/\A@/, '')
+    Account.where(username: username, domain: nil).pluck(:id)
+  end
+
+  def parse_search_flags
+    query = @query.to_s.dup
+    flags = Hash.new { |h,k| h[k] = [] }
+
+    while (m = query.match(/(-?)(\w+):(?:"([^"]+)"|(\S+))/))
+      flags[m[2].downcase.to_sym] << { not: m[1] == '-', value: (m[3] || m[4]) }
+      query.sub!(m[0], '')
+    end
+    [flags, query]
   end
 
   def perform_hashtags_search!
