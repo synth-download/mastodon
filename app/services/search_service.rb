@@ -104,8 +104,8 @@ class SearchService < BaseService
     if !query.empty?
       results = results.left_joins(:media_attachments)
         .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query)
-        .distinct.limit(@limit).offset(@offset)
     end
+    results = results.distinct.limit(@limit).offset(@offset)
 
     account_ids         = results.map(&:account_id)
     account_domains     = results.map(&:account_domain)
