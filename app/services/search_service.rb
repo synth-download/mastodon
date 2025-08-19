@@ -101,9 +101,9 @@ class SearchService < BaseService
     results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
     
     # search query
-    if !query.empty?
+    if !query.strip.empty?
       results = results.left_joins(:media_attachments)
-        .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query)
+        .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query.strip)
     end
     results = results.distinct.limit(@limit).offset(@offset)
 
