@@ -101,7 +101,11 @@ class SearchService < BaseService
     results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
     
     # search query
-    results = results.where('statuses.text &@~ ?', query).limit(@limit).offset(@offset) if !query.empty?
+    if !query.empty?
+      results = results.left_joins(:media_attachments)
+        .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query)
+        .distinct.limit(@limit).offset(@offset)
+    end
 
     account_ids         = results.map(&:account_id)
     account_domains     = results.map(&:account_domain)
