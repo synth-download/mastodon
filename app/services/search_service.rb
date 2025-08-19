@@ -44,8 +44,8 @@ class SearchService < BaseService
 
   def perform_statuses_search!
     # select all public statuses and all statuses from the account the quried
-    results = Status.where(visibility: :public)
-    results = results.or(Status.where(account_id: @account.id)) if @account.present?
+    results = Status.where(visibility: :public, reblog_of_id: nil)
+    results = results.or(Status.where(account_id: @account.id, reblog_of_id: nil)) if @account.present?
 
     flags, query = parse_search_flags
 
