@@ -65,14 +65,33 @@ class SearchService < BaseService
 
       if flags[:has].present?
         flags[:has].each do |entry|
-          if entry[:value].downcase == 'media'
-            if entry[:not]
-              results = results.where("COALESCE(array_length(ordered_media_attachment_ids, 1), 0) = 0")
-            else
-              results = results.where("COALESCE(array_length(ordered_media_attachment_ids, 1), 0) > 0")
-            end
+          case entry[:value].downcase
+          when 'media'
+            op = entry[:not] ? '=' : '>'
+            results = results.where("COALESCE(array_length(ordered_media_attachment_ids, 1), 0) #{op} 0")
+          when 'poll'
+            results = entry[:not] ? results.where(poll_id: nil) : results.where.not(poll_id: nil)
           end
         end
+      end
+
+      if flags[:is].present?
+        flags[:is].each do |entry|
+          case entry[:value].downcase
+          when 'reply'
+            results = results.where(reply: entry[:not] ? false : true)
+          when 'sensitive'
+            results = results.where(sensitive: entry[:not] ? false : true)
+          end
+        end
+      end
+
+      if flags[:language].present?
+        positive = flags[:language].select { |f| !f[:not] }.map { |f| f[:value].downcase }
+        negative = flags[:language].select { |f| f[:not] }.map { |f| f[:value].downcase }
+
+        results = results.where(language: positive) if positive.any?
+        results = results.where.not(language: negative) if negative.any?
       end
     end
 
@@ -82,7 +101,11 @@ class SearchService < BaseService
     results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
     
     # search query
-    results = results.where('statuses.text &@~ ?', query).limit(@limit).offset(@offset)
+    if !query.empty?
+      results = results.left_joins(:media_attachments)
+        .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query)
+    end
+    results = results.distinct.limit(@limit).offset(@offset)
 
     account_ids         = results.map(&:account_id)
     account_domains     = results.map(&:account_domain)
@@ -95,9 +118,7 @@ class SearchService < BaseService
     return Account.none if value.blank?
     v = value.to_s.strip.downcase
 
-    if v.downcase == 'me'
-      return @account.id
-    end
+    return @account.id if v == 'me'
 
     if (m = v.match(/\A@?([^@]+)@(.+)\z/))
       return Account.where(username: m[1], domain: m[2]).pluck(:id)
