@@ -95,9 +95,7 @@ class SearchService < BaseService
     return Account.none if value.blank?
     v = value.to_s.strip.downcase
 
-    if v.downcase == 'me'
-      return @account.id
-    end
+    return @account.id if v == 'me'
 
     if (m = v.match(/\A@?([^@]+)@(.+)\z/))
       return Account.where(username: m[1], domain: m[2]).pluck(:id)
