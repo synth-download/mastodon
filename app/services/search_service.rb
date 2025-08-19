@@ -116,9 +116,9 @@ class SearchService < BaseService
 
   def resolve_account_ids(value)
     return Account.none if value.blank?
-    v = value.to_s.strip.downcase
+    v = value.to_s.strip
 
-    return @account.id if v == 'me'
+    return @account.id if v.downcase == 'me'
 
     if (m = v.match(/\A@?([^@]+)@(.+)\z/))
       return Account.where(username: m[1], domain: m[2]).pluck(:id)
