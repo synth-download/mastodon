@@ -30,7 +30,7 @@ class InitialStateSerializer < ActiveModel::Serializer
     }
   end
 
-  def meta # rubocop:disable Metrics/AbcSize
+  def meta
     store = default_meta_store
 
     if object_account
