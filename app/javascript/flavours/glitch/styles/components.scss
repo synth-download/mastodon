@@ -1484,8 +1484,16 @@
   border: 0;
   background: transparent;
   padding: 0;
-  padding-top: 16px;
+  margin-top: 16px;
   text-decoration: none;
+  text-wrap: nowrap;
+
+  .status--is-quote & {
+    // Needed to prevent buttons from stretching across whole
+    // status width in Safari due to line-clamp
+    width: min-content;
+    white-space: nowrap;
+  }
 
   &:hover,
   &:active {
