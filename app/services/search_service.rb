@@ -49,6 +49,13 @@ class SearchService < BaseService
 
     flags, query = parse_search_flags
 
+    if !query.strip.empty?
+      text_matches = results.where("statuses.text &@~ ?", query).select(:id)
+      media_matches = results.joins(:media_attachments).where("media_attachments.description &@~ ?", query).select('statuses.id')
+    
+      results = results.where(id: text_matches).or(results.where(id: media_matches))
+    end
+
     # check if authed to resolve flags.
     if @account.present?
       if flags[:from].present?
@@ -99,12 +106,7 @@ class SearchService < BaseService
     results = results.where(account_id: @options[:account_id]) if @options[:account_id].present?
     results = results.where('statuses.id > ?', @options[:min_id]) if @options[:min_id].present?
     results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
-    
-    # search query
-    if !query.strip.empty?
-      results = results.left_joins(:media_attachments)
-        .where('statuses.text &@~ :q OR media_attachments.description &@~ :q', q: query.strip)
-    end
+
     results = results.distinct.limit(@limit).offset(@offset)
 
     account_ids         = results.map(&:account_id)
