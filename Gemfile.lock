@@ -290,7 +290,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
-    haml-rails (2.1.0)
+    haml-rails (3.0.0)
       actionpack (>= 5.1)
       activesupport (>= 5.1)
       haml (>= 4.0.6)
@@ -308,8 +308,8 @@ GEM
     highline (3.1.2)
       reline
     hiredis (0.6.3)
-    hiredis-client (0.26.0)
-      redis-client (= 0.26.0)
+    hiredis-client (0.26.1)
+      redis-client (= 0.26.1)
     hkdf (0.3.0)
     htmlentities (4.3.4)
     http (5.3.1)
@@ -728,7 +728,7 @@ GEM
       reline
     redcarpet (3.6.1)
     redis (4.8.1)
-    redis-client (0.26.0)
+    redis-client (0.26.1)
       connection_pool
     regexp_parser (2.11.3)
     reline (0.6.2)
@@ -774,7 +774,7 @@ GEM
       rspec-mocks (~> 3.0)
       sidekiq (>= 5, < 9)
     rspec-support (3.13.4)
-    rubocop (1.81.0)
+    rubocop (1.81.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -798,7 +798,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.44.0, < 2.0)
-    rubocop-rails (2.33.3)
+    rubocop-rails (2.33.4)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -820,7 +820,7 @@ GEM
     ruby-vips (2.2.5)
       ffi (~> 1.12)
       logger
-    rubyzip (3.1.0)
+    rubyzip (3.1.1)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
     safety_net_attestation (0.5.0)
@@ -998,7 +998,7 @@ DEPENDENCIES
   flatware-rspec
   fog-core (<= 2.6.0)
   fog-openstack (~> 1.0)
-  haml-rails (~> 2.0)
+  haml-rails (~> 3.0)
   haml_lint
   hcaptcha (~> 7.1)
   hiredis (~> 0.6)
@@ -1111,6 +1111,7 @@ DEPENDENCIES
   webauthn (~> 3.0)
   webmock (~> 3.18)
   webpush!
+  websocket-driver (~> 0.8)
   xorcist (~> 1.1)
 
 RUBY VERSION

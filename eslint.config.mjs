@@ -198,6 +198,7 @@ export default tseslint.config([
     'tmp/**/*',
     'vendor/**/*',
     'streaming/**/*',
+    '.bundle/**/*',
   ]),
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],

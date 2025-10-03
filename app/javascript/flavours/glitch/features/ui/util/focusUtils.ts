@@ -1,4 +1,4 @@
-import initialState from '@/flavours/glitch/initial_state';
+import { initialState } from '@/flavours/glitch/initial_state';
 
 interface FocusColumnOptions {
   index?: number;

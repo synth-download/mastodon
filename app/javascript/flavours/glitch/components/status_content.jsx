@@ -13,10 +13,12 @@ import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react'
 import { Icon } from 'flavours/glitch/components/icon';
 import { Poll } from 'flavours/glitch/components/poll';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
-import { autoPlayGif, languages as preloadedLanguages } from 'flavours/glitch/initial_state';
+import { languages as preloadedLanguages } from 'flavours/glitch/initial_state';
 import { decode as decodeIDNA } from 'flavours/glitch/utils/idna';
-import { EmojiHTML } from '../features/emoji/emoji_html';
+
 import { isModernEmojiEnabled } from '../utils/environment';
+
+import { EmojiHTML } from './emoji/html';
 
 const MAX_HEIGHT = 706; // 22px * 32 (+ 2px padding at the top)
 

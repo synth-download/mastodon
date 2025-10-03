@@ -14,7 +14,7 @@ import ErrorBoundary from 'flavours/glitch/components/error_boundary';
 import { Router } from 'flavours/glitch/components/router';
 import UI from 'flavours/glitch/features/ui';
 import { IdentityContext, createIdentityContext } from 'flavours/glitch/identity_context';
-import initialState, { title as siteTitle } from 'flavours/glitch/initial_state';
+import { initialState, title as siteTitle } from 'flavours/glitch/initial_state';
 import { IntlProvider } from 'flavours/glitch/locales';
 import { store } from 'flavours/glitch/store';
 import { isProduction } from 'flavours/glitch/utils/environment';
