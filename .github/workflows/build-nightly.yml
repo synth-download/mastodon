@@ -12,7 +12,7 @@ permissions:
 jobs:
   compute-suffix:
     runs-on: ubuntu-latest
-    if: github.repository == 'melontini/mastodon'
+    if: github.repository == 'synth-download/mastodon'
     steps:
       - id: version_vars
         env:
