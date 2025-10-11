@@ -109,14 +109,12 @@ class ActivityPub::Activity::Undo < ActivityPub::Activity
 
     return if status.nil?
 
-    if @account.favourited?(status) && status.account.local?
+    if @account.favourited?(status)
       favourite = status.favourites.where(account: @account).first
       favourite&.destroy
     elsif @object['content'].present? || @object['_misskey_reaction'].present?
       undo_emoji_react
     else
-      return unless status.account.local?
-
       delete_later!(object_uri)
     end
   end
@@ -136,12 +134,10 @@ class ActivityPub::Activity::Undo < ActivityPub::Activity
       return if custom_emoji.nil?
     end
 
-    if @account.reacted?(status, name, custom_emoji) && status.account.local?
+    if @account.reacted?(status, name, custom_emoji)
       reaction = status.status_reactions.where(account: @account, name: name).first
       reaction&.destroy
     else
-      return unless status.account.local?
-
       delete_later!(object_uri)
     end
   end
