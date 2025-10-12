@@ -31,8 +31,14 @@ class ReactService < BaseService
 
     if status.account.local?
       LocalNotificationWorker.perform_async(status.account_id, reaction.id, 'StatusReaction', 'reaction')
-    elsif status.account.activitypub?
-      ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url)
+    end
+
+    if status.direct_visibility?
+      if status.account.activitypub?
+        ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url)
+      end
+    else
+      ActivityPub::InteractionDistributionWorker.perform_async(build_json(reaction), reaction.account_id, status.id) unless status.local_only?
     end
   end
 
