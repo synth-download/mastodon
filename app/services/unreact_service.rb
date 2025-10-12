@@ -18,7 +18,12 @@ class UnreactService < BaseService
 
   def create_notification(reaction)
     status = reaction.status
-    ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url)
+
+    if status.direct_visibility?
+      ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url)
+    else
+      ActivityPub::InteractionDistributionWorker.perform_async(build_json(reaction), reaction.account_id, status.id) unless status.local_only?
+    end
   end
 
   def build_json(reaction)
