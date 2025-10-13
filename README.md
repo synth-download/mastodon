@@ -5,6 +5,9 @@ A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very m
 Changes currently including
 - Patches for PGroonga full text search support, over Elasticsearch
 - Advanced lists. Listen to keywords, exclude boosts, only include posts with media. With optional https://relay.fedi.buzz ingress.
+- Remove favorite and reaction federation restrictions; federate likes and reacts to all followers.
+- Audio files are converted to opus instead of mp3.
+- More webp support, like tootctl; static emojis/avatars/headers previews use webp.
 - Custom Synth.download theme
 
 ---
