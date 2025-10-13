@@ -37,7 +37,7 @@ module Mastodon::CLI
 
       Gem::Package::TarReader.new(Zlib::GzipReader.open(path)) do |tar|
         tar.each do |entry|
-          next unless entry.file? && entry.full_name.end_with?('.png', '.gif')
+          next unless entry.file? && entry.full_name.end_with?('.png', '.gif', '.webp')
 
           filename = File.basename(entry.full_name, '.*')
 
