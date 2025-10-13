@@ -10,7 +10,7 @@ class UnreactService < BaseService
     return if reaction.nil?
 
     reaction.destroy!
-    create_notification(reaction) if !status.account.local? && status.account.activitypub?
+    create_notification(reaction)
     reaction
   end
 
@@ -19,10 +19,12 @@ class UnreactService < BaseService
   def create_notification(reaction)
     status = reaction.status
 
+    return if status.local_only?
+
     if status.direct_visibility?
-      ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url)
+      ActivityPub::DeliveryWorker.perform_async(build_json(reaction), reaction.account_id, status.account.inbox_url) if status.account.activitypub?
     else
-      ActivityPub::InteractionDistributionWorker.perform_async(build_json(reaction), reaction.account_id, status.id) unless status.local_only?
+      ActivityPub::InteractionDistributionWorker.perform_async(build_json(reaction), reaction.account_id, status.id)
     end
   end
 
