@@ -4,6 +4,7 @@ module Account::Header
   extend ActiveSupport::Concern
 
   HEADER_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
+  HEADER_ANIMATED_MIME_TYPES = ['image/gif', 'image/webp'].freeze
   HEADER_LIMIT = Rails.configuration.x.use_vips ? 8.megabytes : 2.megabytes
   HEADER_DIMENSIONS = [1500, 500].freeze
   HEADER_GEOMETRY = [HEADER_DIMENSIONS.first, HEADER_DIMENSIONS.last].join('x')
@@ -12,7 +13,7 @@ module Account::Header
   class_methods do
     def header_styles(file)
       styles = { original: { pixels: HEADER_MAX_PIXELS, file_geometry_parser: FastGeometryParser } }
-      styles[:static] = { format: 'png', convert_options: '-coalesce', file_geometry_parser: FastGeometryParser } if file.content_type == 'image/gif'
+      styles[:static] = { format: 'webp', convert_options: '-coalesce -delete 1--1', file_geometry_parser: FastGeometryParser } if HEADER_ANIMATED_MIME_TYPES.include?(file.content_type)
       styles
     end
 
@@ -32,6 +33,6 @@ module Account::Header
   end
 
   def header_static_url
-    header_content_type == 'image/gif' ? header.url(:static) : header_original_url
+    HEADER_ANIMATED_MIME_TYPES.include?(header_content_type) ? header.url(:static) : header_original_url
   end
 end
