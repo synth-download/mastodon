@@ -4,6 +4,7 @@ module Account::Avatar
   extend ActiveSupport::Concern
 
   AVATAR_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
+  AVATAR_ANIMATED_MIME_TYPES = ['image/gif', 'image/webp'].freeze
   AVATAR_LIMIT = Rails.configuration.x.use_vips ? 8.megabytes : 2.megabytes
   AVATAR_DIMENSIONS = [400, 400].freeze
   AVATAR_GEOMETRY = [AVATAR_DIMENSIONS.first, AVATAR_DIMENSIONS.last].join('x')
@@ -11,7 +12,7 @@ module Account::Avatar
   class_methods do
     def avatar_styles(file)
       styles = { original: { geometry: "#{AVATAR_GEOMETRY}#", file_geometry_parser: FastGeometryParser } }
-      styles[:static] = { geometry: "#{AVATAR_GEOMETRY}#", format: 'png', convert_options: '-coalesce', file_geometry_parser: FastGeometryParser } if file.content_type == 'image/gif'
+      styles[:static] = { geometry: "#{AVATAR_GEOMETRY}#", format: 'webp', convert_options: '-coalesce -delete 1--1', file_geometry_parser: FastGeometryParser } if AVATAR_ANIMATED_MIME_TYPES.include?(file.content_type)
       styles
     end
 
@@ -31,6 +32,6 @@ module Account::Avatar
   end
 
   def avatar_static_url
-    avatar_content_type == 'image/gif' ? avatar.url(:static) : avatar_original_url
+    AVATAR_ANIMATED_MIME_TYPES.include?(avatar_content_type) ? avatar.url(:static) : avatar_original_url
   end
 end

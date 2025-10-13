@@ -31,7 +31,7 @@ module Paperclip
     private
 
     def extract_image_from_file!
-      dst = Tempfile.new([File.basename(@file.path, '.*'), '.png'])
+      dst = Tempfile.new([File.basename(@file.path, '.*'), '.webp'])
       dst.binmode
 
       begin
