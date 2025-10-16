@@ -16,7 +16,7 @@ class ActivityPub::Activity::EmojiReact < ActivityPub::Activity
       return if custom_emoji.nil?
     end
 
-    return @account.reacted?(original_status, name, custom_emoji)
+    return if @account.reacted?(original_status, name, custom_emoji)
 
     reaction = original_status.status_reactions.create!(account: @account, name: name, custom_emoji: custom_emoji)
 
