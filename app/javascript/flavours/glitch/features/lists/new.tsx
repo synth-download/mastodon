@@ -101,8 +101,8 @@ const NewList: React.FC<{
   useEffect(() => {
     if (id && list) {
       setTitle(list.title);
-      setKeywords(list.include_keywords.map(g => g.join(' ')).join('\n'));
-      setExcludeKeywords(list.exclude_keywords.map(g => g.join(' ')).join('\n'));
+      setKeywords(list.include_keywords.join('\n'));
+      setExcludeKeywords(list.exclude_keywords.join('\n'));
       setWithMediaOnly(list.with_media_only);
       setIgnoreReblog(list.ignore_reblog);
       setExclusive(list.exclusive);
@@ -163,11 +163,9 @@ const NewList: React.FC<{
     setSubmitting(true);
     const include_keywords = keywords.split('\n')
       .map(line => line.trim())
-      .map(line => (line === '' ? [] : line.split(/\s+/).filter(Boolean)))
       .filter(group => group.length > 0);
     const exclude_keywords = excludeKeywords.split('\n')
       .map(line => line.trim())
-      .map(line => (line === '' ? [] : line.split(/\s+/).filter(Boolean)))
       .filter(group => group.length > 0);
 
     if (id) {
@@ -209,16 +207,16 @@ const NewList: React.FC<{
       });
     }
   }, [
-    history, 
-    dispatch, 
-    setSubmitting, 
-    id, 
-    title, 
-    withMediaOnly, 
-    ignoreReblog, 
-    exclusive, 
-    repliesPolicy, 
-    keywords, 
+    history,
+    dispatch,
+    setSubmitting,
+    id,
+    title,
+    withMediaOnly,
+    ignoreReblog,
+    exclusive,
+    repliesPolicy,
+    keywords,
     excludeKeywords
   ]);
 

@@ -9,6 +9,6 @@ export interface ApiListJSON {
   ignore_reblog: boolean;
   exclusive: boolean;
   replies_policy: RepliesPolicyType;
-  include_keywords: string[][];
-  exclude_keywords: string[][];
+  include_keywords: string[];
+  exclude_keywords: string[];
 }

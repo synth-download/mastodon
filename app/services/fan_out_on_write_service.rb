@@ -136,7 +136,7 @@ class FanOutOnWriteService < BaseService
 
     scope.find_in_batches do |batch|
       candidates = batch.select do |list|
-        next false if texts.any? { |t| matches_groups?(t, list.exclude_keywords) }
+        next false if texts.any? { |t| list.matches_any_keyword?(t, list.compiled_exclude_keywords) }
         true
       end
 
@@ -201,8 +201,8 @@ class FanOutOnWriteService < BaseService
 
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
-        next false unless texts.any? { |t| matches_groups?(t, list.include_keywords) }
-        next false if texts.any? { |t| matches_groups?(t, list.exclude_keywords) }
+        next false unless texts.any? { |t| list.matches_any_keyword?(t, list.compiled_include_keywords) }
+        next false if texts.any? { |t| list.matches_any_keyword?(t, list.compiled_exclude_keywords) }
         true
       end
 
@@ -219,13 +219,6 @@ class FanOutOnWriteService < BaseService
     text = strip_tags(raw)
     text = CGI.unescapeHTML(text)
     text = text.gsub(/\s+/, ' ').strip.downcase
-  end
-
-  def matches_groups?(text, groups)
-    return false if groups.blank?
-    groups.any? do |group|
-      group.all? { |kw| text.include?(kw.downcase) }
-    end
   end
 
   def deliver_to_conversation!
