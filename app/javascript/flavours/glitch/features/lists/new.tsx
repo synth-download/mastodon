@@ -11,6 +11,7 @@ import Toggle from 'react-toggle';
 
 import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
+import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import { fetchList } from 'flavours/glitch/actions/lists';
 import { createList, updateList } from 'flavours/glitch/actions/lists_typed';
 import { apiGetAccounts } from 'flavours/glitch/api/lists';
@@ -30,6 +31,109 @@ const messages = defineMessages({
   edit: { id: 'column.edit_list', defaultMessage: 'Edit list' },
   create: { id: 'column.create_list', defaultMessage: 'Create list' },
 });
+
+const KeywordPills: React.FC<{
+  keywords: string[];
+  onRemove: (keyword: string) => void;
+}> = ({ keywords, onRemove }) => {
+  if (keywords.length === 0) return null;
+
+  return (
+    <div className='keyword-pills'>
+      {keywords.map((keyword, index) => (
+        <div key={index} className='keyword-pill'>
+          <span className='keyword-pill__text'>{keyword}</span>
+          <button
+            type='button'
+            className='keyword-pill__remove'
+            onClick={() => onRemove(keyword)}
+            aria-label={`Remove ${keyword}`}
+          >
+            <Icon id='close' icon={CloseIcon} size={12} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const KeywordInput: React.FC<{
+  label: React.ReactNode;
+  id: string;
+  value: string[];
+  onChange: (keywords: string[]) => void;
+  placeholder?: string;
+}> = ({ label, id, value, onChange, placeholder }) => {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInputValue(e.target.value);
+    },
+    [],
+  );
+
+  const handleInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const newKeyword = inputValue.trim();
+        if (newKeyword && !value.includes(newKeyword)) {
+          onChange([...value, newKeyword]);
+          setInputValue('');
+        }
+      } else if (e.key === 'Backspace' && inputValue === '' && value.length > 0) {
+        onChange(value.slice(0, -1));
+      }
+    },
+    [inputValue, value, onChange],
+  );
+
+  const handleRemoveKeyword = useCallback(
+    (keywordToRemove: string) => {
+      onChange(value.filter(keyword => keyword !== keywordToRemove));
+    },
+    [value, onChange],
+  );
+
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const pastedData = e.clipboardData.getData('text');
+      const newKeywords = pastedData
+        .split(/[\n]/)
+        .map(k => k.trim())
+        .filter(k => k.length > 0 && !value.includes(k));
+
+      if (newKeywords.length > 0) {
+        onChange([...value, ...newKeywords]);
+      }
+    },
+    [value, onChange],
+  );
+
+  return (
+    <div className='input with_label'>
+      <div className='label_input'>
+        <label htmlFor={id}>
+          {label}
+        </label>
+
+        <div className='label_input__wrapper keyword-input-wrapper'>
+          <KeywordPills keywords={value} onRemove={handleRemoveKeyword} />
+          <input
+            id={id}
+            type='text'
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
+            placeholder={placeholder || 'Type a keyword and press Enter to add'}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MembersLink: React.FC<{
   id: string;
@@ -84,8 +188,8 @@ const NewList: React.FC<{
     id ? state.lists.get(id) : undefined,
   );
   const [title, setTitle] = useState('');
-  const [keywords, setKeywords] = useState('');
-  const [excludeKeywords, setExcludeKeywords] = useState('');
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [excludeKeywords, setExcludeKeywords] = useState<string[]>([]);
   const [withMediaOnly, setWithMediaOnly] = useState(false);
   const [ignoreReblog, setIgnoreReblog] = useState(false);
   const [exclusive, setExclusive] = useState(false);
@@ -101,8 +205,8 @@ const NewList: React.FC<{
   useEffect(() => {
     if (id && list) {
       setTitle(list.title);
-      setKeywords(list.include_keywords.join('\n'));
-      setExcludeKeywords(list.exclude_keywords.join('\n'));
+      setKeywords(list.include_keywords);
+      setExcludeKeywords(list.exclude_keywords);
       setWithMediaOnly(list.with_media_only);
       setIgnoreReblog(list.ignore_reblog);
       setExclusive(list.exclusive);
@@ -118,15 +222,15 @@ const NewList: React.FC<{
   );
 
   const handleKeywordsChange = useCallback(
-    ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      setKeywords(value);
+    (newKeywords: string[]) => {
+      setKeywords(newKeywords);
     },
     [setKeywords],
   );
 
   const handleExcludeKeywordsChange = useCallback(
-    ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      setExcludeKeywords(value);
+    (newKeywords: string[]) => {
+      setExcludeKeywords(newKeywords);
     },
     [setExcludeKeywords],
   );
@@ -161,12 +265,6 @@ const NewList: React.FC<{
 
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
-    const include_keywords = keywords.split('\n')
-      .map(line => line.trim())
-      .filter(group => group.length > 0);
-    const exclude_keywords = excludeKeywords.split('\n')
-      .map(line => line.trim())
-      .filter(group => group.length > 0);
 
     if (id) {
       void dispatch(
@@ -176,8 +274,8 @@ const NewList: React.FC<{
           with_media_only: withMediaOnly,
           ignore_reblog: ignoreReblog,
           exclusive,
-          include_keywords,
-          exclude_keywords,
+          include_keywords: keywords,
+          exclude_keywords: excludeKeywords,
           replies_policy: repliesPolicy,
         }),
       ).then(() => {
@@ -191,8 +289,8 @@ const NewList: React.FC<{
           with_media_only: withMediaOnly,
           ignore_reblog: ignoreReblog,
           exclusive,
-          include_keywords,
-          exclude_keywords,
+          include_keywords: keywords,
+          exclude_keywords: excludeKeywords,
           replies_policy: repliesPolicy,
         }),
       ).then((result) => {
@@ -307,49 +405,39 @@ const NewList: React.FC<{
           )}
 
           <div className='fields-group'>
-            <div className='input with_label'>
-              <div className='label_input'>
-                <label htmlFor='include_keywords'>
-                  <FormattedMessage
-                    id='lists.include_keywords'
-                    defaultMessage='Include keywords'
-                  />
-                </label>
-
-                <div className='label_input__wrapper'>
-                  <textarea
-                    id='include_keywords'
-                    value={keywords}
-                    onChange={handleKeywordsChange}
-                    placeholder=' '
-                    rows="8"
-                  />
-                </div>
-              </div>
-            </div>
+            <KeywordInput
+              label={
+                <FormattedMessage
+                  id='lists.include_keywords'
+                  defaultMessage='Include keywords'
+                />
+              }
+              id='include_keywords'
+              value={keywords}
+              onChange={handleKeywordsChange}
+              placeholder={intl.formatMessage({
+                id: 'lists.include_keywords.placeholder',
+                defaultMessage: 'Add keywords to include (press Enter to add)'
+              })}
+            />
           </div>
 
           <div className='fields-group'>
-            <div className='input with_label'>
-              <div className='label_input'>
-                <label htmlFor='exclude_keywords'>
-                  <FormattedMessage
-                    id='lists.exclude_keywords'
-                    defaultMessage='Exclude keywords'
-                  />
-                </label>
-
-                <div className='label_input__wrapper'>
-                  <textarea
-                    id='exclude_keywords'
-                    value={excludeKeywords}
-                    onChange={handleExcludeKeywordsChange}
-                    placeholder=' '
-                    rows="8"
-                  />
-                </div>
-              </div>
-            </div>
+            <KeywordInput
+              label={
+                <FormattedMessage
+                  id='lists.exclude_keywords'
+                  defaultMessage='Exclude keywords'
+                />
+              }
+              id='exclude_keywords'
+              value={excludeKeywords}
+              onChange={handleExcludeKeywordsChange}
+              placeholder={intl.formatMessage({
+                id: 'lists.exclude_keywords.placeholder',
+                defaultMessage: 'Add keywords to exclude (press Enter to add)'
+              })}
+            />
           </div>
 
           <div className='fields-group'>
