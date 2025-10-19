@@ -41,7 +41,6 @@ class List < ApplicationRecord
   scope :with_list_account, ->(account) { joins(:list_accounts).where(list_accounts: { account: }) }
 
   def matches_any_keyword?(text, compiled_keywords)
-    Rails.logger.warn("AAAAAAAA #{text} AAAAAA #{compiled_keywords}")
     simple_keywords, regexes = compiled_keywords
     return true if simple_keywords.any? { |keyword| text.include?(keyword) }
     regexes.any? { |regex| regex.match?(text) }
