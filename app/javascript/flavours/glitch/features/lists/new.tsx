@@ -73,41 +73,46 @@ const KeywordInput: React.FC<{
     [],
   );
 
+  const commitKeyword = useCallback(() => {
+    const newKeyword = inputValue.trim();
+    if (newKeyword && !value.includes(newKeyword)) {
+      onChange([...value, newKeyword]);
+    }
+    setInputValue('');
+  }, [inputValue, value, onChange]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      commitKeyword();
+    },
+    [commitKeyword],
+  );
+
   const handleInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const newKeyword = inputValue.trim();
-        if (newKeyword && !value.includes(newKeyword)) {
-          onChange([...value, newKeyword]);
-          setInputValue('');
-        }
-      } else if (e.key === 'Backspace' && inputValue === '' && value.length > 0) {
+        commitKeyword();
+      } else if (
+        e.key === 'Backspace' &&
+        inputValue === '' &&
+        value.length > 0
+      ) {
+        const lastKeyword = value[value.length - 1];
         onChange(value.slice(0, -1));
+        if (lastKeyword) {
+          e.preventDefault();
+          setInputValue(lastKeyword);
+        }
       }
     },
-    [inputValue, value, onChange],
+    [inputValue, value, onChange, commitKeyword],
   );
 
   const handleRemoveKeyword = useCallback(
     (keywordToRemove: string) => {
-      onChange(value.filter(keyword => keyword !== keywordToRemove));
-    },
-    [value, onChange],
-  );
-
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent<HTMLInputElement>) => {
-      e.preventDefault();
-      const pastedData = e.clipboardData.getData('text');
-      const newKeywords = pastedData
-        .split(/[\n]/)
-        .map(k => k.trim())
-        .filter(k => k.length > 0 && !value.includes(k));
-
-      if (newKeywords.length > 0) {
-        onChange([...value, ...newKeywords]);
-      }
+      onChange(value.filter((keyword) => keyword !== keywordToRemove));
     },
     [value, onChange],
   );
@@ -115,11 +120,12 @@ const KeywordInput: React.FC<{
   return (
     <div className='input with_label'>
       <div className='label_input'>
-        <label htmlFor={id}>
-          {label}
-        </label>
-
-        <div className='label_input__wrapper keyword-input-wrapper'>
+        <label htmlFor={id}>{label}</label>
+        <form
+          onSubmit={handleSubmit}
+          className='label_input__wrapper keyword-input-wrapper'
+          noValidate
+        >
           <KeywordPills keywords={value} onRemove={handleRemoveKeyword} />
           <input
             id={id}
@@ -128,8 +134,13 @@ const KeywordInput: React.FC<{
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
             placeholder={placeholder || 'Type a keyword and press Enter to add'}
+            inputMode='text'
+            enterKeyHint='done'
+            autoComplete='off'
+            aria-label={typeof label === 'string' ? label : undefined}
           />
-        </div>
+          <button type='submit' style={{ display: 'none' }} aria-hidden />
+        </form>
       </div>
     </div>
   );
@@ -315,7 +326,7 @@ const NewList: React.FC<{
     exclusive,
     repliesPolicy,
     keywords,
-    excludeKeywords
+    excludeKeywords,
   ]);
 
   return (
@@ -417,7 +428,7 @@ const NewList: React.FC<{
               onChange={handleKeywordsChange}
               placeholder={intl.formatMessage({
                 id: 'lists.include_keywords.placeholder',
-                defaultMessage: 'Add keywords to include (press Enter to add)'
+                defaultMessage: 'Add keywords to include (press Enter to add)',
               })}
             />
           </div>
@@ -435,7 +446,7 @@ const NewList: React.FC<{
               onChange={handleExcludeKeywordsChange}
               placeholder={intl.formatMessage({
                 id: 'lists.exclude_keywords.placeholder',
-                defaultMessage: 'Add keywords to exclude (press Enter to add)'
+                defaultMessage: 'Add keywords to exclude (press Enter to add)',
               })}
             />
           </div>
@@ -469,7 +480,6 @@ const NewList: React.FC<{
             </label>
           </div>
 
-
           <div className='fields-group'>
             {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label className='app-form__toggle'>
@@ -493,7 +503,7 @@ const NewList: React.FC<{
                   <Toggle
                     checked={ignoreReblog}
                     onChange={handleIgnoreReblogChange}
-                   />
+                  />
                 </div>
               </div>
             </label>
