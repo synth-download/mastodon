@@ -18,11 +18,20 @@
   }
 }
 
+.keyword-input-wrapper__input_error {
+  border: 1px solid red !important;
+}
+
 .keyword-input-wrapper {
-  padding: 4px;
+  line-height: 16px;
+  padding: 8px;
   border: 1px solid var(--background-border-color);
   border-radius: 4px;
   min-height: 44px;
+}
+
+.keyword-input-wrapper__error {
+  color: red;
 }
 
 .keyword-pills {
@@ -34,10 +43,9 @@
 
 .keyword-pill {
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 11fr 1fr;
   align-items: center;
-  border: 1px solid rgb(139.8,140.5384615385,255);
-  color: white;
+  border: 1px solid var(--background-border-color);
   padding: 1px 10px;
   margin-bottom: 4px;
   border-radius: 4px;
@@ -46,14 +54,13 @@
 
 .keyword-pill__text {
   overflow: hidden;
+  opacity: 0.6;
   margin-right: 2px;
 }
 
 .keyword-pill__remove {
   justify-self: right;
-  background: none;
   border: none;
-  color: white;
   cursor: pointer;
   border-radius: 4px;
   margin-top: 2px !important;
@@ -70,9 +77,4 @@
   flex: 1;
   min-width: 120px;
   background: transparent;
-}
-
-.keyword-input-wrapper input:focus {
-  outline: none;
-  box-shadow: none;
 }

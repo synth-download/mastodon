@@ -57,6 +57,32 @@ const KeywordPills: React.FC<{
   );
 };
 
+const REGEX_PATTER_REGEX = RegExp(/^\/(.+)\/$/);
+
+const validateKeyword = (
+  keyword: string,
+): { valid: boolean; error?: string } => {
+  const trimmed = keyword.trim();
+
+  if (!trimmed) {
+    return { valid: false, error: 'Keyword cannot be empty' };
+  }
+
+  if (REGEX_PATTER_REGEX.test(trimmed)) {
+    try {
+      new RegExp(trimmed + 'i');
+      return { valid: true };
+    } catch (e) {
+      return {
+        valid: false,
+        error: `Invalid regex pattern: ${e instanceof Error ? e.message : 'Unknown error'}`,
+      };
+    }
+  }
+
+  return { valid: true };
+};
+
 const KeywordInput: React.FC<{
   label: React.ReactNode;
   id: string;
@@ -65,20 +91,30 @@ const KeywordInput: React.FC<{
   placeholder?: string;
 }> = ({ label, id, value, onChange, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setInputValue(e.target.value);
+      setError(null);
     },
     [],
   );
 
   const commitKeyword = useCallback(() => {
     const newKeyword = inputValue.trim();
+    const validation = validateKeyword(newKeyword);
+
+    if (!validation.valid) {
+      setError(validation.error || 'Invalid keyword');
+      return;
+    }
+
     if (newKeyword && !value.includes(newKeyword)) {
       onChange([...value, newKeyword]);
+      setInputValue('');
+      setError(null);
     }
-    setInputValue('');
   }, [inputValue, value, onChange]);
 
   const handleSubmit = useCallback(
@@ -138,7 +174,9 @@ const KeywordInput: React.FC<{
             enterKeyHint='done'
             autoComplete='off'
             aria-label={typeof label === 'string' ? label : undefined}
+            className={`${error && 'keyword-input-wrapper__input_error'} keyword-input-wrapper__input`}
           />
+          {error && <p className='keyword-input-wrapper__error'>{error}</p>}
           <button type='submit' style={{ display: 'none' }} aria-hidden />
         </form>
       </div>
