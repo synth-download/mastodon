@@ -105,7 +105,6 @@ ia:
         status_page_url: URL de un pagina ubi le personas pote vider le stato de iste servitor durante un interruption
         theme: Thema que le visitatores disconnexe e le nove usatores vide.
         thumbnail: Un imagine de circa 2:1 monstrate al latere del informationes de tu servitor.
-        timeline_preview: Le visitatores foras de session potera percurrer le messages public le plus recente disponibile sur le servitor.
         trendable_by_default: Saltar le revision manual del contento de tendentia. Elementos singule pote ancora esser removite de tendentias post le facto.
         trends: Tendentias monstra que messages, hashtags e novas gania traction sur tu servitor.
         trends_as_landing_page: Monstrar contento de tendentia a usatores disconnexe e visitatores in vice que un description de iste servitor. Require tendentias esser activate.
@@ -235,12 +234,10 @@ ia:
         setting_aggregate_reblogs: Gruppar impulsos in chronologias
         setting_always_send_emails: Sempre inviar notificationes per e-mail
         setting_auto_play_gif: Auto-reproduce GIFs animate
-        setting_boost_modal: Monstrar dialogo de confirmation ante de impulsar
         setting_default_language: Lingua de publication
         setting_default_privacy: Visibilitate de publication
         setting_default_quote_policy: Qui pote citar
         setting_default_sensitive: Sempre marcar le medios cmo sensbile
-        setting_delete_modal: Monstrar le dialogo de confirmation ante deler un message
         setting_disable_hover_cards: Disactivar le previsualisation de profilos al passar del mus
         setting_disable_swiping: Disactivar le movimentos per glissamento
         setting_display_media: Visualisation de medios
@@ -250,7 +247,6 @@ ia:
         setting_emoji_style: Stilo de emojis
         setting_expand_spoilers: Sempre expander messages marcate con avisos de contento
         setting_hide_network: Cela tu rete social
-        setting_missing_alt_text_modal: Monstrar un dialogo de confirmation ante de publicar multimedia sin texto alternative
         setting_reduce_motion: Reducer movimento in animationes
         setting_system_font_ui: Usar typo de litteras predefinite del systema
         setting_system_scrollbars_ui: Usar le barra de rolamento predefinite del systema
@@ -302,7 +298,6 @@ ia:
         status_page_url: URL del pagina de stato
         theme: Thema predefinite
         thumbnail: Miniatura de servitor
-        timeline_preview: Permitter accesso non authenticate a chronologias public
         trendable_by_default: Permitter tendentias sin revision previe
         trends: Activar tendentias
         trends_as_landing_page: Usar tendentias como pagina de destination

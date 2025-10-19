@@ -41,7 +41,9 @@ import { ColumnLink } from 'flavours/glitch/features/ui/components/column_link';
 import { useBreakpoint } from 'flavours/glitch/features/ui/hooks/useBreakpoint';
 import { useIdentity } from 'flavours/glitch/identity_context';
 import {
-  timelinePreview,
+  localLiveFeedAccess,
+  bubbleLiveFeedAccess,
+  remoteLiveFeedAccess,
   trendsEnabled,
   me,
 } from 'flavours/glitch/initial_state';
@@ -285,10 +287,19 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
           />
         )}
 
-        {(signedIn || timelinePreview) && (
+        {(signedIn ||
+          localLiveFeedAccess === 'public' ||
+          bubbleLiveFeedAccess === 'public' ||
+          remoteLiveFeedAccess === 'public') && (
           <ColumnLink
             transparent
-            to='/public/local'
+            to={
+              signedIn || localLiveFeedAccess === 'public'
+                ? '/public/local'
+                : bubbleLiveFeedAccess === 'public'
+                  ? '/public/bubble'
+                  : '/public/remote'
+            }
             icon='globe'
             iconComponent={PublicIcon}
             isActive={isFirehoseActive}

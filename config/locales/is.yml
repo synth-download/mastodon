@@ -850,6 +850,10 @@ is:
         all: Til allra
         disabled: Til engra
         users: Til innskráðra staðværra notenda
+      feed_access:
+        modes:
+          authenticated: Einungis auðkenndir notendur
+          public: Allir
       registrations:
         moderation_recommandation: Tryggðu að þú hafir hæft og aðgengilegt umsjónarteymi til taks áður en þú opnar á skráningar fyrir alla!
         preamble: Stýrðu því hverjir geta útbúið notandaaðgang á netþjóninum þínum.
@@ -903,6 +907,7 @@ is:
       no_status_selected: Engum færslum var breytt þar sem engar voru valdar
       open: Opna færslu
       original_status: Upprunaleg færsla
+      quotes: Tilvitnanir
       reblogs: Endurbirtingar
       replied_to_html: Svaraði til %{acct_link}
       status_changed: Færslu breytt
@@ -910,6 +915,7 @@ is:
       title: Færslur notanda - @%{name}
       trending: Vinsælt
       view_publicly: Skoða opinberlega
+      view_quoted_post: Skoða færslu sem vitnað er í
       visibility: Sýnileiki
       with_media: Með myndefni
     strikes:
@@ -1184,10 +1190,10 @@ is:
     hint_html: Ef þú vilt flytjast af öðrum notandaaðgangi yfir á þennan, þá geturðu búið hér til samnefni, sem er nauðsynlegt áður en þú getur haldið áfram við að flytja fylgjendur af gamla notandaaðgangnum yfir á þennan aðgang. Þessi aðgerð er í sjálfu sér <strong>skaðlaus og afturkræf</strong>. <strong>Yfirfærsla notandaaðgangsins er síðan ræst á gamla notandaaðgangnum</strong>.
     remove: Aftengja samnefni
   appearance:
-    advanced_web_interface: Ítarlegt vefviðmót
-    advanced_web_interface_hint: 'Ef þú vilt geta notað alla skjábreiddina gefur ítarlegt vefviðmót þér færi á að stilla marga mismunandi dálka svo hægt sé að sjá eins miklar upplýsingar í einu eins og þér hentar: Heim, tilkynningar, sameiginleg tímalína, ótiltekinn fjöldi lista og myllumerkja.'
+    advanced_settings: Ítarlegar stillingar
     animations_and_accessibility: Hreyfingar og algilt aðgengi
-    confirmation_dialogs: Staðfestingargluggar
+    boosting_preferences: Kjörstillingar fyrir endurbirtingar
+    boosting_preferences_info_html: "<strong>Ábending:</strong> Hverjar svo sem stillingarnar eru, þá mun <kbd>Shift</kbd> + <kbd>smella</kbd> á %{icon} endurbirtingartáknið alltaf endurbirta strax."
     discovery: Uppgötvun
     localization:
       body: Mastodon er þýtt af sjálfboðaliðum.
@@ -1591,6 +1597,13 @@ is:
       expires_at: Rennur út
       uses: Afnot
     title: Bjóða fólki
+  link_preview:
+    author_html: Frá %{name}
+    potentially_sensitive_content:
+      action: Smelltu til að birta
+      confirm_visit: Ertu viss um að þú viljir opna þennan tengil?
+      hide_button: Fela
+      label: Mögulega viðkvæmt efni
   lists:
     errors:
       limit: Þú hefur náð hámarksfjölda lista
@@ -1901,6 +1914,9 @@ is:
         other: "%{count} myndskeið"
     boosted_from_html: Endurbirt frá %{acct_link}
     content_warning: 'Aðvörun vegna efnis (CW): %{warning}'
+    content_warnings:
+      hide: Fela færslu
+      show: Sýna meira
     default_language: Sama og tungumál viðmóts
     disallowed_hashtags:
       one: 'innihélt óleyfilegt myllumerki: %{tags}'
@@ -1915,10 +1931,15 @@ is:
       limit: Þú hefur þegar fest leyfilegan hámarksfjölda færslna
       ownership: Færslur frá einhverjum öðrum er ekki hægt að festa
       reblog: Ekki er hægt að festa endurbirtingu
+    quote_error:
+      not_available: Færsla ekki tiltæk
+      pending_approval: Færsla í bið
+      revoked: Færsla fjarlægð af höfundi
     quote_policies:
       followers: Einungis fylgjendur
       nobody: Bara ég
       public: Hver sem er
+    quote_post_author: Vitnaði í færslu frá %{acct}
     title: "%{name}: „%{quote}‟"
     visibilities:
       direct: Einkaspjall
