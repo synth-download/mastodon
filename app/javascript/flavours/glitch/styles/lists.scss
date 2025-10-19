@@ -59,7 +59,10 @@
 }
 
 .keyword-pill__remove {
-  justify-self: right;
+  aspect-ratio: 1/1;
+  justify-self:right;
+  color: white;
+  background: #6364ff;
   border: none;
   cursor: pointer;
   border-radius: 4px;
