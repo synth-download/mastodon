@@ -1,15 +1,24 @@
 import redis, time, json, os
 from redis import Sentinel
 
+
 def get_redis():
     redis_url = os.environ.get("SIDEKIQ_REDIS_URL") or os.environ.get("REDIS_URL")
     if redis_url:
         return redis.Redis.from_url(redis_url, decode_responses=True)
 
-    redis_host = os.environ.get("SIDEKIQ_REDIS_HOST") or os.environ.get("REDIS_HOST") or 'localhost'
-    redis_port = os.environ.get("SIDEKIQ_REDIS_PORT") or os.environ.get("REDIS_PORT") or 6379
+    redis_host = (
+        os.environ.get("SIDEKIQ_REDIS_HOST")
+        or os.environ.get("REDIS_HOST")
+        or "localhost"
+    )
+    redis_port = (
+        os.environ.get("SIDEKIQ_REDIS_PORT") or os.environ.get("REDIS_PORT") or 6379
+    )
     redis_user = os.environ.get("SIDEKIQ_REDIS_USER") or os.environ.get("REDIS_USER")
-    redis_password = os.environ.get("SIDEKIQ_REDIS_PASSWORD") or os.environ.get("REDIS_PASSWORD")
+    redis_password = os.environ.get("SIDEKIQ_REDIS_PASSWORD") or os.environ.get(
+        "REDIS_PASSWORD"
+    )
 
     if redis_host:
         return redis.Redis(
@@ -17,14 +26,26 @@ def get_redis():
             port=int(redis_port),
             username=redis_user,
             password=redis_password,
-            decode_responses=True
+            decode_responses=True,
         )
 
-    redis_sentinels = os.environ.get("SIDEKIQ_REDIS_SENTINELS") or os.environ.get("REDIS_SENTINELS")
-    redis_sentinel_master = os.environ.get("SIDEKIQ_REDIS_SENTINEL_MASTER") or os.environ.get("REDIS_SENTINEL_MASTER")
-    redis_sentinel_port = int(os.environ.get("SIDEKIQ_REDIS_SENTINEL_PORT") or os.environ.get("REDIS_SENTINEL_PORT") or 26379)
-    redis_sentinel_username = os.environ.get("SIDEKIQ_REDIS_SENTINEL_USERNAME") or os.environ.get("REDIS_SENTINEL_USERNAME")
-    redis_sentinel_password = os.environ.get("SIDEKIQ_REDIS_SENTINEL_PASSWORD") or os.environ.get("REDIS_SENTINEL_PASSWORD")
+    redis_sentinels = os.environ.get("SIDEKIQ_REDIS_SENTINELS") or os.environ.get(
+        "REDIS_SENTINELS"
+    )
+    redis_sentinel_master = os.environ.get(
+        "SIDEKIQ_REDIS_SENTINEL_MASTER"
+    ) or os.environ.get("REDIS_SENTINEL_MASTER")
+    redis_sentinel_port = int(
+        os.environ.get("SIDEKIQ_REDIS_SENTINEL_PORT")
+        or os.environ.get("REDIS_SENTINEL_PORT")
+        or 26379
+    )
+    redis_sentinel_username = os.environ.get(
+        "SIDEKIQ_REDIS_SENTINEL_USERNAME"
+    ) or os.environ.get("REDIS_SENTINEL_USERNAME")
+    redis_sentinel_password = os.environ.get(
+        "SIDEKIQ_REDIS_SENTINEL_PASSWORD"
+    ) or os.environ.get("REDIS_SENTINEL_PASSWORD")
 
     if redis_sentinels and redis_sentinel_master:
         sentinels = []
@@ -40,28 +61,28 @@ def get_redis():
         sentinel = Sentinel(
             sentinels,
             socket_timeout=2,
-            sentinel_kwargs=sentinel_kwargs if sentinel_kwargs else None
+            sentinel_kwargs=sentinel_kwargs if sentinel_kwargs else None,
         )
 
         return sentinel.master_for(
-            service_name=redis_sentinel_master,
-            socket_timeout=2,
-            decode_responses=True
+            service_name=redis_sentinel_master, socket_timeout=2, decode_responses=True
         )
 
     raise RuntimeError("No valid Redis configuration found")
 
+
 _r = get_redis()
+
 
 def enqueue_fetch(uri: str):
     now_ms = int(time.time() * 1000)
     payload = {
-        'class': 'ActivityPub::FetchStatusWorker',
+        "class": "ActivityPub::FetchStatusWorker",
         "jid": os.urandom(12).hex(),
-        'args': [uri],
-        'retry': True,
+        "args": [uri],
+        "retry": True,
         "created_at": now_ms,
         "enqueued_at": now_ms,
-        'queue': 'pull'
+        "queue": "pull",
     }
-    _r.rpush('queue:pull', json.dumps(payload, separators=(',',':')))
+    _r.rpush("queue:pull", json.dumps(payload, separators=(",", ":")))

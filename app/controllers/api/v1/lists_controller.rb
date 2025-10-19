@@ -17,45 +17,13 @@ class Api::V1::ListsController < Api::BaseController
   end
 
   def create
-    raw = params.require(:list)
-    
-    attrs = raw.permit(:title, :replies_policy, :exclusive, :with_media_only, :ignore_reblog)
-    @list = current_account.owned_lists.new(attrs)
-
-    if raw.key?(:include_keywords)
-      @list.include_keywords = normalize_groups(raw[:include_keywords])
-    end
-
-    if raw.key?(:exclude_keywords)
-      @list.exclude_keywords = normalize_groups(raw[:exclude_keywords])
-    end
-
-    if @list.save
-      render json: @list, serializer: REST::ListSerializer, status: :created
-    else
-      render json: { errors: @list.errors }, status: :unprocessable_entity
-    end
+    @list = List.create!(list_params.merge(account: current_account))
+    render json: @list, serializer: REST::ListSerializer
   end
 
   def update
-    raw = params.require(:list)
-    
-    attrs = raw.permit(:title, :replies_policy, :exclusive, :with_media_only, :ignore_reblog)
-    @list.assign_attributes(attrs)
-
-    if raw.key?(:include_keywords)
-      @list.include_keywords = normalize_groups(raw[:include_keywords])
-    end
-
-    if raw.key?(:exclude_keywords)
-      @list.exclude_keywords = normalize_groups(raw[:exclude_keywords])
-    end
-
-    if @list.save
-      render json: @list, serializer: REST::ListSerializer
-    else
-      render json: { errors: @list.errors }, status: :unprocessable_entity
-    end
+    @list.update!(list_params)
+    render json: @list, serializer: REST::ListSerializer
   end
 
   def destroy
@@ -64,20 +32,6 @@ class Api::V1::ListsController < Api::BaseController
   end
 
   private
-
-  def normalize_groups(groups)
-    return [] if groups.nil?
-    groups = groups.is_a?(String) ? (JSON.parse(groups) rescue []) : groups
-
-    unless groups.is_a?(Array)
-      return []
-    end
-
-    groups.map do |group|
-      g = group.is_a?(Array) ? group : Array(group)
-      g.map(&:to_s).map(&:strip).reject(&:blank?)
-    end.reject(&:empty?)
-  end
 
   def set_list
     @list = List.where(account: current_account).find(params[:id])
