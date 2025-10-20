@@ -1,11 +1,13 @@
 import asyncio
 import datetime
+import json
 import os
 import re
+import threading
 from typing import cast
+import select
 
 import psycopg2
-from psycopg2 import pool
 from util import LOGGER
 
 DATABASE_URL = os.environ.get("REPLICA_DATABASE_URL") or os.environ.get("DATABASE_URL")
@@ -29,15 +31,6 @@ def get_conn():
         )
 
 
-def get_connection_pool():
-    if DATABASE_URL:
-        return pool.ThreadedConnectionPool(minconn=1, maxconn=20, dsn=DATABASE_URL)
-    else:
-        conn_string = f"host={DB_HOST or 'localhost'} dbname={DB_NAME or 'mastodon_production'} user={DB_USER or 'mastodon'} password={DB_PASS} port={DB_PORT or 5432}"
-        return pool.ThreadedConnectionPool(minconn=1, maxconn=20, dsn=conn_string)
-
-
-psql_pool = get_connection_pool()
 conn = get_conn()
 
 
@@ -69,6 +62,8 @@ class DomainBlocks:
 
 class ListDefs:
     def __init__(self) -> None:
+        self.thread: threading.Thread | None = None
+
         self.include_keywords: set[str] = set()
         self.exclude_keywords: set[str] = set()
 
@@ -77,40 +72,17 @@ class ListDefs:
 
         self.last_updated: datetime.datetime | None = None
 
-    def _check_for_changes(self) -> bool:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT MAX(l.updated_at) as max_updated
-            FROM lists l
-            JOIN accounts a ON l.account_id = a.id
-            WHERE a.domain IS NULL
-              AND l.include_keywords IS NOT NULL
-              AND jsonb_array_length(l.include_keywords) > 0
-        """)
-        row = cur.fetchone()
-        cur.close()
-
-        if not row or not row[0]:
-            return False
-
-        updated = not self.last_updated or row[0] > self.last_updated
-        self.last_updated = datetime.datetime.now()
-        return updated
-
     def _refresh(self) -> None:
-        if not self._check_for_changes():
-            return
-
         cur = conn.cursor()
         cur.execute("""
-      SELECT lists.include_keywords,
-              lists.exclude_keywords
-      FROM lists
-      JOIN accounts ON lists.account_id = accounts.id
-      WHERE accounts.domain IS NULL
-        AND lists.include_keywords IS NOT NULL
-        AND jsonb_array_length(lists.include_keywords) > 0
-      """)
+            SELECT lists.include_keywords,
+                    lists.exclude_keywords
+            FROM lists
+            JOIN accounts ON lists.account_id = accounts.id
+            WHERE accounts.domain IS NULL
+              AND lists.include_keywords IS NOT NULL
+              AND jsonb_array_length(lists.include_keywords) > 0
+        """)
         rows = cur.fetchall()
         cur.close()
 
@@ -152,11 +124,37 @@ class ListDefs:
         else:
             self.exclude_regex = None
 
-    async def poll(self, stop: asyncio.Event):
-        while not stop.is_set():
-            try:
-                await asyncio.to_thread(self._refresh)
-            except Exception:
-                LOGGER.exception("Exception in poll task!")
-                stop.set()
-            await asyncio.sleep(10)
+    def start_listen_thread(self, stop: asyncio.Event, loop: asyncio.AbstractEventLoop):
+        listen_conn = get_conn()
+        listen_conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = listen_conn.cursor()
+        cur.execute("LISTEN lists_changed;")
+        cur.close()
+
+        def _listen():
+            while not stop.is_set():
+                r, _, _ = select.select([listen_conn], [], [], 5)
+                if not r:
+                    continue
+                try:
+                    listen_conn.poll()
+                    while listen_conn.notifies:
+                        notify = listen_conn.notifies.pop(0)
+                        if notify.payload:
+                            data = json.loads(notify.payload)
+                            if data["table"] == "lists":
+                                LOGGER.info("Refreshing lists!")
+                                _ = asyncio.run_coroutine_threadsafe(
+                                    asyncio.to_thread(self._refresh), loop
+                                )
+                except Exception:
+                    LOGGER.exception("Exception in listen thread")
+                    stop.set()
+                    break
+
+        self.thread = threading.Thread(target=_listen, daemon=True)
+        self.thread.start()
+
+    def stop_listen_thread(self):
+        if self.thread:
+            self.thread.join(timeout=2)
