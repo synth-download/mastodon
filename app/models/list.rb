@@ -41,9 +41,9 @@ class List < ApplicationRecord
   scope :with_list_account, ->(account) { joins(:list_accounts).where(list_accounts: { account: }) }
 
   def matches_any_keyword?(text, compiled_keywords)
-    simple_keywords, regexes = compiled_keywords
+    simple_keywords, regex = compiled_keywords
     return true if simple_keywords.any? { |keyword| text.include?(keyword) }
-    regexes.any? { |regex| regex.match?(text) }
+    regex&.match?(text)
   end
 
   def compiled_include_keywords
@@ -66,13 +66,14 @@ class List < ApplicationRecord
 
   def compile_keywords(keywords)
     simple_keywords = []
-    regexes = []
+    regex_patterns = []
 
     keywords.each do |keyword|
       if keyword.start_with?('/') && keyword.end_with?('/') && keyword.length > 2
         pattern = keyword[1..-2]
         begin
-          regexes << Regexp.new(pattern, Regexp::IGNORECASE)
+          Regexp.new(pattern, Regexp::IGNORECASE)
+          regex_patterns << pattern
         rescue RegexpError => e
           Rails.logger.error "Invalid regex pattern in list #{id}: #{pattern} - #{e.message}"
           simple_keywords << keyword
@@ -82,7 +83,11 @@ class List < ApplicationRecord
       end
     end
 
-    [simple_keywords, regexes]
+    combined_regex = if regex_patterns.any?
+      Regexp.new(regex_patterns.join('|'), Regexp::IGNORECASE)
+    end
+
+    [simple_keywords, combined_regex]
   end
 
   def clear_keyword_cache

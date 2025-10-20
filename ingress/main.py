@@ -1,46 +1,35 @@
-import logging, requests, json, html, sys, re, os
+import asyncio
+import html
+import json
+import os
+import re
+import time
+from typing import Any, Callable, cast
+import requests
 from urllib.parse import urlparse
-from database import ListCache, BlockedDomainsCache
-from sidekiq import enqueue_fetch
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-LOGGER = logging.getLogger("ingress")
-TAG_PATTERN = re.compile(r"<[^>]+>")
+from database import DomainBlocks, ListDefs, psql_pool
+from sidekiq import enqueue_fetch
+from util import LOGGER
+
+MASTODON_DOMAIN = os.environ.get("WEB_DOMAIN") or os.environ["LOCAL_DOMAIN"]
+
 TIMELINE_API = (
     os.environ.get("INGRESS_TIMELINE_API_URL")
     or "https://fedi.buzz/api/v1/streaming/public"
 )
 TIMELINE_API_TOKEN = os.environ.get("INGRESS_TIMELINE_API_TOKEN")
-LISTS = ListCache()
-BLOCKED_DOMAINS = BlockedDomainsCache()
 
-
-def matches_filters(
-    texts: list[str],
-    include_kw: list[str],
-    include_rx: list[re.Pattern[str]],
-    exclude_kw: list[str],
-    exclude_rx: list[re.Pattern[str]],
-):
-    has_include_match = (
-        not include_kw or any(kw in text for kw in include_kw for text in texts)
-    ) and (
-        not include_rx or any(rx.search(text) for rx in include_rx for text in texts)
-    )
-
-    has_exclude_match = any(kw in text for kw in exclude_kw for text in texts) or any(
-        rx.search(text) for rx in exclude_rx for text in texts
-    )
-
-    return has_include_match and not has_exclude_match
+TAG_PATTERN: re.Pattern[str] = re.compile(r"<[^>]+>")
+DOMAIN_BLOCKS: DomainBlocks = DomainBlocks()
+LISTS: ListDefs = ListDefs()
 
 
 def uri_blocked(uri: str):
     hostname = urlparse(uri).hostname
     if not hostname:
         return False
-    blocks = BLOCKED_DOMAINS.get_blocks()
-
+    blocks: list[str] = []  # TODO
     domain = hostname.lower()
     parts = domain.split(".")
     for i in range(len(parts)):
@@ -50,60 +39,124 @@ def uri_blocked(uri: str):
     return False
 
 
-def handle_status(status: dict):
-    uri = status.get("uri")
-    if not uri:
+def handle_status(status: dict[str, Any]) -> None:
+    if "uri" not in status:
+        return
+    if uri_blocked(status["uri"]):
         return
 
-    if uri_blocked(uri):
-        return
+    spoiler: str = (status.get("spoiler_text", ''))
+    content: str = (html.unescape(TAG_PATTERN.sub("", status.get("content") or "")))
+    tags: str = (' '.join("#" + tag['name'] for tag in status["tags"]) if status.get('tags') else '')
 
-    lists = LISTS.get_lists(
-        status.get("reblog") or False, status.get("media_attachments") or False
+    text: str = f"{spoiler}\n{content}\n{tags}".strip()
+    if not text:
+      return
+
+    if any(kw in text for kw in LISTS.exclude_keywords) or LISTS.exclude_regex.search(text):
+      return
+
+    if not any(kw in text for kw in LISTS.include_keywords) and not LISTS.include_regex.search(text):
+      return
+
+    LOGGER.info("Pulling... %s", status['uri'])
+    enqueue_fetch(status['uri'])
+
+
+def listen(
+    loop: asyncio.AbstractEventLoop,
+    stop: asyncio.Event,
+    task_queue: asyncio.Queue[Callable[[], None] | None],
+) -> None:
+    headers: dict[str, str | bytes | None] = {}
+    headers["User-Agent"] = (
+        f"Mastodon/ingress (+http://{MASTODON_DOMAIN}/)"
     )
-    if not lists:
-        return
-
-    spoiler = status.get("spoiler_text") or ""
-    text = html.unescape(TAG_PATTERN.sub("", status.get("content") or ""))
-    texts = [spoiler.lower(), text.lower()]
-
-    for _list in lists:
-        include: tuple[list[str], list[re.Pattern[str]]] = _list.get(
-            "include_keywords", ()
-        )
-        exclude: tuple[list[str], list[re.Pattern[str]]] = _list.get(
-            "exclude_keywords", ()
-        )
-        include_kw, include_rx = include
-        exclude_kw, exclude_rx = exclude
-
-        if not matches_filters(texts, include_kw, include_rx, exclude_kw, exclude_rx):
-            continue
-
-        enqueue_fetch(uri)
-        LOGGER.info("Pulling %s..", uri)
-        break
-
-
-def run_timeline_listener():
-    headers = {}
     if TIMELINE_API_TOKEN:
         headers["Authorization"] = f"Bearer {TIMELINE_API_TOKEN}"
 
-    with requests.get(TIMELINE_API, headers=headers, stream=True) as rsp:
-        if rsp.status_code != 200:
-            rsp.raise_for_status()
+    LOGGER.info(f"Listening to {TIMELINE_API}...")
+    try:
+        with requests.get(
+            TIMELINE_API, headers=headers, allow_redirects=True, stream=True
+        ) as rsp:
+            if rsp.status_code != 200:
+                rsp.raise_for_status()
 
-        buffer = []
-        for line in rsp.iter_lines():
-            if line.startswith(b"event:") and line.endswith(b"update"):
-                buffer.append(line)
+            current_event: str | None = None
+            for incomplete in rsp.iter_lines():
+                if stop.is_set():
+                    return
 
-            if buffer and line.startswith(b"data:"):
-                buffer.pop()
-                handle_status(json.loads(line.decode("utf-8")[5:]))
+                if not incomplete:
+                    continue
+                line: str = cast(str, incomplete.decode("utf-8"))
+                if line.startswith(":"):
+                    continue
+
+                if line.startswith("event:"):
+                    current_event = line[6:].strip()
+                elif line.startswith("data:") and current_event == "update":
+                    data = line[5:].strip()
+                    coro = task_queue.put(lambda d=data: handle_status(json.loads(d)))
+                    _ = asyncio.run_coroutine_threadsafe(coro, loop)
+                    current_event = None
+    except Exception:
+        LOGGER.exception("Exception in listening task.. Reconnecting in 5 seconds...")
+        time.sleep(5)
+
+
+async def poll(stop: asyncio.Event):
+    _ = await asyncio.gather(
+        DOMAIN_BLOCKS.poll(stop),
+        LISTS.poll(stop),
+    )
+
+
+async def worker(task_queue: asyncio.Queue[Callable[[], None] | None]):
+    while True:
+        task = await task_queue.get()
+        try:
+            if task is None:
+                break
+            if asyncio.iscoroutinefunction(task):
+                await task()
+            else:
+                await asyncio.get_running_loop().run_in_executor(None, task)
+        finally:
+            task_queue.task_done()
+
+
+async def run_listener(
+    stop: asyncio.Event, task_queue: asyncio.Queue[Callable[[], None] | None]
+):
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, listen, loop, stop, task_queue)
+
+
+async def main() -> None:
+    task_queue: asyncio.Queue[Callable[[], None] | None] = asyncio.Queue()
+    event = asyncio.Event()
+
+    worker_task = asyncio.create_task(worker(task_queue))
+    poll_task = asyncio.create_task(poll(event))
+    listener_task = asyncio.create_task(run_listener(event, task_queue))
+
+    try:
+        await listener_task
+    except asyncio.CancelledError:
+        LOGGER.info("listener cancelled")
+    except KeyboardInterrupt:
+        LOGGER.info("Shutting down...")
+
+    event.set()
+    await task_queue.put(None)
+    await task_queue.join()
+    _ = worker_task.cancel()
+    _ = poll_task.cancel()
+    _ = await asyncio.gather(worker_task, poll_task, return_exceptions=True)
+    psql_pool.closeall()
 
 
 if __name__ == "__main__":
-    run_timeline_listener()
+    asyncio.run(main())

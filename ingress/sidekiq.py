@@ -1,4 +1,8 @@
-import redis, time, json, os
+import json
+import os
+import time
+
+import redis
 from redis import Sentinel
 
 
