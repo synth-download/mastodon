@@ -132,6 +132,7 @@ class ListDefs:
         cur.close()
 
         def _listen():
+            self._refresh()
             while not stop.is_set():
                 r, _, _ = select.select([listen_conn], [], [], 5)
                 if not r:
