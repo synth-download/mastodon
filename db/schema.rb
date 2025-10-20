@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_19_001245) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_235220) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -646,14 +646,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_001245) do
   create_table "lists", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "title", default: "", null: false
-    t.jsonb "include_keywords", default: [], null: false
-    t.jsonb "exclude_keywords", default: [], null: false
-    t.boolean "with_media_only", default: false, null: false
-    t.boolean "ignore_reblog", default: false, null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "replies_policy", default: 0, null: false
     t.boolean "exclusive", default: false, null: false
+    t.jsonb "include_keywords", default: [], null: false
+    t.jsonb "exclude_keywords", default: [], null: false
+    t.boolean "with_media_only", default: false, null: false
+    t.boolean "ignore_reblog", default: false, null: false
     t.index ["account_id"], name: "index_lists_on_account_id"
   end
 
@@ -1116,6 +1116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_001245) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "status_id", "name"], name: "index_status_reactions_on_account_id_and_status_id", unique: true
+    t.index ["account_id"], name: "index_status_reactions_on_account_id"
     t.index ["custom_emoji_id"], name: "index_status_reactions_on_custom_emoji_id"
     t.index ["status_id"], name: "index_status_reactions_on_status_id"
   end

@@ -8,7 +8,7 @@ from typing import Any, Callable, cast
 from urllib.parse import urlparse
 
 import requests
-from database import DomainBlocks, ListDefs, psql_pool
+from database import DomainBlocks, ListDefs
 from sidekiq import enqueue_fetch
 from util import LOGGER
 
@@ -121,8 +121,7 @@ def listen(
 
 async def poll(stop: asyncio.Event):
     _ = await asyncio.gather(
-        DOMAIN_BLOCKS.poll(stop),
-        LISTS.poll(stop),
+        DOMAIN_BLOCKS.poll(stop)
     )
 
 
@@ -151,6 +150,9 @@ async def main() -> None:
     task_queue: asyncio.Queue[Callable[[], None] | None] = asyncio.Queue()
     event = asyncio.Event()
 
+    loop = asyncio.get_running_loop()
+    LISTS.start_listen_thread(event, loop)
+
     worker_task = asyncio.create_task(worker(task_queue))
     poll_task = asyncio.create_task(poll(event))
     listener_task = asyncio.create_task(run_listener(event, task_queue))
@@ -168,7 +170,7 @@ async def main() -> None:
     _ = worker_task.cancel()
     _ = poll_task.cancel()
     _ = await asyncio.gather(worker_task, poll_task, return_exceptions=True)
-    psql_pool.closeall()
+    LISTS.stop_listen_thread()
 
 
 if __name__ == "__main__":
