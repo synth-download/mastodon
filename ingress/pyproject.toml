@@ -2,9 +2,10 @@
 name = "ingress"
 version = "0.1.0"
 description = "Mastodon federated timeline list ingress service"
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "psycopg2-binary>=2.9.10",
+    "psycopg2-binary>=2.9.11",
     "redis>=6.4.0",
-    "requests>=2.32.4",
+    "requests>=2.32.5",
 ]
