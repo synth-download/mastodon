@@ -1,4 +1,5 @@
 web: env PORT=3000 RAILS_ENV=development bundle exec puma -C config/puma.rb
 sidekiq: env PORT=3000 RAILS_ENV=development bundle exec sidekiq
 stream: env PORT=4000 yarn workspace @mastodon/streaming start
+ingress: cd ingress && env DB_NAME=mastodon_development uv run main.py
 vite: yarn dev
