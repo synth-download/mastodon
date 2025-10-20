@@ -40,7 +40,7 @@ class ReblogService < BaseService
     DistributionWorker.perform_async(@reblog.id)
     ActivityPub::DistributionWorker.perform_async(@reblog.id) unless @reblogged_status.local_only?
 
-    create_notification(@reblog)
+    create_notification()
     increment_statistics
 
     @reblog
@@ -55,9 +55,7 @@ class ReblogService < BaseService
   end
 
   def create_notification()
-    reblogged_status = @reblog.reblog
-
-    LocalNotificationWorker.perform_async(reblogged_status.account_id, @reblog.id, @reblog.class.name, 'reblog') if reblogged_status.account.local?
+    LocalNotificationWorker.perform_async(@reblogged_status.account_id, @reblog.id, @reblog.class.name, 'reblog') if @reblogged_status.account.local?
   end
 
   def increment_statistics
