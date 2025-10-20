@@ -5,9 +5,9 @@ import os
 import re
 import time
 from typing import Any, Callable, cast
-import requests
 from urllib.parse import urlparse
 
+import requests
 from database import DomainBlocks, ListDefs, psql_pool
 from sidekiq import enqueue_fetch
 from util import LOGGER
@@ -45,22 +45,30 @@ def handle_status(status: dict[str, Any]) -> None:
     if uri_blocked(status["uri"]):
         return
 
-    spoiler: str = (status.get("spoiler_text", ''))
-    content: str = (html.unescape(TAG_PATTERN.sub("", status.get("content") or "")))
-    tags: str = (' '.join("#" + tag['name'] for tag in status["tags"]) if status.get('tags') else '')
+    spoiler: str = status.get("spoiler_text", "")
+    content: str = html.unescape(TAG_PATTERN.sub("", status.get("content") or ""))
+    tags: str = (
+        " ".join("#" + tag["name"] for tag in status["tags"])
+        if status.get("tags")
+        else ""
+    )
 
     text: str = f"{spoiler}\n{content}\n{tags}".strip()
     if not text:
-      return
+        return
 
-    if any(kw in text for kw in LISTS.exclude_keywords) or LISTS.exclude_regex.search(text):
-      return
+    if any(kw in text for kw in LISTS.exclude_keywords) or (
+        LISTS.exclude_regex and LISTS.exclude_regex.search(text)
+    ):
+        return
 
-    if not any(kw in text for kw in LISTS.include_keywords) and not LISTS.include_regex.search(text):
-      return
+    if not any(kw in text for kw in LISTS.include_keywords) and not (
+        LISTS.include_regex and LISTS.include_regex.search(text)
+    ):
+        return
 
-    LOGGER.info("Pulling... %s", status['uri'])
-    enqueue_fetch(status['uri'])
+    LOGGER.info("Pulling... %s", status["uri"])
+    enqueue_fetch(status["uri"])
 
 
 def listen(
@@ -69,9 +77,7 @@ def listen(
     task_queue: asyncio.Queue[Callable[[], None] | None],
 ) -> None:
     headers: dict[str, str | bytes | None] = {}
-    headers["User-Agent"] = (
-        f"Mastodon/ingress (+http://{MASTODON_DOMAIN}/)"
-    )
+    headers["User-Agent"] = f"Mastodon/ingress (+http://{MASTODON_DOMAIN}/)"
     if TIMELINE_API_TOKEN:
         headers["Authorization"] = f"Bearer {TIMELINE_API_TOKEN}"
 
