@@ -6,7 +6,6 @@ from typing import cast
 
 import psycopg2
 from psycopg2 import pool
-
 from util import LOGGER
 
 DATABASE_URL = os.environ.get("REPLICA_DATABASE_URL") or os.environ.get("DATABASE_URL")
@@ -104,13 +103,13 @@ class ListDefs:
 
         cur = conn.cursor()
         cur.execute("""
-        SELECT lists.include_keywords,
-               lists.exclude_keywords
-        FROM lists
-        JOIN accounts ON lists.account_id = accounts.id
-        WHERE accounts.domain IS NULL
-          AND lists.include_keywords IS NOT NULL
-          AND jsonb_array_length(lists.include_keywords) > 0
+      SELECT lists.include_keywords,
+              lists.exclude_keywords
+      FROM lists
+      JOIN accounts ON lists.account_id = accounts.id
+      WHERE accounts.domain IS NULL
+        AND lists.include_keywords IS NOT NULL
+        AND jsonb_array_length(lists.include_keywords) > 0
       """)
         rows = cur.fetchall()
         cur.close()
@@ -120,6 +119,7 @@ class ListDefs:
 
         include_patterns: set[str] = set()
         exclude_patterns: set[str] = set()
+
         for row in rows:
             include_kw, exclude_kw = row
 
@@ -138,13 +138,19 @@ class ListDefs:
         self.include_keywords = include_keywords
         self.exclude_keywords = exclude_keywords
 
-        include_pattern = "|".join(include_patterns)
-        exclude_pattern = "|".join(exclude_patterns)
+        if include_patterns:
+            include_pattern = "|".join(include_patterns)
+            if not self.include_regex or self.include_regex.pattern != include_pattern:
+                self.include_regex = re.compile(include_pattern, re.IGNORECASE)
+        else:
+            self.include_regex = None
 
-        if not self.include_regex or self.include_regex.pattern != include_pattern:
-            self.include_regex = re.compile(include_pattern, re.IGNORECASE)
-        if not self.exclude_regex or self.exclude_regex.pattern != exclude_pattern:
-            self.exclude_regex = re.compile(exclude_pattern, re.IGNORECASE)
+        if exclude_patterns:
+            exclude_pattern = "|".join(exclude_patterns)
+            if not self.exclude_regex or self.exclude_regex.pattern != exclude_pattern:
+                self.exclude_regex = re.compile(exclude_pattern, re.IGNORECASE)
+        else:
+            self.exclude_regex = None
 
     async def poll(self, stop: asyncio.Event):
         while not stop.is_set():

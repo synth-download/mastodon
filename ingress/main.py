@@ -39,6 +39,20 @@ def uri_blocked(uri: str):
     return False
 
 
+def should_include_status(text: str):
+    if any(kw in text for kw in LISTS.exclude_keywords):
+        return False
+    if LISTS.exclude_regex and LISTS.exclude_regex.search(text):
+        return False
+
+    if any(kw in text for kw in LISTS.include_keywords):
+        return True
+    if LISTS.include_regex and LISTS.include_regex.search(text):
+        return True
+
+    return False
+
+
 def handle_status(status: dict[str, Any]) -> None:
     if "uri" not in status:
         return
@@ -53,18 +67,11 @@ def handle_status(status: dict[str, Any]) -> None:
         else ""
     )
 
-    text: str = f"{spoiler}\n{content}\n{tags}".strip()
+    text: str = f"{spoiler}\n{content}\n{tags}".strip().lower()
     if not text:
         return
 
-    if any(kw in text for kw in LISTS.exclude_keywords) or (
-        LISTS.exclude_regex and LISTS.exclude_regex.search(text)
-    ):
-        return
-
-    if not any(kw in text for kw in LISTS.include_keywords) and not (
-        LISTS.include_regex and LISTS.include_regex.search(text)
-    ):
+    if not should_include_status(text):
         return
 
     LOGGER.info("Pulling... %s", status["uri"])
