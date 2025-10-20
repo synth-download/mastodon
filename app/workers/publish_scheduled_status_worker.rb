@@ -11,10 +11,22 @@ class PublishScheduledStatusWorker
 
     return true if scheduled_status.account.user_disabled?
 
-    PostStatusService.new.call(
-      scheduled_status.account,
-      options_with_objects(scheduled_status.params.with_indifferent_access)
-    )
+    params = scheduled_status.params.with_indifferent_access
+
+    if params[:reblog].present?
+      reblog_id = params[:reblog]['id'] || params[:reblog][:id]
+      reblog = Status.find_by(id: reblog_id)
+
+      if reblog
+        options = options_with_objects(params.except(:reblog))
+        ReblogService.new.call(scheduled_status.account, reblog, options)
+      end
+    else
+      PostStatusService.new.call(
+        scheduled_status.account,
+        options_with_objects(scheduled_status.params.with_indifferent_access)
+      )
+    end
   rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
     true
   end

@@ -16,7 +16,7 @@ class Api::V1::Statuses::ReblogsController < Api::V1::Statuses::BaseController
       @status = ReblogService.new.call(current_account, @reblog, reblog_params)
     end
 
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
   end
 
   def destroy
@@ -50,6 +50,6 @@ class Api::V1::Statuses::ReblogsController < Api::V1::Statuses::BaseController
   end
 
   def reblog_params
-    params.permit(:visibility)
+    params.permit(:visibility, :scheduled_at)
   end
 end
