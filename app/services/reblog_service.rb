@@ -80,7 +80,7 @@ class ReblogService < BaseService
     @options.dup.tap do |options_hash|
       options_hash[:scheduled_at] = nil
       options_hash[:media_ids] = []
-      options_hash[:status]    = "🔁 #{ActivityPub::TagManager.instance.url_for(@reblogged_status)}"
+      options_hash[:text]    = "🔁 #{ActivityPub::TagManager.instance.url_for(@reblogged_status)}"
       options_hash[:reblog]    = reblogged_status_json()
       options_hash[:visibility]    = @visibility
     end
