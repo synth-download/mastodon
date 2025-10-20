@@ -73,8 +73,8 @@ class ListDefs:
         self.include_keywords: set[str] = set()
         self.exclude_keywords: set[str] = set()
 
-        self.include_regex: re.Pattern[str]
-        self.exclude_regex: re.Pattern[str]
+        self.include_regex: re.Pattern[str] | None = None
+        self.exclude_regex: re.Pattern[str] | None = None
 
         self.last_updated: datetime.datetime | None = None
 
@@ -141,15 +141,9 @@ class ListDefs:
         include_pattern = "|".join(include_patterns)
         exclude_pattern = "|".join(exclude_patterns)
 
-        if (
-            not hasattr(self, "include_regex")
-            or self.include_regex.pattern != include_pattern
-        ):
+        if not self.include_regex or self.include_regex.pattern != include_pattern:
             self.include_regex = re.compile(include_pattern, re.IGNORECASE)
-        if (
-            not hasattr(self, "exclude_regex")
-            or self.exclude_regex.pattern != exclude_pattern
-        ):
+        if not self.exclude_regex or self.exclude_regex.pattern != exclude_pattern:
             self.exclude_regex = re.compile(exclude_pattern, re.IGNORECASE)
 
     async def poll(self, stop: asyncio.Event):
