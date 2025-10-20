@@ -132,11 +132,16 @@ class FanOutOnWriteService < BaseService
     scope = scope.where(with_media_only: false) unless has_media
     return unless scope.exists?
 
-    texts = [@status.spoiler_text.downcase, normalize_status_text(@status)]
+    tags_line = @status.tags.pluck(:name).map { |tag| "##{tag.downcase}" }.join(' ')
+    searchable_text = [
+      @status.spoiler_text.downcase,
+      normalize_status_text(@status),
+      tags_line
+    ].compact.join("\n")
 
     scope.find_in_batches do |batch|
       candidates = batch.select do |list|
-        next false if texts.any? { |t| list.matches_any_keyword?(t, list.compiled_exclude_keywords) }
+        next false if list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
         true
       end
 
@@ -197,12 +202,17 @@ class FanOutOnWriteService < BaseService
     scope = scope.where.not(include_keywords: [nil, []])
     return unless scope.exists?
 
-    texts = [@status.spoiler_text.downcase, normalize_status_text(@status)]
+    tags_line = @status.tags.pluck(:name).map { |tag| "##{tag.downcase}" }.join(' ')
+    searchable_text = [
+      @status.spoiler_text.downcase,
+      normalize_status_text(@status),
+      tags_line
+    ].compact.join("\n")
 
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
-        next false unless texts.any? { |t| list.matches_any_keyword?(t, list.compiled_include_keywords) }
-        next false if texts.any? { |t| list.matches_any_keyword?(t, list.compiled_exclude_keywords) }
+        next false unless list.matches_any_keyword?(searchable_text, list.compiled_include_keywords)
+        next false if list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
         true
       end
 
