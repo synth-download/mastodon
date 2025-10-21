@@ -77,15 +77,11 @@ class ReblogService < BaseService
   def scheduled_options
     @options.dup.tap do |options_hash|
       options_hash[:scheduled_at] = nil
-      options_hash[:media_ids] = []
-      options_hash[:text]    = "🔁 #{ActivityPub::TagManager.instance.url_for(@reblogged_status)}"
-      options_hash[:reblog]    = reblogged_status_json()
-      options_hash[:visibility]    = @visibility
+      options_hash[:media_ids]    = []
+      options_hash[:text]         = "🔁 #{ActivityPub::TagManager.instance.url_for(@reblogged_status)}"
+      options_hash[:reblog]       = { id: @reblogged_status.id }
+      options_hash[:visibility]   = @visibility
     end
-  end
-
-  def reblogged_status_json
-    REST::StatusSerializer.new(@reblogged_status, scope: @account.user, scope_name: :current_user)
   end
 
   def build_json()
