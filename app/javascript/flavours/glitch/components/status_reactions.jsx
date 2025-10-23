@@ -113,6 +113,7 @@ class Reaction extends ImmutablePureComponent {
       <animated.button
         type='button'
         className={classNames('reactions-bar__item', { active: reaction.get('me') })}
+        disabled={reaction.get('name').includes('@')}
         onClick={this.handleClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}

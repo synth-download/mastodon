@@ -6,6 +6,7 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
   before_action -> { doorkeeper_authorize! :write, :'write:favourites' }, only: [:create, :destroy]
   before_action -> { authorize_if_got_token! :read, :'read:accounts' }, only: [:index]
   before_action :require_user!, only: [:create, :destroy]
+  before_action :enforce_local, only: :create
   after_action :insert_pagination_headers, only: [:index]
 
   def index
@@ -46,6 +47,13 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
   end
 
   private
+
+  def enforce_local
+    return if params[:id].blank?
+    return unless params[:id].include?('@')
+
+    render json: { error: "Remote custom emojis are not allowed" }, status: :unprocessable_entity
+  end
 
   def set_reactions
     ordered_reactions.select(
