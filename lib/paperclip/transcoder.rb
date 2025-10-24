@@ -39,7 +39,7 @@ module Paperclip
 
         @output_options['f']       = 'image2'
         @output_options['vframes'] = 1
-      when 'mp4'
+      when 'mp4', 'webm'
         unless eligible_to_passthrough?(metadata)
           size_limit_in_bits = MediaAttachment::VIDEO_LIMIT * 8
           desired_bitrate = (metadata.width * metadata.height * 30 * BITS_PER_PIXEL).floor
