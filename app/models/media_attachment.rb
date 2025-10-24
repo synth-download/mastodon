@@ -104,7 +104,7 @@ class MediaAttachment < ApplicationRecord
         'pix_fmt' => 'yuv420p', # Ensure color space for cross-browser compatibility
         'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
         'c:v' => 'h264',
-        'c:a' => 'aac',
+        'c:a' => 'libopus',
         'b:a' => '256k',
         'map_metadata' => '-1',
         'frames:v' => MAX_VIDEO_FRAMES,
@@ -114,7 +114,7 @@ class MediaAttachment < ApplicationRecord
 
   VIDEO_PASSTHROUGH_OPTIONS = {
     video_codecs: ['h264'].freeze,
-    audio_codecs: ['aac', nil].freeze,
+    audio_codecs: ['aac', 'opus', nil].freeze,
     colorspaces: ['yuv420p', 'yuvj420p'].freeze,
     options: {
       format: 'mp4',
