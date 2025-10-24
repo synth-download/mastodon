@@ -107,7 +107,7 @@ class Form::AdminSettings
   DOMAIN_BLOCK_AUDIENCES = %w(disabled users all).freeze
   BUBBLE_DOMAIN_AUDIENCES = %w(disabled users all).freeze
   REGISTRATION_MODES = %w(open approved none).freeze
-  FEED_ACCESS_MODES = %w(public authenticated).freeze
+  FEED_ACCESS_MODES = %w(public authenticated disabled).freeze
 
   attr_accessor(*KEYS)
 
