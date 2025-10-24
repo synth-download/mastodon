@@ -73,6 +73,10 @@ class PublicFeed
     Setting.local_live_feed_access
   end
 
+  def bubble_feed_setting
+    Setting.bubble_live_feed_access
+  end
+
   def remote_feed_setting
     Setting.remote_live_feed_access
   end
@@ -82,7 +86,7 @@ class PublicFeed
   end
 
   def bubble_only?
-    options[:bubble] && !options[:local] && !options[:remote]
+    (options[:bubble] && !options[:local] && !options[:remote]) || !user_has_access_to_feed?(bubble_feed_setting)
   end
 
   def remote_only?

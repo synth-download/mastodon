@@ -37,7 +37,7 @@ interface InitialStateMeta {
   source_url: string;
   streaming_api_base_url: string;
   local_live_feed_access: 'public' | 'authenticated' | 'disabled';
-  bubble_live_feed_access: 'public' | 'authenticated';
+  bubble_live_feed_access: 'public' | 'authenticated' | 'disabled';
   remote_live_feed_access: 'public' | 'authenticated' | 'disabled';
   local_topic_feed_access: 'public' | 'authenticated' | 'disabled';
   remote_topic_feed_access: 'public' | 'authenticated' | 'disabled';
