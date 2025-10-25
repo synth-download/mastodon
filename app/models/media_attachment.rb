@@ -93,17 +93,20 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   VIDEO_FORMAT = {
-    format: 'mp4',
-    content_type: 'video/mp4',
+    format: 'webm',
+    content_type: 'video/webm',
     vfr_frame_rate_threshold: MAX_VIDEO_FRAME_RATE,
     convert_options: {
       output: {
         'loglevel' => 'fatal',
-        'preset' => 'veryfast',
-        'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
+        #'preset' => 'veryfast',
+        #'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
         'pix_fmt' => 'yuv420p', # Ensure color space for cross-browser compatibility
         'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
-        'c:v' => 'h264',
+        'c:v' => 'vp9',
+        'cpu-used' => '8',
+        'row-mt' => '1',
+        'deadline' => 'realtime',
         'c:a' => 'libopus',
         'b:a' => '256k',
         'map_metadata' => '-1',
@@ -113,16 +116,16 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   VIDEO_PASSTHROUGH_OPTIONS = {
-    video_codecs: ['h264'].freeze,
-    audio_codecs: ['aac', 'opus', nil].freeze,
+    video_codecs: ['vp9', 'vp8'].freeze,
+    audio_codecs: ['opus', nil].freeze,
     colorspaces: ['yuv420p', 'yuvj420p'].freeze,
     options: {
-      format: 'mp4',
+      format: 'webm',
       convert_options: {
         output: {
           'loglevel' => 'fatal',
           'map_metadata' => '-1',
-          'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
+          #'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
           'c:v' => 'copy',
           'c:a' => 'copy',
         }.freeze,
@@ -138,7 +141,7 @@ class MediaAttachment < ApplicationRecord
           :vf => 'scale=\'min(640\, iw):min(640\, ih)\':force_original_aspect_ratio=decrease',
         }.freeze,
       }.freeze,
-      format: 'jpeg',
+      format: 'webp',
       time: 0,
       file_geometry_parser: FastGeometryParser,
       blurhash: BLURHASH_OPTIONS,
