@@ -848,6 +848,11 @@ zh-CN:
         modes:
           authenticated: 仅已登录用户
           public: 所有人
+      landing_page:
+        values:
+          about: 关于
+          local_feed: 本站动态
+          trends: 热门
       others:
         activitypub: ActivityPub
         preamble: 其他设置，含自定行为

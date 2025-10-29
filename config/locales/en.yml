@@ -865,6 +865,11 @@ en:
           authenticated: Authenticated users only
           disabled: Require specific user role
           public: Everyone
+      landing_page:
+        values:
+          about: About
+          local_feed: Local feed
+          trends: Trends
       others:
         activitypub: ActivityPub
         preamble: Other settings, including customizing behavior
