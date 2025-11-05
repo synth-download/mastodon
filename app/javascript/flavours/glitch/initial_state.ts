@@ -39,7 +39,7 @@ interface InitialStateMeta {
   local_live_feed_access: 'public' | 'authenticated' | 'disabled';
   bubble_live_feed_access: 'public' | 'authenticated' | 'disabled';
   remote_live_feed_access: 'public' | 'authenticated' | 'disabled';
-  local_topic_feed_access: 'public' | 'authenticated' | 'disabled';
+  local_topic_feed_access: 'public' | 'authenticated';
   bubble_topic_feed_access: 'public' | 'authenticated' | 'disabled';
   remote_topic_feed_access: 'public' | 'authenticated' | 'disabled';
   title: string;
