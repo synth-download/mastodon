@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { quoteComposeById } from '@/flavours/glitch/actions/compose_typed';
 import { toggleReblog } from '@/flavours/glitch/actions/interactions';
 import { openModal } from '@/flavours/glitch/actions/modal';
+import { fetchStatus } from '@/flavours/glitch/actions/statuses';
 import { quickBoosting } from '@/flavours/glitch/initial_state';
 import type { ActionMenuItem } from '@/flavours/glitch/models/dropdown_menu';
 import type { Status } from '@/flavours/glitch/models/status';
@@ -111,6 +112,7 @@ const BoostOrQuoteMenu: FC<ReblogButtonProps> = ({ status, counters }) => {
 
   const statusId = status.get('id') as string;
   const wasBoosted = !!status.get('reblogged');
+  const quoteApproval = status.get('quote_approval');
 
   const showLoginPrompt = useCallback(() => {
     dispatch(
@@ -167,9 +169,16 @@ const BoostOrQuoteMenu: FC<ReblogButtonProps> = ({ status, counters }) => {
         dispatch(toggleReblog(status.get('id'), true));
         return false;
       }
+
+      if (quoteApproval === null) {
+        dispatch(
+          fetchStatus(statusId, { forceFetch: true, alsoFetchContext: false }),
+        );
+      }
+
       return true;
     },
-    [dispatch, isLoggedIn, showLoginPrompt, status],
+    [dispatch, isLoggedIn, showLoginPrompt, status, quoteApproval, statusId],
   );
 
   return (

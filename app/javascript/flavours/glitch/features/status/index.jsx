@@ -163,7 +163,7 @@ class Status extends ImmutablePureComponent {
 
   componentDidMount () {
     attachFullscreenListener(this.onFullScreenChange);
-    this.props.dispatch(fetchStatus(this.props.params.statusId));
+    this.props.dispatch(fetchStatus(this.props.params.statusId, { forceFetch: true }));
     this._scrollStatusIntoView();
   }
 
@@ -172,7 +172,7 @@ class Status extends ImmutablePureComponent {
     let updated = false;
 
     if (props.params.statusId && state.statusId !== props.params.statusId) {
-      props.dispatch(fetchStatus(props.params.statusId));
+      props.dispatch(fetchStatus(props.params.statusId, { forceFetch: true }));
       update.threadExpanded = undefined;
       update.statusId = props.params.statusId;
       updated = true;
