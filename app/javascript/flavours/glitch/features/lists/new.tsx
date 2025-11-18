@@ -227,6 +227,7 @@ const MembersLink: React.FC<{
 };
 
 const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
+  const intl = useIntl();
   const dispatch = useAppDispatch();
   const history = useHistory();
 
