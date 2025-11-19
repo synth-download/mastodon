@@ -222,6 +222,7 @@ function continueThread (state, status) {
     map.set('focusDate', new Date());
     map.set('caretPosition', null);
     map.set('preselectDate', new Date());
+    map.set('quoted_status_id', null);
   });
 }
 
@@ -434,14 +435,16 @@ export const composeReducer = (state = initialState, action) => {
     const isDirect = state.get('privacy') === 'direct';
     return state
       .set('quoted_status_id', isDirect ? null : status.get('id'))
-      .set('spoiler', status.get('sensitive'))
-      .set('spoiler_text', status.get('spoiler_text'))
+      .update('spoiler', spoiler => (spoiler) || !!status.get('spoiler_text'))
+      .update('spoiler_text', (spoiler_text) => spoiler_text || status.get('spoiler_text'))
       .update('privacy', (visibility) => {
         if (['public', 'unlisted'].includes(visibility) && status.get('visibility') === 'private') {
           return 'private';
         }
         return visibility;
-      });
+      }).update('advanced_options',
+        map => map.merge(new ImmutableMap({ do_not_federate: !!status.get('local_only') })),
+      );
   } else if (quoteComposeCancel.match(action)) {
     return state.set('quoted_status_id', null);
   } else if (setComposeQuotePolicy.match(action)) {
