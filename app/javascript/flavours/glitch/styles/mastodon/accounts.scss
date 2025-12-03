@@ -196,7 +196,8 @@
 .simple_form .overridden,
 .simple_form .recommended,
 .simple_form .not_recommended,
-.simple_form .glitch_only {
+.simple_form .glitch_only,
+.simple_form .chuckya_only {
   display: inline-block;
   padding: 4px 6px;
   cursor: default;
@@ -264,6 +265,12 @@
   color: var(--color-text-warning);
   background-color: var(--color-bg-warning-softer);
   border-color: var(--color-border-on-bg-warning-softer);
+}
+
+.simple_form .chuckya_only {
+  color: var(--color-text-brand-soft);
+  background-color: var(--color-bg-brand-softer);
+  border-color: var(--color-border-on-bg-brand-softer);
 }
 
 .account__header__fields {
