@@ -7484,7 +7484,18 @@ img.modal-warning {
     // The size of single images is determined by their
     // aspect-ratio, applied via inline style attribute
     width: initial;
-    max-height: 460px;
+
+    // Prevent extremely tall images from essentially becoming invisible
+    min-width: 120px;
+    max-height: var(--max-media-height-small);
+
+    @container (width > 500px) {
+      max-height: var(--max-media-height-large);
+    }
+
+    .detailed-status & {
+      max-height: calc(2 * var(--max-media-height-large));
+    }
   }
 
   &--layout-2 {
@@ -7837,7 +7848,7 @@ img.modal-warning {
   position: relative;
   color: var(--color-text-on-media);
   background: var(--color-bg-media);
-  max-height: 460px;
+  max-height: var(--max-media-height-small);
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
@@ -7852,6 +7863,10 @@ img.modal-warning {
   }
 
   @include fullwidth-gallery;
+
+  @container (width > 500px) {
+    max-height: var(--max-media-height-large);
+  }
 
   video {
     display: block;
