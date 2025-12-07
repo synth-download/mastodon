@@ -27,7 +27,7 @@
 body {
   font-display: swap !important;
 }
-body:not(.admin)::before {
+body.app-body::before {
   content: "";
   position: fixed;
   inset: 0;
