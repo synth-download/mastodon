@@ -2,9 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.5.3] - 2025-12-08
+
+### Security
+
+- Fix inconsistent error handling leaking information on existence of private posts ([GHSA-gwhw-gcjx-72v8](https://github.com/mastodon/mastodon/security/advisories/GHSA-gwhw-gcjx-72v8))
+
+### Fixed
+
+- Fix “Delete and Redraft” on a non-quote being treated as a quote post in some cases (#37140 by @ClearlyClaire)
+- Fix YouTube embeds by sending referer (#37126 by @ChaosExAnima)
+- Fix streamed quoted polls not being hydrated correctly (#37118 by @ClearlyClaire)
+- Fix creation of duplicate conversations (#37108 by @oneiros)
+- Fix extraneous `noreferrer` in external links (#37107 by @ChaosExAnima)
+- Fix edge case error handling in some database migrations (#37079 by @ClearlyClaire)
+- Fix error handling when re-fetching already-known statuses (#37077 by @ClearlyClaire)
+- Fix post navigation in single-column mode when Advanced UI is enabled (#37044 by @diondiondion)
+- Fix `tootctl status remove` removing quoted posts and remote quotes of local posts (#37009 by @ClearlyClaire)
+- Fix known expensive S3 batch delete operation failing because of short timeouts (#37004 by @ClearlyClaire)
+- Fix compose autosuggest always lowercasing input token (#36995 by @ClearlyClaire)
+
+## [4.5.2] - 2025-11-20
+
+### Changed
+
+- Change private quote education modal to not show up on self-quotes (#36926 by @ClearlyClaire)
+
+### Fixed
+
+- Fix missing fallback link in CW-only quote posts (#36963 by @ClearlyClaire)
+- Fix statuses without text being hidden while loading (#36962 by @ClearlyClaire)
+- Fix `g` + `h` keyboard shortcut not working when a post is focused (#36935 by @diondiondion)
+- Fix quoting overwriting current content warning (#36934 by @ClearlyClaire)
+- Fix scroll-to-status in threaded view being unreliable (#36927 by @ClearlyClaire)
+- Fix path resolution for emoji worker (#36897 by @ChaosExAnima)
+- Fix `tootctl upgrade storage-schema` failing with `ArgumentError` (#36914 by @shugo)
+- Fix cross-origin handling of CSS modules (#36890 by @ClearlyClaire)
+- Fix error with remote tags including percent signs (#36886 and #36925 by @ChaosExAnima and @ClearlyClaire)
+- Fix bogus quote approval policy not always being replaced correctly (#36885 by @ClearlyClaire)
+- Fix hashtag completion not being inserted correctly (#36884 by @ClearlyClaire)
+- Fix Cmd/Ctrl + Enter in the composer triggering confirmation dialog action (#36870 by @diondiondion)
+
 ## [4.5.1] - 2025-11-13
 
-### Fixes
+### Fixed
 
 - Fix Cmd/Ctrl + Enter not submitting Alt text modal on some browsers (#36866 by @diondiondion)
 - Fix posts coming from public/hashtag streaming being marked as unquotable (#36860 and #36869 by @ClearlyClaire)
