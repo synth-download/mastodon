@@ -6,11 +6,14 @@ import classNames from 'classnames';
 
 import { Avatar } from '@/flavours/glitch/components/avatar';
 import { Button } from '@/flavours/glitch/components/button';
+import { DisplayName } from '@/flavours/glitch/components/display_name';
+import { me } from '@/flavours/glitch/initial_state';
 import type { Account } from '@/flavours/glitch/models/account';
 import type {
   AnnualReport,
   Archetype as ArchetypeData,
 } from '@/flavours/glitch/models/annual_report';
+import { wrapstodonSettings } from '@/flavours/glitch/settings';
 import booster from '@/images/archetypes/booster.png';
 import lurker from '@/images/archetypes/lurker.png';
 import oracle from '@/images/archetypes/oracle.png';
@@ -117,9 +120,16 @@ export const Archetype: React.FC<{
   const wrapperRef = useRef<HTMLDivElement>(null);
   const isSelfView = context === 'modal';
 
-  const [isRevealed, setIsRevealed] = useState(!isSelfView);
+  const [isRevealed, setIsRevealed] = useState(
+    () =>
+      !isSelfView ||
+      (me ? (wrapstodonSettings.get(me)?.archetypeRevealed ?? false) : true),
+  );
   const reveal = useCallback(() => {
     setIsRevealed(true);
+    if (me) {
+      wrapstodonSettings.set(me, { archetypeRevealed: true });
+    }
     wrapperRef.current?.focus();
   }, []);
 
@@ -127,8 +137,6 @@ export const Archetype: React.FC<{
   const descriptions = isSelfView
     ? archetypeSelfDescriptions
     : archetypePublicDescriptions;
-
-  const name = account?.display_name;
 
   return (
     <div
@@ -172,7 +180,9 @@ export const Archetype: React.FC<{
             <FormattedMessage
               id='annual_report.summary.archetype.title_public'
               defaultMessage="{name}'s archetype"
-              values={{ name }}
+              values={{
+                name: <DisplayName variant='simple' account={account} />,
+              }}
             />
           )}
         </h2>
@@ -189,7 +199,7 @@ export const Archetype: React.FC<{
         <p>
           {isRevealed ? (
             intl.formatMessage(descriptions[archetype], {
-              name,
+              name: <DisplayName variant='simple' account={account} />,
             })
           ) : (
             <FormattedMessage

@@ -1,6 +1,5 @@
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 
-import { reinsertAnnualReport, TIMELINE_WRAPSTODON } from '@/flavours/glitch/reducers/slices/annual_report';
 import api, { getLinks } from 'flavours/glitch/api';
 import { compareId } from 'flavours/glitch/compare_id';
 import { usePendingItems as preferPendingItems } from 'flavours/glitch/initial_state';
@@ -33,7 +32,6 @@ export const TIMELINE_GAP = null;
 export const TIMELINE_NON_STATUS_MARKERS = [
   TIMELINE_GAP,
   TIMELINE_SUGGESTIONS,
-  TIMELINE_WRAPSTODON,
 ];
 
 export const loadPending = timeline => ({
@@ -143,7 +141,6 @@ export function expandTimeline(timelineId, path, params = {}) {
 
       if (timelineId === 'home') {
         dispatch(submitMarkers());
-        dispatch(reinsertAnnualReport())
       }
     } catch(error) {
       dispatch(expandTimelineFail(timelineId, error, isLoadingMore));
