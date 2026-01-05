@@ -120,6 +120,7 @@ class Status extends ImmutablePureComponent {
     muted: PropTypes.bool,
     hidden: PropTypes.bool,
     unread: PropTypes.bool,
+    showActions: PropTypes.bool,
     prepend: PropTypes.string,
     withDismiss: PropTypes.bool,
     isQuotedPost: PropTypes.bool,
@@ -471,7 +472,8 @@ class Status extends ImmutablePureComponent {
       notification,
       history,
       identity,
-      isQuotedPost,
+      showActions = true,
+      isQuotedPost = false,
       ...other
     } = this.props;
     let attachments = null;
@@ -640,7 +642,7 @@ class Status extends ImmutablePureComponent {
     } else if (status.get('card') && settings.get('inline_preview_cards') && !this.props.muted && !status.get('quote')) {
       media.push(
         <Card
-          onOpenMedia={this.handleOpenMedia}
+          key={`${status.get('id')}-${status.get('edited_at')}`}
           card={status.get('card')}
           sensitive={status.get('sensitive')}
         />,
@@ -757,8 +759,6 @@ class Status extends ImmutablePureComponent {
                   collapsible
                   media={media}
                   onCollapsedToggle={this.handleCollapsedToggle}
-                  tagLinks={settings.get('tag_misleading_links')}
-                  rewriteMentions={settings.get('rewrite_mentions')}
                   {...statusContentProps}
                 />
 
@@ -781,7 +781,7 @@ class Status extends ImmutablePureComponent {
               canReact={this.props.identity.signedIn}
             />
 
-            {!isQuotedPost &&
+            {(showActions && !isQuotedPost) &&
               <StatusActionBar
                 status={status}
                 account={status.get('account')}

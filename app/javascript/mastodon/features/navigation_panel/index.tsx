@@ -46,6 +46,8 @@ import { canViewFeed } from 'mastodon/permissions';
 import { selectUnreadNotificationGroupsCount } from 'mastodon/selectors/notifications';
 import { useAppSelector, useAppDispatch } from 'mastodon/store';
 
+import { AnnualReportNavItem } from '../annual_report/nav_item';
+
 import { DisabledAccountBanner } from './components/disabled_account_banner';
 import { FollowedTagsPanel } from './components/followed_tags_panel';
 import { ListPanel } from './components/list_panel';
@@ -61,6 +63,10 @@ const messages = defineMessages({
   },
   explore: { id: 'explore.title', defaultMessage: 'Trending' },
   firehose: { id: 'column.firehose', defaultMessage: 'Live feeds' },
+  firehose_singular: {
+    id: 'column.firehose_singular',
+    defaultMessage: 'Live feed',
+  },
   direct: { id: 'navigation_bar.direct', defaultMessage: 'Private mentions' },
   favourites: { id: 'navigation_bar.favourites', defaultMessage: 'Favorites' },
   bookmarks: { id: 'navigation_bar.bookmarks', defaultMessage: 'Bookmarks' },
@@ -275,7 +281,12 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             icon='globe'
             iconComponent={PublicIcon}
             isActive={isFirehoseActive}
-            text={intl.formatMessage(messages.firehose)}
+            text={intl.formatMessage(
+              canViewFeed(signedIn, permissions, localLiveFeedAccess) &&
+                canViewFeed(signedIn, permissions, remoteLiveFeedAccess)
+                ? messages.firehose
+                : messages.firehose_singular,
+            )}
           />
         )}
 
@@ -284,6 +295,8 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             <NotificationsLink />
 
             <FollowRequestsLink />
+
+            <AnnualReportNavItem />
 
             <hr />
 

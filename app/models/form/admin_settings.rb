@@ -29,7 +29,6 @@ class Form::AdminSettings
     show_reblogs_in_public_timelines
     show_replies_in_public_timelines
     trends
-    trends_as_landing_page
     trendable_by_default
     trending_status_cw
     show_domain_blocks
@@ -54,7 +53,10 @@ class Form::AdminSettings
     bubble_live_feed_access
     remote_live_feed_access
     local_topic_feed_access
+    bubble_topic_feed_access
     remote_topic_feed_access
+    landing_page
+    wrapstodon
   ).freeze
 
   INTEGER_KEYS = %i(
@@ -75,13 +77,13 @@ class Form::AdminSettings
     show_reblogs_in_public_timelines
     show_replies_in_public_timelines
     trends
-    trends_as_landing_page
     trendable_by_default
     trending_status_cw
     noindex
     require_invite_text
     captcha_enabled
     authorized_fetch
+    wrapstodon
   ).freeze
 
   UPLOAD_KEYS = %i(
@@ -108,6 +110,8 @@ class Form::AdminSettings
   BUBBLE_DOMAIN_AUDIENCES = %w(disabled users all).freeze
   REGISTRATION_MODES = %w(open approved none).freeze
   FEED_ACCESS_MODES = %w(public authenticated disabled).freeze
+  ALTERNATE_FEED_ACCESS_MODES = %w(public authenticated).freeze
+  LANDING_PAGE = %w(trends about local_feed).freeze
 
   attr_accessor(*KEYS)
 
@@ -121,7 +125,8 @@ class Form::AdminSettings
   validates :local_live_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@local_live_feed_access) }
   validates :bubble_live_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@bubble_live_feed_access) }
   validates :remote_live_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@remote_live_feed_access) }
-  validates :local_topic_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@local_topic_feed_access) }
+  validates :local_topic_feed_access, inclusion: { in: ALTERNATE_FEED_ACCESS_MODES }, if: -> { defined?(@local_topic_feed_access) }
+  validates :bubble_topic_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@bubble_topic_feed_access) }
   validates :remote_topic_feed_access, inclusion: { in: FEED_ACCESS_MODES }, if: -> { defined?(@remote_topic_feed_access) }
   validates :media_cache_retention_period, :content_cache_retention_period, :backups_retention_period, numericality: { only_integer: true }, allow_blank: true, if: -> { defined?(@media_cache_retention_period) || defined?(@content_cache_retention_period) || defined?(@backups_retention_period) }
   validates :min_age, numericality: { only_integer: true }, allow_blank: true, if: -> { defined?(@min_age) }
@@ -129,6 +134,7 @@ class Form::AdminSettings
   validates :reject_pattern, regexp_syntax: true, if: -> { defined?(@reject_pattern) }
   validates :status_page_url, url: true, allow_blank: true
   validate :validate_site_uploads
+  validates :landing_page, inclusion: { in: LANDING_PAGE }, if: -> { defined?(@landing_page) }
 
   KEYS.each do |key|
     define_method(key) do
@@ -181,6 +187,10 @@ class Form::AdminSettings
 
   def flavour_and_skin=(value)
     @flavour, @skin = value.split('/', 2)
+  end
+
+  def persisted?
+    true
   end
 
   private
