@@ -23,6 +23,7 @@ RSpec.describe ActivityPub::NoteSerializer do
         'zh-TW' => a_kind_of(String),
       }),
       'replies' => replies_collection_values,
+      'context' => ActivityPub::TagManager.instance.uri_for(parent.conversation),
     })
   end
 
@@ -57,8 +58,23 @@ RSpec.describe ActivityPub::NoteSerializer do
     end
   end
 
-  context 'with a quote policy', feature: :outgoing_quotes do
-    let(:parent) { Fabricate(:status, quote_approval_policy: Status::QUOTE_APPROVAL_POLICY_FLAGS[:followers] << 16) }
+  context 'with a deleted quote' do
+    let(:quoted_status) { Fabricate(:status) }
+
+    before do
+      Fabricate(:quote, status: parent, quoted_status: nil, state: :accepted)
+    end
+
+    it 'has the expected shape' do
+      expect(subject).to include({
+        'type' => 'Note',
+        'quote' => { 'type' => 'Tombstone' },
+      })
+    end
+  end
+
+  context 'with a quote policy' do
+    let(:parent) { Fabricate(:status, quote_approval_policy: InteractionPolicy::POLICY_FLAGS[:followers] << 16) }
 
     it 'has the expected shape' do
       expect(subject).to include({

@@ -1,3 +1,7 @@
+import { isList } from 'immutable';
+
+import { assetHost } from '@/mastodon/utils/config';
+
 import {
   VARIATION_SELECTOR_CODE,
   KEYCAP_CODE,
@@ -6,8 +10,10 @@ import {
   SKIN_TONE_CODES,
   EMOJIS_WITH_DARK_BORDER,
   EMOJIS_WITH_LIGHT_BORDER,
+  EMOJIS_REQUIRING_INVERSION_IN_LIGHT_MODE,
+  EMOJIS_REQUIRING_INVERSION_IN_DARK_MODE,
 } from './constants';
-import type { TwemojiBorderInfo } from './types';
+import type { CustomEmojiMapArg, ExtraCustomEmojiMap } from './types';
 
 // Misc codes that have special handling
 const SKIER_CODE = 0x26f7;
@@ -25,6 +31,12 @@ export function emojiToUnicodeHex(emoji: string): string {
     if (code !== undefined) {
       codes.push(code);
     }
+  }
+
+  // Handles how Emojibase removes the variation selector for single code emojis.
+  // See: https://emojibase.dev/docs/spec/#merged-variation-selectors
+  if (codes.at(1) === VARIATION_SELECTOR_CODE && codes.length === 2) {
+    codes.pop();
   }
   return hexNumbersToString(codes);
 }
@@ -61,21 +73,17 @@ export const CODES_WITH_DARK_BORDER =
 export const CODES_WITH_LIGHT_BORDER =
   EMOJIS_WITH_LIGHT_BORDER.map(emojiToUnicodeHex);
 
-export function twemojiHasBorder(twemojiHex: string): TwemojiBorderInfo {
-  const normalizedHex = twemojiHex.toUpperCase();
-  let hasLightBorder = false;
-  let hasDarkBorder = false;
-  if (CODES_WITH_LIGHT_BORDER.includes(normalizedHex)) {
-    hasLightBorder = true;
+export function unicodeHexToUrl(unicodeHex: string, darkMode: boolean): string {
+  const normalizedHex = unicodeToTwemojiHex(unicodeHex);
+  let url = `${assetHost}/emoji/${normalizedHex}`;
+  if (darkMode && CODES_WITH_LIGHT_BORDER.includes(normalizedHex)) {
+    url += '_border';
   }
   if (CODES_WITH_DARK_BORDER.includes(normalizedHex)) {
-    hasDarkBorder = true;
+    url += '_border';
   }
-  return {
-    hexCode: twemojiHex,
-    hasLightBorder,
-    hasDarkBorder,
-  };
+  url += '.svg';
+  return url;
 }
 
 interface TwemojiSpecificEmoji {
@@ -148,6 +156,37 @@ export function twemojiToUnicodeInfo(
   }
 
   return hexNumbersToString(mappedCodes);
+}
+
+export function emojiToInversionClassName(emoji: string): string | null {
+  if (EMOJIS_REQUIRING_INVERSION_IN_DARK_MODE.includes(emoji)) {
+    return 'invert-on-dark';
+  }
+  if (EMOJIS_REQUIRING_INVERSION_IN_LIGHT_MODE.includes(emoji)) {
+    return 'invert-on-light';
+  }
+  return null;
+}
+
+export function cleanExtraEmojis(extraEmojis?: CustomEmojiMapArg) {
+  if (!extraEmojis) {
+    return null;
+  }
+  if (Array.isArray(extraEmojis)) {
+    return extraEmojis.reduce<ExtraCustomEmojiMap>(
+      (acc, emoji) => ({ ...acc, [emoji.shortcode]: emoji }),
+      {},
+    );
+  }
+  if (isList(extraEmojis)) {
+    return extraEmojis
+      .toJS()
+      .reduce<ExtraCustomEmojiMap>(
+        (acc, emoji) => ({ ...acc, [emoji.shortcode]: emoji }),
+        {},
+      );
+  }
+  return extraEmojis;
 }
 
 function hexStringToNumbers(hexString: string): number[] {

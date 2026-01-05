@@ -8,6 +8,7 @@ class NotifyService < BaseService
     admin.report
     admin.sign_up
     update
+    quoted_update
     poll
     status
     moderation_warning
@@ -57,10 +58,6 @@ class NotifyService < BaseService
 
     def override_for_sender?
       NotificationPermission.exists?(account: @recipient, from_account: @sender)
-    end
-
-    def from_limited?
-      @sender.silenced? && not_following?
     end
 
     def private_mention_not_in_response?

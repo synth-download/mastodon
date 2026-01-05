@@ -12,6 +12,7 @@ import {
   mentionCompose,
   directCompose,
 } from '../actions/compose';
+import { quoteComposeById } from '../actions/compose_typed';
 import {
   initDomainBlockModal,
   unblockDomain,
@@ -76,6 +77,10 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
   onReblog (status, e) {
     dispatch(toggleReblog(status.get('id'), e.shiftKey));
   },
+  
+  onQuote (status) {
+    dispatch(quoteComposeById(status.get('id')));
+  },
 
   onFavourite (status) {
     dispatch(toggleFavourite(status.get('id')));
@@ -108,7 +113,13 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     if (!deleteModal) {
       dispatch(deleteStatus(status.get('id'), withRedraft));
     } else {
-      dispatch(openModal({ modalType: 'CONFIRM_DELETE_STATUS', modalProps: { statusId: status.get('id'), withRedraft } }));
+      dispatch(openModal({
+        modalType: 'CONFIRM_DELETE_STATUS',
+        modalProps: {
+          statusId: status.get('id'),
+          withRedraft
+        }
+      }));
     }
   },
 
@@ -220,11 +231,10 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     dispatch(deployPictureInPicture({statusId: status.get('id'), accountId: status.getIn(['account', 'id']), playerType: type, props: mediaProps}));
   },
 
-  onInteractionModal (type, status) {
+  onInteractionModal (status) {
     dispatch(openModal({
       modalType: 'INTERACTION',
       modalProps: {
-        type,
         accountId: status.getIn(['account', 'id']),
         url: status.get('uri'),
       },

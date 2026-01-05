@@ -5,6 +5,7 @@ import { throttle } from 'lodash';
 
 import api from 'flavours/glitch/api';
 import { browserHistory } from 'flavours/glitch/components/router';
+import { countableText } from 'flavours/glitch/features/compose/util/counter';
 import { search as emojiSearch } from 'flavours/glitch/features/emoji/emoji_mart_search_light';
 import { tagHistory } from 'flavours/glitch/settings';
 import { recoverHashtags } from 'flavours/glitch/utils/hashtag';
@@ -57,7 +58,6 @@ export const COMPOSE_ADVANCED_OPTIONS_CHANGE = 'COMPOSE_ADVANCED_OPTIONS_CHANGE'
 export const COMPOSE_SENSITIVITY_CHANGE  = 'COMPOSE_SENSITIVITY_CHANGE';
 export const COMPOSE_SPOILERNESS_CHANGE  = 'COMPOSE_SPOILERNESS_CHANGE';
 export const COMPOSE_SPOILER_TEXT_CHANGE = 'COMPOSE_SPOILER_TEXT_CHANGE';
-export const COMPOSE_VISIBILITY_CHANGE   = 'COMPOSE_VISIBILITY_CHANGE';
 export const COMPOSE_COMPOSING_CHANGE    = 'COMPOSE_COMPOSING_CHANGE';
 export const COMPOSE_CONTENT_TYPE_CHANGE = 'COMPOSE_CONTENT_TYPE_CHANGE';
 export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
@@ -98,6 +98,7 @@ const messages = defineMessages({
   open: { id: 'compose.published.open', defaultMessage: 'Open' },
   published: { id: 'compose.published.body', defaultMessage: 'Post published.' },
   saved: { id: 'compose.saved.body', defaultMessage: 'Post saved.' },
+  blankPostError: { id: 'compose.error.blank_post', defaultMessage: 'Post can\'t be blank.' },
 });
 
 export const ensureComposeIsVisible = (getState) => {
@@ -107,13 +108,18 @@ export const ensureComposeIsVisible = (getState) => {
 };
 
 export function setComposeToStatus(status, text, spoiler_text, content_type) {
-  return{
-    type: COMPOSE_SET_STATUS,
-    status,
-    text,
-    spoiler_text,
-    content_type,
-  };
+  return (dispatch, getState) => {
+    const maxOptions = getState().server.getIn(['server', 'configuration', 'polls', 'max_options']);
+
+    dispatch({
+      type: COMPOSE_SET_STATUS,
+      status,
+      text,
+      spoiler_text,
+      content_type,
+      maxOptions,
+    });
+  }
 }
 
 export function changeCompose(text) {
@@ -198,18 +204,32 @@ export function directCompose(account) {
 }
 
 /**
+ * @callback ComposeSuccessCallback
+ * @param {Object} status
+ */
+
+/**
  * @param {null | string} overridePrivacy
- * @param {undefined | Function} successCallback
+ * @param {undefined | ComposeSuccessCallback} successCallback
  */
 export function submitCompose(overridePrivacy = null, successCallback = undefined) {
   return function (dispatch, getState) {
     let status     = getState().getIn(['compose', 'text'], '');
     const media    = getState().getIn(['compose', 'media_attachments']);
     const statusId = getState().getIn(['compose', 'id'], null);
+    const hasQuote = !!getState().getIn(['compose', 'quoted_status_id']);
     const spoilers = getState().getIn(['compose', 'spoiler']) || getState().getIn(['local_settings', 'always_show_spoilers_field']);
-    let spoilerText = spoilers ? getState().getIn(['compose', 'spoiler_text'], '') : '';
+    const spoiler_text = spoilers ? getState().getIn(['compose', 'spoiler_text'], '') : '';
 
-    if ((!status || !status.length) && media.size === 0) {
+    const fulltext = `${spoiler_text ?? ''}${countableText(status ?? '')}`;
+    const hasText = fulltext.trim().length > 0;
+
+    if (!(hasText || media.size !== 0 || (hasQuote && spoiler_text?.length))) {
+      dispatch(showAlert({
+        message: messages.blankPostError,
+      }));
+      dispatch(focusCompose());
+
       return;
     }
 
@@ -239,22 +259,23 @@ export function submitCompose(overridePrivacy = null, successCallback = undefine
       });
     }
 
+    const visibility = overridePrivacy || getState().getIn(['compose', 'privacy']);
     api().request({
       url: statusId === null ? '/api/v1/statuses' : `/api/v1/statuses/${statusId}`,
       method: statusId === null ? 'post' : 'put',
       data: {
         status,
+        spoiler_text,
         content_type: getState().getIn(['compose', 'content_type']),
         in_reply_to_id: getState().getIn(['compose', 'in_reply_to'], null),
         media_ids: media.map(item => item.get('id')),
         media_attributes,
-        sensitive: getState().getIn(['compose', 'sensitive']) || (spoilerText.length > 0 && media.size !== 0),
-        spoiler_text: spoilerText,
-        visibility: overridePrivacy || getState().getIn(['compose', 'privacy']),
+        sensitive: getState().getIn(['compose', 'sensitive']) || (spoiler_text.length > 0 && media.size !== 0),
+        visibility: visibility,
         poll: getState().getIn(['compose', 'poll'], null),
         language: getState().getIn(['compose', 'language']),
         quoted_status_id: getState().getIn(['compose', 'quoted_status_id']),
-        quote_approval_policy: getState().getIn(['compose', 'quote_policy']),
+        quote_approval_policy: visibility === 'private' || visibility === 'direct' ? 'nobody' : getState().getIn(['compose', 'quote_policy']),
       },
       headers: {
         'Idempotency-Key': getState().getIn(['compose', 'idempotencyKey']),
@@ -687,6 +708,7 @@ export function fetchComposeSuggestions(token) {
       fetchComposeSuggestionsEmojis(dispatch, getState, token);
       break;
     case '#':
+    case '＃':
       fetchComposeSuggestionsTags(dispatch, getState, token);
       break;
     default:
@@ -728,11 +750,20 @@ export function selectComposeSuggestion(position, token, suggestion, path) {
 
       dispatch(useEmoji(suggestion));
     } else if (suggestion.type === 'hashtag') {
-      completion    = `#${suggestion.name}`;
+      // TODO: it could make sense to keep the “most capitalized” of the two
+      const tokenName = token.slice(1); // strip leading '#'
+      const suggestionPrefix = suggestion.name.slice(0, tokenName.length);
+      const prefixMatchesSuggestion = suggestionPrefix.localeCompare(tokenName, undefined, { sensitivity: 'accent' }) === 0;
+      if (prefixMatchesSuggestion) {
+        completion = token + suggestion.name.slice(tokenName.length);
+      } else {
+        completion = `${token.slice(0, 1)}${suggestion.name}`;
+      }
+
       startPosition = position - 1;
     } else if (suggestion.type === 'account') {
-      completion    = getState().getIn(['accounts', suggestion.id, 'acct']);
-      startPosition = position;
+      completion    = `@${getState().getIn(['accounts', suggestion.id, 'acct'])}`;
+      startPosition = position - 1;
     }
 
     // We don't want to replace hashtags that vary only in case due to accessibility, but we need to fire off an event so that
@@ -840,13 +871,6 @@ export function changeComposeSpoilerText(text) {
   return {
     type: COMPOSE_SPOILER_TEXT_CHANGE,
     text,
-  };
-}
-
-export function changeComposeVisibility(value) {
-  return {
-    type: COMPOSE_VISIBILITY_CHANGE,
-    value,
   };
 }
 
