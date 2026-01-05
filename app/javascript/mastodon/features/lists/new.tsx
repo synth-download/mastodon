@@ -163,12 +163,14 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
 
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
-    const include_keywords = keywords.split('\n')
-      .map(line => line.trim())
-      .filter(group => group.length > 0);
-    const exclude_keywords = excludeKeywords.split('\n')
-      .map(line => line.trim())
-      .filter(group => group.length > 0);
+    const include_keywords = keywords
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((group) => group.length > 0);
+    const exclude_keywords = excludeKeywords
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((group) => group.length > 0);
 
     if (id) {
       void dispatch(
@@ -219,7 +221,7 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
     exclusive,
     repliesPolicy,
     keywords,
-    excludeKeywords
+    excludeKeywords,
   ]);
 
   return (
@@ -289,116 +291,115 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
         </div>
       </div>
 
-          {id && (
-            <div className='fields-group'>
-              <MembersLink id={id} />
-            </div>
-          )}
+      {id && (
+        <div className='fields-group'>
+          <MembersLink id={id} />
+        </div>
+      )}
 
-          <div className='fields-group'>
-            <div className='input with_label'>
-              <div className='label_input'>
-                <label htmlFor='include_keywords'>
-                  <FormattedMessage
-                    id='lists.include_keywords'
-                    defaultMessage='Include keywords'
-                  />
-                </label>
-
-                <div className='label_input__wrapper'>
-                  <textarea
-                    id='include_keywords'
-                    value={keywords}
-                    onChange={handleKeywordsChange}
-                    placeholder=' '
-                    rows="8"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className='fields-group'>
-            <div className='input with_label'>
-              <div className='label_input'>
-                <label htmlFor='exclude_keywords'>
-                  <FormattedMessage
-                    id='lists.exclude_keywords'
-                    defaultMessage='Exclude keywords'
-                  />
-                </label>
-
-                <div className='label_input__wrapper'>
-                  <textarea
-                    id='exclude_keywords'
-                    value={excludeKeywords}
-                    onChange={handleExcludeKeywordsChange}
-                    placeholder=' '
-                    rows="8"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className='fields-group'>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className='app-form__toggle'>
-              <div className='app-form__toggle__label'>
-                <strong>
-                  <FormattedMessage
-                    id='lists.with_media_only'
-                    defaultMessage='Media only'
-                  />
-                </strong>
-                <span className='hint'>
-                  <FormattedMessage
-                    id='lists.with_media_only_hint'
-                    defaultMessage='Only posts with media will be added to the list.'
-                  />
-                </span>
-              </div>
-
-              <div className='app-form__toggle__toggle'>
-                <div>
-                  <Toggle
-                    checked={withMediaOnly}
-                    onChange={handleWithMediaOnlyChange}
-                  />
-                </div>
-              </div>
+      <div className='fields-group'>
+        <div className='input with_label'>
+          <div className='label_input'>
+            <label htmlFor='include_keywords'>
+              <FormattedMessage
+                id='lists.include_keywords'
+                defaultMessage='Include keywords'
+              />
             </label>
+
+            <div className='label_input__wrapper'>
+              <textarea
+                id='include_keywords'
+                value={keywords}
+                onChange={handleKeywordsChange}
+                placeholder=' '
+                rows='8'
+              />
+            </div>
           </div>
+        </div>
+      </div>
 
-
-          <div className='fields-group'>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className='app-form__toggle'>
-              <div className='app-form__toggle__label'>
-                <strong>
-                  <FormattedMessage
-                    id='lists.ignore_reblog'
-                    defaultMessage='Exclude boosts'
-                  />
-                </strong>
-                <span className='hint'>
-                  <FormattedMessage
-                    id='lists.ignore_reblog_hint'
-                    defaultMessage='Boosts will be excluded from this list.'
-                  />
-                </span>
-              </div>
-
-              <div className='app-form__toggle__toggle'>
-                <div>
-                  <Toggle
-                    checked={ignoreReblog}
-                    onChange={handleIgnoreReblogChange}
-                   />
-                </div>
-              </div>
+      <div className='fields-group'>
+        <div className='input with_label'>
+          <div className='label_input'>
+            <label htmlFor='exclude_keywords'>
+              <FormattedMessage
+                id='lists.exclude_keywords'
+                defaultMessage='Exclude keywords'
+              />
             </label>
+
+            <div className='label_input__wrapper'>
+              <textarea
+                id='exclude_keywords'
+                value={excludeKeywords}
+                onChange={handleExcludeKeywordsChange}
+                placeholder=' '
+                rows='8'
+              />
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div className='fields-group'>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+        <label className='app-form__toggle'>
+          <div className='app-form__toggle__label'>
+            <strong>
+              <FormattedMessage
+                id='lists.with_media_only'
+                defaultMessage='Media only'
+              />
+            </strong>
+            <span className='hint'>
+              <FormattedMessage
+                id='lists.with_media_only_hint'
+                defaultMessage='Only posts with media will be added to the list.'
+              />
+            </span>
+          </div>
+
+          <div className='app-form__toggle__toggle'>
+            <div>
+              <Toggle
+                checked={withMediaOnly}
+                onChange={handleWithMediaOnlyChange}
+              />
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <div className='fields-group'>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+        <label className='app-form__toggle'>
+          <div className='app-form__toggle__label'>
+            <strong>
+              <FormattedMessage
+                id='lists.ignore_reblog'
+                defaultMessage='Exclude boosts'
+              />
+            </strong>
+            <span className='hint'>
+              <FormattedMessage
+                id='lists.ignore_reblog_hint'
+                defaultMessage='Boosts will be excluded from this list.'
+              />
+            </span>
+          </div>
+
+          <div className='app-form__toggle__toggle'>
+            <div>
+              <Toggle
+                checked={ignoreReblog}
+                onChange={handleIgnoreReblogChange}
+              />
+            </div>
+          </div>
+        </label>
+      </div>
 
       <div className='fields-group'>
         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
