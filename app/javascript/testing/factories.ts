@@ -76,7 +76,7 @@ export const statusFactory: FactoryFunction<ApiStatusJSON> = ({
   mentions: [],
   tags: [],
   emojis: [],
-  contentHtml: '<p>This is a test status.</p>',
+  contentHtml: data.text ?? '<p>This is a test status.</p>',
   ...data,
 });
 
@@ -118,6 +118,7 @@ export function unicodeEmojiFactory(
     hexcode: 'test',
     label: 'Test',
     unicode: '🧪',
+    shortcodes: ['test_emoji'],
     ...data,
   };
 }
@@ -127,8 +128,8 @@ export function customEmojiFactory(
 ): CustomEmojiData {
   return {
     shortcode: 'custom',
-    static_url: 'emoji/custom/static',
-    url: 'emoji/custom',
+    static_url: '/custom-emoji/logo.svg',
+    url: '/custom-emoji/logo.svg',
     visible_in_picker: true,
     ...data,
   };

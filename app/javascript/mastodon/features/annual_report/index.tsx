@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { FC } from 'react';
 
-import { defineMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useLocation } from 'react-router';
 
@@ -10,8 +10,12 @@ import classNames from 'classnames/bind';
 import { closeModal } from '@/mastodon/actions/modal';
 import { IconButton } from '@/mastodon/components/icon_button';
 import { LoadingIndicator } from '@/mastodon/components/loading_indicator';
-import { me } from '@/mastodon/initial_state';
-import { useAppDispatch, useAppSelector } from '@/mastodon/store';
+import { getReport } from '@/mastodon/reducers/slices/annual_report';
+import {
+  createAppSelector,
+  useAppDispatch,
+  useAppSelector,
+} from '@/mastodon/store';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 
 import { Archetype } from './archetype';
@@ -23,10 +27,15 @@ import { NewPosts } from './new_posts';
 
 const moduleClassNames = classNames.bind(styles);
 
-export const shareMessage = defineMessage({
-  id: 'annual_report.summary.share_message',
-  defaultMessage: 'I got the {archetype} archetype!',
-});
+export const accountSelector = createAppSelector(
+  [(state) => state.accounts, (state) => state.annualReport.report],
+  (accounts, report) => {
+    if (report?.schema_version === 2) {
+      return accounts.get(report.account_id);
+    }
+    return undefined;
+  },
+);
 
 export const AnnualReport: FC<{ context?: 'modal' | 'standalone' }> = ({
   context = 'standalone',
@@ -34,15 +43,14 @@ export const AnnualReport: FC<{ context?: 'modal' | 'standalone' }> = ({
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const report = useAppSelector((state) => state.annualReport.report);
-  const account = useAppSelector((state) => {
-    if (me) {
-      return state.accounts.get(me);
+  const account = useAppSelector(accountSelector);
+  const needsReport = !report; // Make into boolean to avoid object comparison in deps.
+
+  useEffect(() => {
+    if (needsReport) {
+      void dispatch(getReport());
     }
-    if (report?.schema_version === 2) {
-      return state.accounts.get(report.account_id);
-    }
-    return undefined;
-  });
+  }, [dispatch, needsReport]);
 
   const close = useCallback(() => {
     dispatch(closeModal({ modalType: 'ANNUAL_REPORT', ignoreFocus: false }));
@@ -57,7 +65,7 @@ export const AnnualReport: FC<{ context?: 'modal' | 'standalone' }> = ({
     }
   }, [pathname, initialPathname, close]);
 
-  if (!report) {
+  if (needsReport) {
     return <LoadingIndicator />;
   }
 
@@ -105,7 +113,7 @@ export const AnnualReport: FC<{ context?: 'modal' | 'standalone' }> = ({
           {topHashtag && (
             <MostUsedHashtag
               hashtag={topHashtag}
-              name={account?.display_name}
+              account={account}
               context={context}
             />
           )}
