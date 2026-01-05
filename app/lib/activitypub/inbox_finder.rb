@@ -8,7 +8,9 @@ class ActivityPub::InboxFinder
 
   def followers_inboxes
     scope = followers_scope
-    inboxes_without_suspended_for(scope)
+    inboxes = inboxes_without_suspended_for(scope)
+    inboxes |= [@status.account.preferred_inbox_url]
+    inboxes
   end
 
   private
