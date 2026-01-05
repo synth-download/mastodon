@@ -63,6 +63,10 @@ class KeyboardShortcuts extends ImmutablePureComponent {
                 <td><FormattedMessage id='keyboard_shortcuts.boost' defaultMessage='to boost' /></td>
               </tr>
               <tr>
+                <td><kbd>q</kbd></td>
+                <td><FormattedMessage id='keyboard_shortcuts.quote' defaultMessage='Quote post' /></td>
+              </tr>
+              <tr>
                 <td><kbd>enter</kbd>, <kbd>o</kbd></td>
                 <td><FormattedMessage id='keyboard_shortcuts.enter' defaultMessage='to open status' /></td>
               </tr>
@@ -91,12 +95,16 @@ class KeyboardShortcuts extends ImmutablePureComponent {
                 <td><FormattedMessage id='keyboard_shortcuts.down' defaultMessage='to move down in the list' /></td>
               </tr>
               <tr>
-                <td><kbd>l</kbd></td>
-                <td><FormattedMessage id='keyboard_shortcuts.load_more' defaultMessage='Focus "Load more" button' /></td>
+                <td><kbd>0</kbd></td>
+                <td><FormattedMessage id='keyboard_shortcuts.top' defaultMessage='Move to top of list' /></td>
               </tr>
               <tr>
                 <td><kbd>1</kbd>-<kbd>9</kbd></td>
                 <td><FormattedMessage id='keyboard_shortcuts.column' defaultMessage='to focus a status in one of the columns' /></td>
+              </tr>
+              <tr>
+                <td><kbd>l</kbd></td>
+                <td><FormattedMessage id='keyboard_shortcuts.load_more' defaultMessage='Focus "Load more" button' /></td>
               </tr>
               <tr>
                 <td><kbd>n</kbd></td>

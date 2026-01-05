@@ -25,7 +25,7 @@ class Quote < ApplicationRecord
   REFRESH_DEADLINE = 6.hours
 
   enum :state,
-       { pending: 0, accepted: 1, rejected: 2, revoked: 3 },
+       { pending: 0, accepted: 1, rejected: 2, revoked: 3, deleted: 4 },
        validate: true
 
   belongs_to :status
@@ -39,6 +39,11 @@ class Quote < ApplicationRecord
   validates :activity_uri, presence: true, if: -> { account.local? && quoted_account&.remote? }
   validates :approval_uri, absence: true, if: -> { quoted_account&.local? }
   validate :validate_visibility
+  validate :validate_original_quoted_status
+
+  after_create_commit :increment_counter_caches!
+  after_destroy_commit :decrement_counter_caches!
+  after_update_commit :update_counter_caches!
 
   def accept!
     update!(state: :accepted)
@@ -81,7 +86,34 @@ class Quote < ApplicationRecord
     errors.add(:quoted_status_id, :visibility_mismatch)
   end
 
+  def validate_original_quoted_status
+    errors.add(:quoted_status_id, :reblog_unallowed) if quoted_status&.reblog?
+  end
+
   def set_activity_uri
     self.activity_uri = [ActivityPub::TagManager.instance.uri_for(account), '/quote_requests/', SecureRandom.uuid].join
+  end
+
+  def increment_counter_caches!
+    return unless accepted?
+
+    quoted_status&.increment_count!(:quotes_count)
+  end
+
+  def decrement_counter_caches!
+    return unless accepted?
+
+    quoted_status&.decrement_count!(:quotes_count)
+  end
+
+  def update_counter_caches!
+    return if legacy? || !state_previously_changed?
+
+    if accepted?
+      quoted_status&.increment_count!(:quotes_count)
+    else
+      # TODO: are there cases where this would not be correct?
+      quoted_status&.decrement_count!(:quotes_count)
+    end
   end
 end

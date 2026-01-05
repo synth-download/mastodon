@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ActivityPub::Activity::QuoteRequest, feature: :outgoing_quotes do
+RSpec.describe ActivityPub::Activity::QuoteRequest do
   let(:sender)    { Fabricate(:account, domain: 'example.com') }
   let(:recipient) { Fabricate(:account) }
   let(:quoted_post) { Fabricate(:status, account: recipient) }
@@ -87,7 +87,7 @@ RSpec.describe ActivityPub::Activity::QuoteRequest, feature: :outgoing_quotes do
     context 'when trying to quote a quotable local status' do
       before do
         stub_request(:get, 'https://example.com/unknown-status').to_return(status: 200, body: Oj.dump(status_json), headers: { 'Content-Type': 'application/activity+json' })
-        quoted_post.update(quote_approval_policy: Status::QUOTE_APPROVAL_POLICY_FLAGS[:public] << 16)
+        quoted_post.update(quote_approval_policy: InteractionPolicy::POLICY_FLAGS[:public] << 16)
       end
 
       it 'accepts the quote and sends an Accept activity' do
@@ -105,7 +105,7 @@ RSpec.describe ActivityPub::Activity::QuoteRequest, feature: :outgoing_quotes do
       let(:instrument) { status_json.without('@context') }
 
       before do
-        quoted_post.update(quote_approval_policy: Status::QUOTE_APPROVAL_POLICY_FLAGS[:public] << 16)
+        quoted_post.update(quote_approval_policy: InteractionPolicy::POLICY_FLAGS[:public] << 16)
       end
 
       it 'accepts the quote and sends an Accept activity' do

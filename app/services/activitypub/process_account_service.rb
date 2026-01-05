@@ -102,10 +102,12 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.outbox_url              = valid_collection_uri(@json['outbox'])
     @account.shared_inbox_url        = valid_collection_uri(@json['endpoints'].is_a?(Hash) ? @json['endpoints']['sharedInbox'] : @json['sharedInbox'])
     @account.followers_url           = valid_collection_uri(@json['followers'])
+    @account.following_url           = valid_collection_uri(@json['following'])
     @account.url                     = url || @uri
     @account.uri                     = @uri
     @account.actor_type              = actor_type
     @account.created_at              = @json['published'] if @json['published'].present?
+    @account.feature_approval_policy = feature_approval_policy if Mastodon::Feature.collections_enabled?
   end
 
   def valid_collection_uri(uri)
@@ -369,5 +371,9 @@ class ActivityPub::ProcessAccountService < BaseService
     emoji ||= CustomEmoji.new(domain: @account.domain, shortcode: shortcode, uri: uri)
     emoji.image_remote_url = image_url
     emoji.save
+  end
+
+  def feature_approval_policy
+    ActivityPub::Parser::InteractionPolicyParser.new(@json.dig('interactionPolicy', 'canFeature'), @account).bitmap
   end
 end

@@ -12,23 +12,27 @@ import type { ApiStatusReactionJSON } from 'flavours/glitch/api_types/reaction';
 import type { ApiReportJSON } from 'flavours/glitch/api_types/reports';
 
 // Maximum number of avatars displayed in a notification group
-// This corresponds to the max lenght of `group.sampleAccountIds`
+// This corresponds to the max length of `group.sampleAccountIds`
 export const NOTIFICATIONS_GROUP_MAX_AVATARS = 8;
 
-interface BaseNotificationGroup
-  extends Omit<BaseNotificationGroupJSON, 'sample_account_ids'> {
+interface BaseNotificationGroup extends Omit<
+  BaseNotificationGroupJSON,
+  'sample_account_ids'
+> {
   sampleAccountIds: string[];
   partial: boolean;
 }
 
-interface BaseNotificationWithStatus<Type extends NotificationWithStatusType>
-  extends BaseNotificationGroup {
+interface BaseNotificationWithStatus<
+  Type extends NotificationWithStatusType,
+> extends BaseNotificationGroup {
   type: Type;
   statusId: string | undefined;
 }
 
-interface BaseNotification<Type extends NotificationType>
-  extends BaseNotificationGroup {
+interface BaseNotification<
+  Type extends NotificationType,
+> extends BaseNotificationGroup {
   type: Type;
 }
 
@@ -40,6 +44,8 @@ export type NotificationGroupMention = BaseNotificationWithStatus<'mention'>;
 export type NotificationGroupQuote = BaseNotificationWithStatus<'quote'>;
 export type NotificationGroupPoll = BaseNotificationWithStatus<'poll'>;
 export type NotificationGroupUpdate = BaseNotificationWithStatus<'update'>;
+export type NotificationGroupQuotedUpdate =
+  BaseNotificationWithStatus<'quoted_update'>;
 export type NotificationGroupFollow = BaseNotification<'follow'>;
 export type NotificationGroupFollowRequest = BaseNotification<'follow_request'>;
 export type NotificationGroupAdminSignUp = BaseNotification<'admin.sign_up'>;
@@ -52,26 +58,25 @@ export type AccountWarningAction =
   | 'sensitive'
   | 'silence'
   | 'suspend';
-export interface AccountWarning
-  extends Omit<ApiAccountWarningJSON, 'target_account'> {
+export interface AccountWarning extends Omit<
+  ApiAccountWarningJSON,
+  'target_account'
+> {
   targetAccountId: string;
 }
 
-export interface NotificationGroupModerationWarning
-  extends BaseNotification<'moderation_warning'> {
+export interface NotificationGroupModerationWarning extends BaseNotification<'moderation_warning'> {
   moderationWarning: AccountWarning;
 }
 
 type AccountRelationshipSeveranceEvent =
   ApiAccountRelationshipSeveranceEventJSON;
-export interface NotificationGroupSeveredRelationships
-  extends BaseNotification<'severed_relationships'> {
+export interface NotificationGroupSeveredRelationships extends BaseNotification<'severed_relationships'> {
   event: AccountRelationshipSeveranceEvent;
 }
 
 type AnnualReportEvent = ApiAnnualReportEventJSON;
-export interface NotificationGroupAnnualReport
-  extends BaseNotification<'annual_report'> {
+export interface NotificationGroupAnnualReport extends BaseNotification<'annual_report'> {
   annualReport: AnnualReportEvent;
 }
 
@@ -79,15 +84,13 @@ interface Report extends Omit<ApiReportJSON, 'target_account'> {
   targetAccountId: string;
 }
 
-export interface NotificationGroupAdminReport
-  extends BaseNotification<'admin.report'> {
+export interface NotificationGroupAdminReport extends BaseNotification<'admin.report'> {
   report: Report;
 }
 
 type StatusReaction = Omit<Omit<ApiStatusReactionJSON, 'account'>, 'count'>;
 
-export interface NotificationGroupReaction
-  extends BaseNotification<'reaction'> {
+export interface NotificationGroupReaction extends BaseNotification<'reaction'> {
   statusId: string | undefined;
   reaction: StatusReaction | undefined;
 }
@@ -101,6 +104,7 @@ export type NotificationGroup =
   | NotificationGroupQuote
   | NotificationGroupPoll
   | NotificationGroupUpdate
+  | NotificationGroupQuotedUpdate
   | NotificationGroupFollow
   | NotificationGroupFollowRequest
   | NotificationGroupModerationWarning
@@ -151,7 +155,8 @@ export function createNotificationGroupFromJSON(
     case 'mention':
     case 'quote':
     case 'poll':
-    case 'update': {
+    case 'update':
+    case 'quoted_update': {
       const { status_id: statusId, ...groupWithoutStatus } = group;
       return {
         statusId: statusId ?? undefined,
@@ -239,6 +244,7 @@ export function createNotificationGroupFromNotificationJSON(
     case 'quote':
     case 'poll':
     case 'update':
+    case 'quoted_update':
       return {
         ...group,
         type: notification.type,

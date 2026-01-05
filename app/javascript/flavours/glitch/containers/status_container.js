@@ -6,6 +6,7 @@ import {
   mentionCompose,
   directCompose,
 } from 'flavours/glitch/actions/compose';
+import { quoteComposeById } from 'flavours/glitch/actions/compose_typed';
 import {
   initAddFilter,
 } from 'flavours/glitch/actions/filters';
@@ -83,6 +84,10 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
       }
     });
   },
+  
+  onQuote (status) {
+    dispatch(quoteComposeById(status.get('id')));
+  },
 
   onReblog (status, e) {
     dispatch(toggleReblog(status.get('id'), e.shiftKey));
@@ -127,7 +132,13 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     if (!deleteModal) {
       dispatch(deleteStatus(status.get('id'), withRedraft));
     } else {
-      dispatch(openModal({ modalType: 'CONFIRM_DELETE_STATUS', modalProps: { statusId: status.get('id'), withRedraft } }));
+      dispatch(openModal({
+        modalType: 'CONFIRM_DELETE_STATUS',
+        modalProps: {
+          statusId: status.get('id'),
+          withRedraft
+        }
+      }));
     }
   },
 
@@ -228,11 +239,10 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     });
   },
 
-  onInteractionModal (type, status) {
+  onInteractionModal (status) {
     dispatch(openModal({
       modalType: 'INTERACTION',
       modalProps: {
-        type,
         accountId: status.getIn(['account', 'id']),
         url: status.get('uri'),
       },
