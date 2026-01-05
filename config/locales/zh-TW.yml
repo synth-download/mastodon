@@ -7,6 +7,8 @@ zh-TW:
     hosted_on: 於 %{domain} 託管之 Mastodon 站點
     title: 關於本站
   accounts:
+    errors:
+      cannot_be_added_to_collections: 此帳號無法被加至集合中。
     followers:
       other: 跟隨者
     following: 正在跟隨
@@ -782,6 +784,8 @@ zh-TW:
         view_dashboard_description: 允許使用者存取儀表板與各種指標
         view_devops: DevOps
         view_devops_description: 允許使用者存取 Sidekiq 與 pgHero 儀表板
+        view_feeds: 檢視即時內容與主題
+        view_feeds_description: 允許使用者無論伺服器設定為何皆可存取即時內容與主題
       title: 角色
     rules:
       add_new: 新增規則
@@ -825,13 +829,14 @@ zh-TW:
         title: 預設將使用者排除於搜尋引擎索引
       discovery:
         follow_recommendations: 跟隨建議
-        preamble: 呈現有趣的內容有助於 Mastodon 上一人不識的新手上路。控制各種不同的分類於您伺服器上如何被探索到。
+        preamble: 呈現有趣的內容有助於 Mastodon 上一人不識的新手上路。控制您伺服器上各類探索功能之運作方式。
         privacy: 隱私權
         profile_directory: 個人檔案目錄
         public_timelines: 公開時間軸
         publish_statistics: 公開統計資料
         title: 探索
         trends: 熱門趨勢
+        wrapstodon: Mastodon 年度回顧
       domain_blocks:
         all: 至任何人
         disabled: 至沒有人
@@ -839,7 +844,13 @@ zh-TW:
       feed_access:
         modes:
           authenticated: 僅限已登入之使用者
+          disabled: 需要特定使用者權限
           public: 任何人
+      landing_page:
+        values:
+          about: 關於
+          local_feed: 本站時間軸
+          trends: 熱門趨勢
       registrations:
         moderation_recommandation: 對所有人開放註冊之前，請確保您有人手充足且反應靈敏的管理員團隊！
         preamble: 控制誰能於您伺服器上建立帳號。
@@ -1627,7 +1638,7 @@ zh-TW:
       disabled_account: 之後您的目前帳號將完全無法使用。但您可以存取資料匯出與重新啟用。
       followers: 此動作將會將目前帳號的所有跟隨者轉移至新帳號
       only_redirect_html: 或者，您也可以<a href="%{path}">僅於您的個人檔案中設定重新導向</a>。
-      other_data: 其他資料並不會自動轉移
+      other_data: 不會自動移動其他資料（包括您的嘟文和您跟隨之帳號列表）
       redirect: 您目前的帳號將於個人檔案頁面新增重新導向公告，並會被排除於搜尋結果之外
   moderation:
     title: 站務
@@ -1661,16 +1672,22 @@ zh-TW:
       body: "%{name} 於嘟文中提及您："
       subject: "%{name} 於嘟文中提及您"
       title: 新的提及
+    moderation_warning:
+      subject: 您已收到管理員警告
     poll:
       subject: 由 %{name} 發起的投票已結束
     quote:
       body: 您的嘟文被 %{name} 引用：
       subject: "%{name} 已引用您的嘟文"
       title: 新引用
+    quoted_update:
+      subject: "%{name} 已編輯一則您曾引用之嘟文"
     reblog:
       body: 您的嘟文被 %{name} 轉嘟：
       subject: "%{name} 已轉嘟您的嘟文"
       title: 新的轉嘟
+    severed_relationships:
+      subject: 由於管理員之決定，您已失去您的社交網路
     status:
       subject: "%{name} 剛剛嘟文"
     update:
@@ -1880,6 +1897,7 @@ zh-TW:
     errors:
       in_reply_not_found: 您嘗試回覆之嘟文似乎不存在。
       quoted_status_not_found: 您嘗試引用之嘟文似乎不存在。
+      quoted_user_not_mentioned: 無法於私訊嘟文中引用無提及之使用者。
     over_character_limit: 已超過 %{max} 字的限制
     pin_errors:
       direct: 無法釘選只有僅提及使用者可見之嘟文
@@ -1894,7 +1912,7 @@ zh-TW:
       followers: 僅限跟隨者
       nobody: 僅有我
       public: 所有人
-    quote_post_author: 以引用 %{acct} 之嘟文
+    quote_post_author: 已引用 %{acct} 之嘟文
     title: "%{name}：「%{quote}」"
     visibilities:
       direct: 私訊
@@ -2132,3 +2150,6 @@ zh-TW:
     not_supported: 此瀏覽器並不支援安全金鑰
     otp_required: 請先啟用兩階段驗證以使用安全金鑰。
     registered_on: 註冊於 %{date}
+  wrapstodon:
+    description: 來瞧瞧 %{name} 今年是如何使用 Mastodon 吧！
+    title: "%{name} 的 %{year} Mastodon 年度回顧 (Wrapstodon)"

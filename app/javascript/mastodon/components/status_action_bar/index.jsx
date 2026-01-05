@@ -272,7 +272,11 @@ class StatusActionBar extends ImmutablePureComponent {
     if (publicStatus && 'share' in navigator) {
       menu.push({ text: intl.formatMessage(messages.share), action: this.handleShareClick });
     }
-    
+
+    if (publicStatus && !isRemote) {
+      menu.push({ text: intl.formatMessage(messages.embed), action: this.handleEmbed });
+    }
+
     if (quickBoosting && signedIn) {
       const quoteItem = quoteItemState(statusQuoteState);
       menu.push(null);
@@ -284,11 +288,6 @@ class StatusActionBar extends ImmutablePureComponent {
         disabled: quoteItem.disabled,
         action: this.handleQuoteClick,
       });
-      menu.push(null);
-    }
-
-    if (publicStatus && !isRemote) {
-      menu.push({ text: intl.formatMessage(messages.embed), action: this.handleEmbed });
     }
 
     if (signedIn) {
@@ -405,16 +404,21 @@ class StatusActionBar extends ImmutablePureComponent {
             <Dropdown
               scrollKey={scrollKey}
               status={status}
+              needsStatusRefresh={quickBoosting && status.get('quote_approval') === null}
               items={menu}
-              icon='ellipsis-h'
-              iconComponent={MoreHorizIcon}
               direction='right'
-              title={intl.formatMessage(messages.more)}
               onOpen={() => {
                 dismissQuoteHint();
                 return true;
               }}
-            />
+            >
+              <IconButton
+                className='status__action-bar__button'
+                icon='ellipsis-h'
+                iconComponent={MoreHorizIcon}
+                title={intl.formatMessage(messages.more)}
+              />
+            </Dropdown>
           )}
         </RemoveQuoteHint>
       </div>

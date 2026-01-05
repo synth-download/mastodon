@@ -670,7 +670,6 @@ id:
         title: Keluarkan pengguna dari pengindeksan mesin telusur secara bawaan
       discovery:
         follow_recommendations: Ikuti rekomendasi
-        preamble: Menampilkan konten menarik penting dalam memandu pengguna baru yang mungkin tidak tahu siapa pun di Mastodon. Atur bagaimana berbagai fitur penemuan bekerja di server Anda.
         profile_directory: Direktori profil
         public_timelines: Linimasa publik
         title: Penemuan
@@ -1168,7 +1167,6 @@ id:
       disabled_account: Akun Anda tidak akan dapat dipakai secara penuh. Namun, Anda tetap akan memiliki akses ke ekspor data dan aktivasi ulang.
       followers: Tindakan ini akan memindah semua pengikut Anda dari akun sekarang ke akun baru
       only_redirect_html: Secara alternatif, Anda <a href="%{path}">hanya dapat menaruh tulisan mengarahkan ke profil Anda</a>.
-      other_data: Tidak akan ada data lagi yang dipindahkan secara otomatis
       redirect: Pemberitahuan peralihan akan dimunculkan pada akun profil Anda dan akun akan dikecualikan dari pencarian
   moderation:
     title: Moderasi

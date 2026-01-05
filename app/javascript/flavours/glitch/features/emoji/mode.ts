@@ -3,6 +3,7 @@
 
 import { createAppSelector, useAppSelector } from '@/flavours/glitch/store';
 import { isDevelopment } from '@/flavours/glitch/utils/environment';
+import { isDarkMode } from '@/flavours/glitch/utils/theme';
 
 import {
   EMOJI_MODE_NATIVE,
@@ -27,7 +28,7 @@ export function useEmojiAppState(): EmojiAppState {
     currentLocale: locale,
     locales: [locale],
     mode,
-    darkTheme: document.body.classList.contains('theme-default'),
+    darkTheme: isDarkMode(),
   };
 }
 
@@ -76,7 +77,7 @@ function testEmojiSupport(text: string) {
   return compareFeatures(feature1, feature2);
 }
 
-const EMOJI_VERSION_TEST_EMOJI = '🫨'; // shaking head, from v15
+const EMOJI_VERSION_TEST_EMOJI = '🫩'; // face with bags under eyes, from Unicode 16.0.
 const EMOJI_FLAG_TEST_EMOJI = '🇨🇭';
 
 export function determineEmojiMode(style: string): EmojiMode {

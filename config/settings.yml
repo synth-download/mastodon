@@ -16,6 +16,7 @@ defaults: &defaults
   bubble_live_feed_access: 'authenticated'
   remote_live_feed_access: 'authenticated'
   local_topic_feed_access: 'authenticated'
+  bubble_topic_feed_access: 'authenticated'
   remote_topic_feed_access: 'authenticated'
   show_staff_badge: true
   preview_sensitive_media: false
@@ -23,7 +24,6 @@ defaults: &defaults
   flavour: 'glitch'
   skin: 'system'
   trends: true
-  trends_as_landing_page: true
   trendable_by_default: false
   trending_status_cw: true
   visible_reactions: 6
@@ -45,6 +45,8 @@ defaults: &defaults
   reject_pattern: ''
   reject_blurhash: ''
   allow_referrer_origin: false
+  landing_page: 'trends'
+  wrapstodon: true
 
 development:
   <<: *defaults

@@ -679,7 +679,6 @@ ku:
         title: Pêlrêçkirna bikarhêneran ji motorê lêgerînê dûr bixe
       discovery:
         follow_recommendations: Pêşniyarên şopandinê
-        preamble: Rûbirûbûna naveroka balkêş ji bo bikarhênerên nû yên ku li ser Mastodon kesek nas nakin pir bi bandor e. Kontrol bike ka çend taybetmendiyên vekolînê li ser rajekarê te çawa dixebite.
         profile_directory: Rêgeha profîlê
         public_timelines: Demnameya gelemperî
         title: Vekolîne
@@ -1190,7 +1189,6 @@ ku:
       disabled_account: Ajimêra te ya heyî dê paşê bi tevahî neyê bikaranîn. Lê belê, tu dikarî bigihîje derxistinê daneyan û hem jî ji nû ve çalakkirinê.
       followers: Ev çalakî dê hemî şopînerên ji ajimêra heyî bar bike ajimêra nû
       only_redirect_html: Wekî din, tu dikarî <a href="%{path}"> tenê beralîkirinekê li ser profîla xwe bicîh bike </a>.
-      other_data: Daneyên din dê bi xweberî neyên livandin
       redirect: Profîla ajimêra te ya heyî dê bi nîşeyeke beralîkirinê were nûve kirin û ji lêgerînan were bi dûrxistin
   moderation:
     title: Çavdêrî

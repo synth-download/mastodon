@@ -13,10 +13,10 @@ ARG BASE_REGISTRY="docker.io"
 
 # Ruby image to use for base image, change with [--build-arg RUBY_VERSION="3.4.x"]
 # renovate: datasource=docker depName=docker.io/ruby
-ARG RUBY_VERSION="3.4.7"
-# # Node.js version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="20"]
+ARG RUBY_VERSION="3.4.8"
+# # Node.js version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="22"]
 # renovate: datasource=node-version depName=node
-ARG NODE_MAJOR_VERSION="22"
+ARG NODE_MAJOR_VERSION="24"
 # Debian image to use for base image, change with [--build-arg DEBIAN_VERSION="trixie"]
 ARG DEBIAN_VERSION="trixie"
 # Node.js image to use for base image based on combined variables (ex: 20-trixie-slim)
@@ -183,7 +183,7 @@ FROM build AS libvips
 
 # libvips version to compile, change with [--build-arg VIPS_VERSION="8.15.2"]
 # renovate: datasource=github-releases depName=libvips packageName=libvips/libvips
-ARG VIPS_VERSION=8.17.2
+ARG VIPS_VERSION=8.17.3
 # libvips download URL, change with [--build-arg VIPS_URL="https://github.com/libvips/libvips/releases/download"]
 ARG VIPS_URL=https://github.com/libvips/libvips/releases/download
 
