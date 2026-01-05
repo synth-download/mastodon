@@ -5,11 +5,8 @@ import { flattenEmojiData } from 'emojibase';
 import unicodeRawEmojis from 'emojibase-data/en/data.json';
 
 import {
-  twemojiHasBorder,
   twemojiToUnicodeInfo,
   unicodeToTwemojiHex,
-  CODES_WITH_DARK_BORDER,
-  CODES_WITH_LIGHT_BORDER,
   emojiToUnicodeHex,
 } from './normalize';
 
@@ -22,9 +19,9 @@ const emojiSVGFiles = await readdir(
 );
 const svgFileNames = emojiSVGFiles
   .filter((file) => file.isFile() && file.name.endsWith('.svg'))
-  .map((file) => basename(file.name, '.svg').toUpperCase());
+  .map((file) => basename(file.name, '.svg'));
 const svgFileNamesWithoutBorder = svgFileNames.filter(
-  (fileName) => !fileName.endsWith('_BORDER'),
+  (fileName) => !fileName.endsWith('_border'),
 );
 
 const unicodeEmojis = flattenEmojiData(unicodeRawEmojis);
@@ -54,26 +51,6 @@ describe('unicodeToTwemojiHex', () => {
   )('verifying an emoji exists for %s (%s)', ([hexcode], { expect }) => {
     const result = unicodeToTwemojiHex(hexcode);
     expect(svgFileNamesWithoutBorder).toContain(result);
-  });
-});
-
-describe('twemojiHasBorder', () => {
-  test.concurrent.for(
-    svgFileNames
-      .filter((file) => file.endsWith('_BORDER'))
-      .map((file) => {
-        const hexCode = file.replace('_BORDER', '');
-        return [
-          hexCode,
-          CODES_WITH_LIGHT_BORDER.includes(hexCode),
-          CODES_WITH_DARK_BORDER.includes(hexCode),
-        ] as const;
-      }),
-  )('twemojiHasBorder for %s', ([hexCode, isLight, isDark], { expect }) => {
-    const result = twemojiHasBorder(hexCode);
-    expect(result).toHaveProperty('hexCode', hexCode);
-    expect(result).toHaveProperty('hasLightBorder', isLight);
-    expect(result).toHaveProperty('hasDarkBorder', isDark);
   });
 });
 

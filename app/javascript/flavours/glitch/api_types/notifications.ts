@@ -8,13 +8,14 @@ import type { ApiReportJSON } from './reports';
 import type { ApiStatusJSON } from './statuses';
 
 // See app/model/notification.rb
-export const allNotificationTypes = [
+export const allNotificationTypes: NotificationType[] = [
   'follow',
   'follow_request',
   'favourite',
   'reaction',
   'reblog',
   'mention',
+  'quote',
   'poll',
   'status',
   'update',
@@ -30,8 +31,10 @@ export type NotificationWithStatusType =
   | 'reblog'
   | 'status'
   | 'mention'
+  | 'quote'
   | 'poll'
-  | 'update';
+  | 'update'
+  | 'quoted_update';
 
 export type NotificationType =
   | NotificationWithStatusType
@@ -102,8 +105,7 @@ export interface ApiAccountWarningJSON {
   appeal: unknown;
 }
 
-interface ModerationWarningNotificationGroupJSON
-  extends BaseNotificationGroupJSON {
+interface ModerationWarningNotificationGroupJSON extends BaseNotificationGroupJSON {
   type: 'moderation_warning';
   moderation_warning: ApiAccountWarningJSON;
 }
@@ -129,14 +131,12 @@ export interface ApiAccountRelationshipSeveranceEventJSON {
   created_at: string;
 }
 
-interface AccountRelationshipSeveranceNotificationGroupJSON
-  extends BaseNotificationGroupJSON {
+interface AccountRelationshipSeveranceNotificationGroupJSON extends BaseNotificationGroupJSON {
   type: 'severed_relationships';
   event: ApiAccountRelationshipSeveranceEventJSON;
 }
 
-interface AccountRelationshipSeveranceNotificationJSON
-  extends BaseNotificationJSON {
+interface AccountRelationshipSeveranceNotificationJSON extends BaseNotificationJSON {
   type: 'severed_relationships';
   event: ApiAccountRelationshipSeveranceEventJSON;
 }

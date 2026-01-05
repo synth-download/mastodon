@@ -94,6 +94,10 @@ export function Reactions () {
   return import('../../reactions');
 }
 
+export function Quotes () {
+  return import('../../quotes');
+}
+
 export function FollowRequests () {
   return import('../../follow_requests');
 }
@@ -235,7 +239,7 @@ export function LinkTimeline () {
 }
 
 export function AnnualReportModal () {
-  return import('../components/annual_report_modal');
+  return import('../../annual_report/modal');
 }
 
 export function ListEdit () {

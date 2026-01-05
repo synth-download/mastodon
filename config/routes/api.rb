@@ -6,7 +6,15 @@ namespace :api, format: false do
 
   # Experimental JSON / REST API
   namespace :v1_alpha do
+    resources :accounts, only: [] do
+      resources :collections, only: [:index]
+    end
+
     resources :async_refreshes, only: :show
+
+    resources :collections, only: [:show, :create, :update, :destroy] do
+      resources :items, only: [:create, :destroy], controller: 'collection_items'
+    end
   end
 
   # JSON / REST API
@@ -18,6 +26,12 @@ namespace :api, format: false do
         resources :reactions, controller: :reactions, only: :index
         resource :reblog, only: :create
         post :unreblog, to: 'reblogs#destroy'
+
+        resources :quotes, only: :index do
+          member do
+            post :revoke
+          end
+        end
 
         resource :favourite, only: :create
         post :unfavourite, to: 'favourites#destroy'
@@ -38,6 +52,8 @@ namespace :api, format: false do
 
         resource :history, only: :show
         resource :source, only: :show
+
+        resource :interaction_policy, only: :update
 
         post :translate, to: 'translations#create'
       end
@@ -69,6 +85,8 @@ namespace :api, format: false do
     resources :annual_reports, only: [:index, :show] do
       member do
         post :read
+        post :generate
+        get :state
       end
     end
 
@@ -371,10 +389,6 @@ namespace :api, format: false do
   namespace :web do
     resource :settings, only: [:update]
     resources :embeds, only: [:show]
-    resources :push_subscriptions, only: [:create, :destroy] do
-      member do
-        put :update
-      end
-    end
+    resources :push_subscriptions, only: [:create, :destroy, :update]
   end
 end
