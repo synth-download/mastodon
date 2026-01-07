@@ -1,0 +1,59 @@
+@use 'mastodon/theme/light';
+@use 'mastodon/theme/dark';
+@use 'mastodon/theme/utils';
+
+@use 'application';
+@use 'modern/style';
+@use 'modern/glitch-fixes';
+
+@mixin custom-palette {
+  --color-black: #000;
+  --color-grey-950: #1a1814;
+  --color-grey-800: #2a241d;
+  --color-grey-700: #3d3528;
+  --color-grey-600: #4f4537;
+  --color-grey-500: #6b5d4f;
+  --color-grey-400: #8a7d6f;
+  --color-grey-300: #aca193;
+  --color-grey-200: #cdc7bd;
+  --color-grey-100: #e8e5df;
+  --color-grey-50: #f5f3ef;
+  --color-white: #fff;
+  --color-indigo-600: #efbd58;
+  --color-indigo-400: #f3ce7a;
+  --color-indigo-300: #f7dc9c;
+  --color-indigo-200: #fae8ba;
+  --color-indigo-100: #fdf4dd;
+  --color-indigo-50: #fefbf0;
+  --color-red-500: #e85d75;
+  --color-red-600: #d63752;
+  --color-yellow-400: #efbd58;
+  --color-yellow-600: #d49a2a;
+  --color-yellow-700: #b37d15;
+  --color-green-400: #6bc490;
+  --color-green-600: #45a574;
+}
+
+html:is([data-user-theme='synth']) {
+    color-scheme: dark light;
+
+    @media (prefers-color-scheme: dark) {
+        @include dark.tokens;
+        @include custom-palette;
+        @include utils.invert-on-dark;
+
+        @media (prefers-contrast: more) {
+            @include dark.contrast-overrides;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        @include light.tokens;
+        @include custom-palette;
+        @include utils.invert-on-light;
+
+        @media (prefers-contrast: more) {
+            @include light.contrast-overrides;
+        }
+    }
+}
