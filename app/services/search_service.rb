@@ -49,24 +49,25 @@ class SearchService < BaseService
 
     flags, query = parse_search_flags
 
-    if !query.strip.empty?
-      text_matches = results.where("statuses.text &@~ ?", query).select(:id)
-      media_matches = results.joins(:media_attachments).where("media_attachments.description &@~ ?", query).select('statuses.id')
-    
+    unless query.strip.empty?
+      text_matches = results.where('statuses.text &@~ ?', query).select(:id)
+      media_matches = results.joins(:media_attachments).where('media_attachments.description &@~ ?', query).select('statuses.id')
+
       results = results.where(id: text_matches).or(results.where(id: media_matches))
     end
 
     # check if authed to resolve flags.
     if @account.present?
       if flags[:from].present?
-        positive = flags[:from].select { |f| !f[:not] }
+        positive = flags[:from].reject { |f| f[:not] }
         negative = flags[:from].select { |f| f[:not] }
 
-        accounts = positive.flat_map {|entry| resolve_account_ids(entry[:value]) }.uniq
+        accounts = positive.flat_map { |entry| resolve_account_ids(entry[:value]) }.uniq
         return Status.none if positive.any? && accounts.empty?
+
         results = results.where(account_id: accounts) if accounts.any?
 
-        not_accounts = negative.flat_map {|entry| resolve_account_ids(entry[:value])}.uniq
+        not_accounts = negative.flat_map { |entry| resolve_account_ids(entry[:value]) }.uniq
         results = results.where.not(account_id: not_accounts) if not_accounts.any?
       end
 
@@ -94,7 +95,7 @@ class SearchService < BaseService
       end
 
       if flags[:language].present?
-        positive = flags[:language].select { |f| !f[:not] }.map { |f| f[:value].downcase }
+        positive = flags[:language].reject { |f| f[:not] }.map { |f| f[:value].downcase }
         negative = flags[:language].select { |f| f[:not] }.map { |f| f[:value].downcase }
 
         results = results.where(language: positive) if positive.any?
@@ -109,15 +110,12 @@ class SearchService < BaseService
 
     results = results.distinct.limit(@limit).offset(@offset)
 
-    account_ids         = results.map(&:account_id)
-    account_domains     = results.map(&:account_domain)
-    preloaded_relations = @account.relations_map(account_ids, account_domains)
-
-    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
+    results.reject { |status| StatusFilter.new(status, @account).filtered? }
   end
 
   def resolve_account_ids(value)
     return Account.none if value.blank?
+
     v = value.to_s.strip
 
     return @account.id if v.downcase == 'me'
@@ -132,10 +130,10 @@ class SearchService < BaseService
 
   def parse_search_flags
     query = @query.to_s.dup
-    flags = Hash.new { |h,k| h[k] = [] }
+    flags = Hash.new { |h, k| h[k] = [] }
 
     while (m = query.match(/(-?)(\w+):(?:"([^"]+)"|(\S+))/))
-      flags[m[2].downcase.to_sym] << { not: m[1] == '-', value: (m[3] || m[4]) }
+      flags[m[2].downcase.to_sym] << { not: m[1] == '-', value: m[3] || m[4] }
       query.sub!(m[0], '')
     end
     [flags, query]
