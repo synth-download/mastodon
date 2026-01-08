@@ -108,9 +108,28 @@ class SearchService < BaseService
     results = results.where('statuses.id > ?', @options[:min_id]) if @options[:min_id].present?
     results = results.where(statuses: { id: ...(@options[:max_id]) }) if @options[:max_id].present?
 
-    results = results.distinct.limit(@limit).offset(@offset)
+    if @account.present?
+      blocked_ids = @account.blocking.select(:target_account_id)
+      muted_ids = @account.muting.select(:target_account_id)
 
-    results.reject { |status| StatusFilter.new(status, @account).filtered? }
+      results = results.where.not(account_id: blocked_ids) if blocked_ids.any?
+      results = results.where.not(account_id: muted_ids) if muted_ids.any?
+
+      blocked_domains = @account.domain_blocks.pluck(:domain)
+      results = results.joins(:account).where.not(accounts: { domain: blocked_domains }) if blocked_domains.any?
+    end
+
+    results = results.distinct.limit(@limit * 2).offset(@offset)
+
+    filtered = []
+    results.each do |status|
+      break if filtered.size >= @limit
+      next if StatusFilter.new(status, @account).filtered?
+
+      filtered << status
+    end
+
+    filtered
   end
 
   def resolve_account_ids(value)
