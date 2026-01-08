@@ -95,8 +95,6 @@ module Account::Mappings
     @preloaded_relations = relations_map(...)
   end
 
-  private
-
   def relations_map(account_ids, domains = nil, **options)
     relations = {
       blocked_by: Account.blocked_by_map(account_ids, id),
