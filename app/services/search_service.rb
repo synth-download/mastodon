@@ -116,7 +116,10 @@ class SearchService < BaseService
       results = results.where.not(account_id: muted_ids) if muted_ids.any?
 
       blocked_domains = @account.domain_blocks.pluck(:domain)
-      results = results.joins(:account).where.not(accounts: { domain: blocked_domains }) if blocked_domains.any?
+      if blocked_domains.any?
+        results = results.joins(:account).where.not(accounts: { domain: blocked_domains })
+                         .or(results.joins(:account).where(accounts: { domain: nil }))
+      end
     end
 
     results = results.distinct.limit(@limit * 2).offset(@offset)
