@@ -172,6 +172,7 @@ RUN \
   libmp3lame-dev \
   libopus-dev \
   libsnappy-dev \
+  libsvtav1enc-dev \
   libvorbis-dev \
   libvpx-dev \
   libx264-dev \
@@ -235,6 +236,7 @@ RUN \
   --enable-libmp3lame \
   --enable-libopus \
   --enable-libsnappy \
+  --enable-libsvtav1 \
   --enable-libvorbis \
   --enable-libvpx \
   --enable-libwebp \
@@ -351,6 +353,7 @@ RUN \
   libopencore-amrwb0 \
   libopus0 \
   libsnappy1v5 \
+  libsvtav1enc2 \
   libtheora0 \
   libvorbis0a \
   libvorbisenc2 \

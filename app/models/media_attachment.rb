@@ -103,13 +103,12 @@ class MediaAttachment < ApplicationRecord
         #'preset' => 'veryfast',
         #'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
         'pix_fmt' => 'yuv420p', # Ensure color space for cross-browser compatibility
-        'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
-        'c:v' => 'vp9',
-        'cpu-used' => '8',
-        'row-mt' => '1',
-        'deadline' => 'realtime',
+        'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2,fps=fps=min(source_fps\,60)', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
+        'c:v' => 'libsvtav1',
+        'b:v' => '512k',
+        'preset' => '12',
         'c:a' => 'libopus',
-        'b:a' => '256k',
+        'b:a' => '128k',
         'map_metadata' => '-1',
         'frames:v' => MAX_VIDEO_FRAMES,
       }.freeze,
@@ -117,7 +116,7 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   VIDEO_PASSTHROUGH_OPTIONS = {
-    video_codecs: ['vp9', 'vp8'].freeze,
+    video_codecs: ['vp9', 'vp8', 'av1'].freeze,
     audio_codecs: ['opus', nil].freeze,
     colorspaces: ['yuv420p', 'yuvj420p'].freeze,
     options: {
