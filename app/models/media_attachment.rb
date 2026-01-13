@@ -109,7 +109,7 @@ class MediaAttachment < ApplicationRecord
         'preset' => '12',
         'svtav1-params' => 'enable-qm=1:qm-min=6:tune=0:fast-decode=1:lookahead=60:enable-overlays=1:scd=1:tile-columns=1',
         'c:a' => 'libopus',
-        'b:a' => '128k',
+        'b:a' => '64k',
         'map_metadata' => '-1',
         'frames:v' => MAX_VIDEO_FRAMES,
       }.freeze,
