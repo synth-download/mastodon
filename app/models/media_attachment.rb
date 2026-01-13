@@ -106,8 +106,8 @@ class MediaAttachment < ApplicationRecord
         'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2,fps=fps=min(source_fps\,60)', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
         'c:v' => 'libsvtav1',
         'b:v' => '512k',
-        'preset' => '12',
-        'svtav1-params' => 'tune=0:lp=0:fast-decode=2:enable-variance-boost=1'
+        'preset' => '9',
+        'svtav1-params' => 'fast-decode=2:enable-variance-boost=1',
         'c:a' => 'libopus',
         'b:a' => '128k',
         'map_metadata' => '-1',
