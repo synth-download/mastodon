@@ -60,9 +60,9 @@
 
 .keyword-pill__remove {
   aspect-ratio: 1/1;
-  justify-self:right;
+  justify-self: right;
   color: white;
-  background: #6364ff;
+  background-color: var(--color-bg-brand-base);
   border: none;
   cursor: pointer;
   border-radius: 4px;
