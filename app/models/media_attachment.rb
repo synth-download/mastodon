@@ -94,22 +94,19 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   VIDEO_FORMAT = {
-    format: 'webm',
-    content_type: 'video/webm',
+    format: 'mp4',
+    content_type: 'video/mp4',
     vfr_frame_rate_threshold: MAX_VIDEO_FRAME_RATE,
     convert_options: {
       output: {
         'loglevel' => 'fatal',
-        #'preset' => 'veryfast',
-        #'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
+        'preset' => 'veryfast',
+        'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
         'pix_fmt' => 'yuv420p', # Ensure color space for cross-browser compatibility
-        'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2,fps=fps=min(source_fps\,60)', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
-        'c:v' => 'libsvtav1',
-        'crf' => '40',
-        'preset' => '12',
-        'svtav1-params' => 'enable-qm=1:qm-min=6:tune=0:fast-decode=1:lookahead=60:enable-overlays=1:scd=1:tile-columns=1',
-        'c:a' => 'libopus',
-        'b:a' => '64k',
+        'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
+        'c:v' => 'h264',
+        'c:a' => 'aac',
+        'b:a' => '192k',
         'map_metadata' => '-1',
         'frames:v' => MAX_VIDEO_FRAMES,
       }.freeze,
@@ -117,16 +114,16 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   VIDEO_PASSTHROUGH_OPTIONS = {
-    video_codecs: ['vp9', 'vp8', 'av1'].freeze,
-    audio_codecs: ['opus', nil].freeze,
+    video_codecs: ['h264'].freeze,
+    audio_codecs: ['aac', nil].freeze,
     colorspaces: ['yuv420p', 'yuvj420p'].freeze,
     options: {
-      format: 'webm',
+      format: 'mp4',
       convert_options: {
         output: {
           'loglevel' => 'fatal',
           'map_metadata' => '-1',
-          #'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
+          'movflags' => 'faststart', # Move metadata to start of file so playback can begin before download finishes
           'c:v' => 'copy',
           'c:a' => 'copy',
         }.freeze,
