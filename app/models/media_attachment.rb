@@ -105,11 +105,11 @@ class MediaAttachment < ApplicationRecord
         'pix_fmt' => 'yuv420p', # Ensure color space for cross-browser compatibility
         'vf' => 'crop=floor(iw/2)*2:floor(ih/2)*2,fps=fps=min(source_fps\,60)', # h264 requires width and height to be even. Crop instead of scale to avoid blurring
         'c:v' => 'libsvtav1',
-        'b:v' => '512k',
+        'crf' => '40',
         'preset' => '12',
-        'svtav1-params' => 'tune=0:fast-decode=1:lookahead=60:enable-overlays=1:scd=1',
+        'svtav1-params' => 'enable-qm=1:qm-min=6:tune=0:fast-decode=1:lookahead=60:enable-overlays=1:scd=1:tile-columns=1',
         'c:a' => 'libopus',
-        'b:a' => '128k',
+        'b:a' => '64k',
         'map_metadata' => '-1',
         'frames:v' => MAX_VIDEO_FRAMES,
       }.freeze,
