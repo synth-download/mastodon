@@ -107,6 +107,7 @@ class MediaAttachment < ApplicationRecord
         'c:v' => 'libsvtav1',
         'b:v' => '512k',
         'preset' => '12',
+        'svtav1-params' => 'tune=0:tile_rows=2:tile_columns=2:lp=0:fast-decode=2:enable-variance-boost=1'
         'c:a' => 'libopus',
         'b:a' => '128k',
         'map_metadata' => '-1',
