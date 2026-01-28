@@ -46,7 +46,7 @@ class SearchService < BaseService
     results = build_base_search_query
 
     filtered = []
-    batch_size = @limit * 3
+    batch_size = @limit * 2
     current_offset = @offset
     max_iterations = 10
     iterations = 0
@@ -77,10 +77,11 @@ class SearchService < BaseService
     flags, query = parse_search_flags
 
     unless query.strip.empty?
-      text_matches = results.where('statuses.text &@~ ?', query).select(:id)
-      media_matches = results.joins(:media_attachments).where('media_attachments.description &@~ ?', query).select('statuses.id')
+      text_matches = results.where('statuses.text &@~ ?', query)
+      media_matches = results.joins(:media_attachments).where('media_attachments.description &@~ ?', query)
 
-      results = results.where(id: text_matches).or(results.where(id: media_matches))
+      union_query = text_matches.arel.union(:all, media_matches.arel)
+      results = Status.from(Status.arel_table.create_table_alias(union_query, :statuses))
     end
 
     # check if authed to resolve flags.
