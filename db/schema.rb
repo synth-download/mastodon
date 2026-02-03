@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_20_235220) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_19_153538) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -356,6 +356,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_20_235220) do
     t.datetime "updated_at", null: false
     t.index ["canonical_email_hash"], name: "index_canonical_email_blocks_on_canonical_email_hash", unique: true
     t.index ["reference_account_id"], name: "index_canonical_email_blocks_on_reference_account_id"
+  end
+
+  create_table "collection_items", id: :bigint, default: -> { "timestamp_id('collection_items'::text)" }, force: :cascade do |t|
+    t.bigint "collection_id", null: false
+    t.bigint "account_id"
+    t.integer "position", default: 1, null: false
+    t.string "object_uri"
+    t.string "approval_uri"
+    t.string "activity_uri"
+    t.datetime "approval_last_verified_at"
+    t.integer "state", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_collection_items_on_account_id"
+    t.index ["approval_uri"], name: "index_collection_items_on_approval_uri", unique: true, where: "(approval_uri IS NOT NULL)"
+    t.index ["collection_id"], name: "index_collection_items_on_collection_id"
+    t.index ["object_uri"], name: "index_collection_items_on_object_uri", unique: true, where: "(activity_uri IS NOT NULL)"
+  end
+
+  create_table "collections", id: :bigint, default: -> { "timestamp_id('collections'::text)" }, force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.text "description", null: false
+    t.string "uri"
+    t.boolean "local", null: false
+    t.boolean "sensitive", null: false
+    t.boolean "discoverable", null: false
+    t.bigint "tag_id"
+    t.integer "original_number_of_items"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "item_count", default: 0, null: false
+    t.string "language"
+    t.index ["account_id"], name: "index_collections_on_account_id"
+    t.index ["tag_id"], name: "index_collections_on_tag_id"
   end
 
   create_table "conversation_mutes", force: :cascade do |t|
