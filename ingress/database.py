@@ -32,7 +32,7 @@ def get_conn():
 
 
 conn = get_conn()
-
+conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 
 class DomainBlocks:
     def __init__(self) -> None:
