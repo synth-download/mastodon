@@ -78,10 +78,14 @@ class SearchService < BaseService
 
     unless query.strip.empty?
       text_matches = results.where('statuses.text &@~ ?', query)
+      spoiler_matches = results.where('statuses.spoiler_text &@~ ?', query)
       media_matches = results.joins(:media_attachments).where('media_attachments.description &@~ ?', query)
 
-      union_query = text_matches.arel.union(:all, media_matches.arel)
-      results = Status.from(Status.arel_table.create_table_alias(union_query, :statuses))
+      union_query = Arel::Nodes::UnionAll.new(
+        Arel::Nodes::UnionAll.new(text_matches.arel, spoiler_matches.arel),
+        media_matches.arel
+      )
+      results = Status.from(Status.arel_table.create_table_alias(union_query, :statuses)).distinct
     end
 
     # check if authed to resolve flags.
