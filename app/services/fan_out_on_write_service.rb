@@ -130,27 +130,26 @@ class FanOutOnWriteService < BaseService
 
   def deliver_to_lists!
     is_reblog = @status.reblog?
-    has_media = @status.media_attachments.present? && @status.media_attachments.any?
+    has_media = @status.media_attachments.any?
 
     scope = @account.lists_for_local_distribution
-            .select(:id, :exclude_keywords, :with_media_only, :ignore_reblog)
-            .reorder(nil)
+                    .select(:id, :exclude_keywords, :with_media_only, :ignore_reblog)
+                    .reorder(nil)
 
     scope = scope.where(ignore_reblog: false) if is_reblog
     scope = scope.where(with_media_only: false) unless has_media
     return unless scope.exists?
 
-    tags_line = @status.tags.pluck(:name).map { |tag| "##{tag.downcase}" }.join(' ')
+    tags_line = @status.tags.map { |tag| "##{tag.name.downcase}" }.join(' ')
     searchable_text = [
       @status.spoiler_text.downcase,
       normalize_status_text(@status),
-      tags_line
+      tags_line,
     ].compact.join("\n")
 
     scope.find_in_batches do |batch|
-      candidates = batch.select do |list|
-        next false if list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
-        true
+      candidates = batch.reject do |list|
+        list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
       end
 
       unless candidates.empty?
@@ -198,30 +197,36 @@ class FanOutOnWriteService < BaseService
 
   def broadcast_to_listening_lists!
     is_reblog = @status.reblog?
-    has_media = @status.media_attachments.present? && @status.media_attachments.any?
+    has_media = @status.media_attachments.any?
 
     scope = List.joins(:account)
-            .where(accounts: { domain: nil })
-            .select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog)
-            .reorder(nil)
+                .where(accounts: { domain: nil })
+                .select(:id, :include_keywords, :exclude_keywords, :with_media_only, :ignore_reblog)
+                .reorder(nil)
 
     scope = scope.where(ignore_reblog: false) if is_reblog
     scope = scope.where(with_media_only: false) unless has_media
     scope = scope.where.not(include_keywords: [nil, []])
+
+    unless @status.account.domain.nil?
+      scope = scope.where.not(
+        accounts: { id: AccountDomainBlock.where(domain: @status.account.domain).select(:account_id) }
+      )
+    end
+
     return unless scope.exists?
 
-    tags_line = @status.tags.pluck(:name).map { |tag| "##{tag.downcase}" }.join(' ')
+    tags_line = @status.tags.map { |tag| "##{tag.name.downcase}" }.join(' ')
     searchable_text = [
       @status.spoiler_text.downcase,
       normalize_status_text(@status),
-      tags_line
+      tags_line,
     ].compact.join("\n")
 
     scope.find_in_batches(batch_size: 500) do |batch|
       candidates = batch.select do |list|
-        next false unless list.matches_any_keyword?(searchable_text, list.compiled_include_keywords)
-        next false if list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
-        true
+        list.matches_any_keyword?(searchable_text, list.compiled_include_keywords) &&
+          !list.matches_any_keyword?(searchable_text, list.compiled_exclude_keywords)
       end
 
       unless candidates.empty?
