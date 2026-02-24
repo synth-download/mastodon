@@ -56,6 +56,7 @@ nn:
         label: Endre rolle
         no_role: Inga rolle
         title: Endre rolle for %{username}
+      collections: Samlingar
       confirm: Stadfest
       confirmed: Stadfesta
       confirming: Stadfestar
@@ -340,6 +341,12 @@ nn:
       unpublish: Avpubliser
       unpublished_msg: Du avpubliserte kunngjeringa.
       updated_msg: Du oppdaterte kunngjeringa.
+    collections:
+      accounts: Kontoar
+      collection_title: Samling av %{name}
+      contents: Innhald
+      open: Opna
+      view_publicly: Vis offentleg
     critical_update_pending: Kritisk oppdatering ventar
     custom_emojis:
       assign_category: Vel kategori
@@ -708,6 +715,7 @@ nn:
       report: 'Rapporter #%{id}'
       reported_account: Rapportert konto
       reported_by: Rapportert av
+      reported_content: Rapportert innhald
       reported_with_application: Rapportert med app
       resolved: Oppløyst
       resolved_msg: Rapporten er løyst!

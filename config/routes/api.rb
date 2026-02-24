@@ -120,7 +120,7 @@ namespace :api, format: false do
     resources :markers, only: [:index, :create]
     resources :gifs, only: [:index]
 
-    resource :profile, only: [:show] do
+    resource :profile, only: [:show, :update] do
       scope module: :profile do
         resource :avatar, only: :destroy
         resource :header, only: :destroy
