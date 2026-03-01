@@ -66,6 +66,12 @@ export function CollectionsEditor() {
   );
 }
 
+export function ShareCollectionModal() {
+  return import('../../collections/detail/share_modal').then(
+    module => ({default: module.CollectionShareModal})
+  );
+}
+
 export function Status () {
   return import('../../status');
 }
