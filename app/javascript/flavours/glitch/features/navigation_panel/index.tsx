@@ -38,6 +38,7 @@ import { Account } from 'flavours/glitch/components/account';
 import { IconWithBadge } from 'flavours/glitch/components/icon_with_badge';
 import { Search } from 'flavours/glitch/features/compose/components/search';
 import { ColumnLink } from 'flavours/glitch/features/ui/components/column_link';
+import { getNavigationSkipLinkId } from 'flavours/glitch/features/ui/components/skip_links';
 import { useBreakpoint } from 'flavours/glitch/features/ui/hooks/useBreakpoint';
 import { useIdentity } from 'flavours/glitch/identity_context';
 import {
@@ -223,6 +224,8 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
 
   let banner: React.ReactNode;
 
+  let linknum = 0;
+
   if (transientSingleColumn) {
     banner = (
       <div className='switch-to-advanced'>
@@ -271,6 +274,7 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
                 activeIconComponent={AddIcon}
                 text={intl.formatMessage(messages.compose)}
                 className='button navigation-panel__compose-button'
+                id={linknum++ === 0 ? getNavigationSkipLinkId() : undefined}
               />
             )}
             <ColumnLink
@@ -280,6 +284,7 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
               iconComponent={HomeIcon}
               activeIconComponent={HomeActiveIcon}
               text={intl.formatMessage(messages.home)}
+              id={linknum++ === 0 ? getNavigationSkipLinkId() : undefined}
             />
           </>
         )}
@@ -291,6 +296,7 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             icon='explore'
             iconComponent={TrendingUpIcon}
             text={intl.formatMessage(messages.explore)}
+            id={linknum++ === 0 ? getNavigationSkipLinkId() : undefined}
           />
         )}
 
@@ -315,6 +321,7 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
                 ? messages.firehose
                 : messages.firehose_singular,
             )}
+            id={linknum++ === 0 ? getNavigationSkipLinkId() : undefined}
           />
         )}
 
@@ -384,6 +391,7 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             icon='ellipsis-h'
             iconComponent={InfoIcon}
             text={intl.formatMessage(messages.about)}
+            id={linknum++ === 0 ? getNavigationSkipLinkId() : undefined}
           />
         </div>
 
