@@ -387,7 +387,8 @@ class EmojiPickerDropdown extends PureComponent {
   };
 
   render() {
-    const { intl, onPickEmoji, onSkinTone, skinTone, frequentlyUsedEmojis, title, icon, disabled } = this.props;
+    const { intl, onPickEmoji, onSkinTone, skinTone, frequentlyUsedEmojis, title: inTitle, icon, disabled } = this.props;
+    const title = inTitle ?? intl.formatMessage(messages.emoji);
     const { active, loading, placement } = this.state;
 
     return (
@@ -396,9 +397,10 @@ class EmojiPickerDropdown extends PureComponent {
           title={title || intl.formatMessage(messages.emoji)}
           aria-expanded={active}
           active={active}
-          disabled={disabled}
           iconComponent={icon || MoodIcon}
           onClick={this.onToggle}
+          disabled={disabled}
+          id="emoji"
         />
 
         <Overlay show={active} placement={placement} flip target={this.findTarget} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>
