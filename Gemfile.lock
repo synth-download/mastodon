@@ -1050,6 +1050,7 @@ DEPENDENCIES
   pghero
   playwright-ruby-client (= 1.57.1)
   premailer-rails
+  prism
   prometheus_exporter (~> 2.2)
   propshaft
   public_suffix (~> 7.0)
