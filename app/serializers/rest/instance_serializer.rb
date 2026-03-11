@@ -69,8 +69,13 @@ class REST::InstanceSerializer < ActiveModel::Serializer
       },
 
       accounts: {
+        max_display_name_length: Account::DISPLAY_NAME_LENGTH_LIMIT,
+        max_note_length: Account::NOTE_LENGTH_LIMIT,
         max_featured_tags: FeaturedTag::LIMIT,
         max_pinned_statuses: StatusPinValidator::PIN_LIMIT,
+        max_profile_fields: Account::DEFAULT_FIELDS_SIZE,
+        profile_field_name_limit: Account::Field::MAX_CHARACTERS_LOCAL,
+        profile_field_value_limit: Account::Field::MAX_CHARACTERS_LOCAL,
       },
 
       statuses: {

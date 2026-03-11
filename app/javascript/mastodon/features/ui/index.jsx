@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
 
+import { scrollRight } from '../../scroll';
 import { focusApp, unfocusApp, changeLayout } from 'mastodon/actions/app';
 import { synchronouslySubmitMarkers, submitMarkers, fetchMarkers } from 'mastodon/actions/markers';
 import { fetchNotifications } from 'mastodon/actions/notification_groups';
@@ -22,6 +23,7 @@ import { identityContextPropShape, withIdentity } from 'mastodon/identity_contex
 import { layoutFromWindow } from 'mastodon/is_mobile';
 import { WithRouterPropTypes } from 'mastodon/utils/react_router';
 import { checkAnnualReport } from '@/mastodon/reducers/slices/annual_report';
+import { isClientFeatureEnabled } from '@/mastodon/utils/environment';
 
 import { uploadCompose, resetCompose, changeComposeSpoilerness } from '../../actions/compose';
 import { clearHeight } from '../../actions/height_cache';
@@ -33,7 +35,7 @@ import BundleColumnError from './components/bundle_column_error';
 import { NavigationBar } from './components/navigation_bar';
 import { UploadArea } from './components/upload_area';
 import { HashtagMenuController } from './components/hashtag_menu_controller';
-import ColumnsAreaContainer from './containers/columns_area_container';
+import { ColumnsArea } from './components/columns_area';
 import LoadingBarContainer from './containers/loading_bar_container';
 import ModalContainer from './containers/modal_container';
 import {
@@ -63,6 +65,9 @@ import {
   Lists,
   ListEdit,
   ListMembers,
+  Collections,
+  CollectionDetail,
+  CollectionsEditor,
   Blocks,
   DomainBlocks,
   Mutes,
@@ -76,6 +81,8 @@ import {
   PrivacyPolicy,
   TermsOfService,
   AccountFeatured,
+  AccountEdit,
+  AccountEditFeaturedTags,
   Quotes,
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
@@ -85,6 +92,8 @@ import { WrappedSwitch, WrappedRoute } from './util/react_router_helpers';
 // Dummy import, to make sure that <Status /> ends up in the application bundle.
 // Without this it ends up in ~8 very commonly used bundles.
 import '../../components/status';
+import { areCollectionsEnabled } from '../collections/utils';
+import { getNavigationSkipLinkId, SkipLinks } from './components/skip_links';
 
 const messages = defineMessages({
   beforeUnload: { id: 'ui.beforeunload', defaultMessage: 'Your draft will be lost if you leave Mastodon.' },
@@ -106,6 +115,7 @@ class SwitchingColumnsArea extends PureComponent {
     children: PropTypes.node,
     location: PropTypes.object,
     singleColumn: PropTypes.bool,
+    layout: PropTypes.string.isRequired,
     forceOnboarding: PropTypes.bool,
   };
 
@@ -116,13 +126,25 @@ class SwitchingColumnsArea extends PureComponent {
 
   componentDidUpdate (prevProps) {
     if (![this.props.location.pathname, '/'].includes(prevProps.location.pathname)) {
-      this.node.handleChildrenContentChange();
+      this.handleChildrenContentChange();
     }
 
     if (prevProps.singleColumn !== this.props.singleColumn) {
       document.body.classList.toggle('layout-single-column', this.props.singleColumn);
       document.body.classList.toggle('layout-multiple-columns', !this.props.singleColumn);
     }
+  }
+
+  handleChildrenContentChange() {
+    const {preventMultiColumnAutoScroll} = this.props.location.state ?? {};
+
+    if (!this.props.singleColumn && !preventMultiColumnAutoScroll) {
+      const isRtlLayout = document.getElementsByTagName('body')[0]
+        ?.classList.contains('rtl');
+  	  const modifier = isRtlLayout ? -1 : 1;
+
+  	  scrollRight(this.node, (this.node.scrollWidth - window.innerWidth) * modifier);
+  	}
   }
 
   setRef = c => {
@@ -136,31 +158,44 @@ class SwitchingColumnsArea extends PureComponent {
     const { signedIn } = this.props.identity;
     const pathName = this.props.location.pathname;
 
-    let redirect;
-
+    let rootRedirect;
     if (signedIn) {
       if (forceOnboarding) {
-        redirect = <Redirect from='/' to='/start' exact />;
+        rootRedirect = '/start';
       } else if (singleColumn) {
-        redirect = <Redirect from='/' to='/home' exact />;
+        rootRedirect = '/home';
       } else {
-        redirect = <Redirect from='/' to='/deck/getting-started' exact />;
+        rootRedirect = '/deck/getting-started';
       }
     } else if (singleUserMode && owner && initialState?.accounts[owner]) {
-      redirect = <Redirect from='/' to={`/@${initialState.accounts[owner].username}`} exact />;
+      rootRedirect = `/@${initialState.accounts[owner].username}`;
     } else if (trendsEnabled && landingPage === 'trends') {
-      redirect = <Redirect from='/' to='/explore' exact />;
+      rootRedirect = '/explore';
     } else if (localLiveFeedAccess === 'public' && landingPage === 'local_feed') {
-      redirect = <Redirect from='/' to='/public/local' exact />;
+      rootRedirect = '/public/local';
     } else {
-      redirect = <Redirect from='/' to='/about' exact />;
+      rootRedirect = '/about';
+    }
+
+    const profileRedesignRoutes = [];
+    if (isClientFeatureEnabled('profile_editing')) {
+      profileRedesignRoutes.push(
+        <WrappedRoute key="edit" path='/profile/edit' component={AccountEdit} content={children} />,
+        <WrappedRoute key="featured_tags" path='/profile/featured_tags' component={AccountEditFeaturedTags} content={children} />
+      )
+    } else {
+      // If profile editing is not enabled, redirect to the home timeline as the current editing pages are outside React Router.
+      profileRedesignRoutes.push(
+        <Redirect key="edit-redirect" from='/profile/edit' to='/' exact />,
+        <Redirect key="featured-tags-redirect" from='/profile/featured_tags' to='/' exact />,
+      );
     }
 
     return (
       <ColumnsContextProvider multiColumn={!singleColumn}>
-        <ColumnsAreaContainer ref={this.setRef} singleColumn={singleColumn}>
+        <ColumnsArea ref={this.setRef} singleColumn={singleColumn}>
           <WrappedSwitch>
-            {redirect}
+            <Redirect from='/' to={{pathname: rootRedirect, state: this.props.location.state}} exact />
 
             {singleColumn ? <Redirect from='/deck' to='/home' exact /> : null}
             {singleColumn && pathName.startsWith('/deck/') ? <Redirect from={pathName} to={{...this.props.location, pathname: pathName.slice(5)}} /> : null}
@@ -202,6 +237,8 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/search' component={Search} content={children} />
             <WrappedRoute path={['/publish', '/statuses/new']} component={Compose} content={children} />
 
+            {...profileRedesignRoutes}
+
             <WrappedRoute path={['/@:acct', '/accounts/:id']} exact component={AccountTimeline} content={children} />
             <WrappedRoute path={['/@:acct/featured', '/accounts/:id/featured']} component={AccountFeatured} content={children} />
             <WrappedRoute path='/@:acct/tagged/:tagged?' exact component={AccountTimeline} content={children} />
@@ -227,10 +264,16 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/followed_tags' component={FollowedTags} content={children} />
             <WrappedRoute path='/mutes' component={Mutes} content={children} />
             <WrappedRoute path='/lists' component={Lists} content={children} />
-
+            {areCollectionsEnabled() &&
+              [
+                <WrappedRoute path={['/collections/new', '/collections/:id/edit']} component={CollectionsEditor} content={children} key='collections-editor' />,
+                <WrappedRoute path='/collections/:id' component={CollectionDetail} content={children} key='collections-detail' />,
+                <WrappedRoute path='/collections' component={Collections} content={children} key='collections-list' />
+              ]
+            }
             <Route component={BundleColumnError} />
           </WrappedSwitch>
-        </ColumnsAreaContainer>
+        </ColumnsArea>
       </ColumnsContextProvider>
     );
   }
@@ -504,6 +547,10 @@ class UI extends PureComponent {
     this.props.history.push('/home');
   };
 
+  handleHotkeyGoToExplore = () => {
+    this.props.history.push('/explore');
+  };
+
   handleHotkeyGoToNotifications = () => {
     this.props.history.push('/notifications');
   };
@@ -522,6 +569,14 @@ class UI extends PureComponent {
 
   handleHotkeyGoToStart = () => {
     this.props.history.push('/getting-started');
+    // Set focus to the navigation after a timeout
+    // to allow for it to be displayed first
+    setTimeout(() => {
+      const navbarSkipTarget = document.querySelector(
+        `#${getNavigationSkipLinkId()}`,
+      );
+      navbarSkipTarget?.focus();
+    }, 0);
   };
 
   handleHotkeyGoToFavourites = () => {
@@ -565,6 +620,7 @@ class UI extends PureComponent {
       moveToTop: this.handleMoveToTop,
       back: this.handleHotkeyBack,
       goToHome: this.handleHotkeyGoToHome,
+      goToExplore: this.handleHotkeyGoToExplore,
       goToNotifications: this.handleHotkeyGoToNotifications,
       goToLocal: this.handleHotkeyGoToLocal,
       goToFederated: this.handleHotkeyGoToFederated,
@@ -582,7 +638,17 @@ class UI extends PureComponent {
     return (
       <Hotkeys global handlers={handlers}>
         <div className={classNames('ui', { 'is-composing': isComposing })} ref={this.setRef}>
-          <SwitchingColumnsArea identity={this.props.identity} location={location} singleColumn={layout === 'mobile' || layout === 'single-column'} forceOnboarding={firstLaunch && newAccount}>
+          <SkipLinks
+            multiColumn={layout === 'multi-column'}
+            onFocusGettingStartedColumn={this.handleHotkeyGoToStart}
+          />
+          <SwitchingColumnsArea
+            identity={this.props.identity}
+            location={location}
+            singleColumn={layout === 'mobile' || layout === 'single-column'}
+            layout={layout}
+            forceOnboarding={firstLaunch && newAccount}
+          >
             {children}
           </SwitchingColumnsArea>
 
