@@ -209,8 +209,10 @@ class User < ApplicationRecord
 
     increment(:sign_in_count) if new_sign_in
 
-    save(validate: false) unless new_record?
-    prepare_returning_user!
+    unless new_record?
+      save(validate: false)
+      prepare_returning_user!
+    end
   end
 
   def pending?
@@ -226,7 +228,11 @@ class User < ApplicationRecord
   end
 
   def functional_or_moved?
-    confirmed? && approved? && !disabled? && !account.unavailable? && !account.memorial?
+    confirmed? && approved? && !disabled? && !account.unavailable? && !account.memorial? && !missing_2fa?
+  end
+
+  def missing_2fa?
+    !two_factor_enabled? && role.require_2fa?
   end
 
   def unconfirmed_or_pending?

@@ -16,12 +16,22 @@ RSpec.describe Collection do
 
     it { is_expected.to_not allow_value(nil).for(:discoverable) }
 
+    it { is_expected.to allow_value('en').for(:language) }
+
+    it { is_expected.to_not allow_value('randomstuff').for(:language) }
+
     context 'when collection is remote' do
       subject { Fabricate.build :collection, local: false }
+
+      it { is_expected.to_not validate_presence_of(:description) }
+
+      it { is_expected.to validate_presence_of(:description_html) }
 
       it { is_expected.to validate_presence_of(:uri) }
 
       it { is_expected.to validate_presence_of(:original_number_of_items) }
+
+      it { is_expected.to allow_value('randomstuff').for(:language) }
     end
 
     context 'when using a hashtag as category' do
@@ -124,6 +134,26 @@ RSpec.describe Collection do
           expect(subject).to be_changed
         end
       end
+    end
+  end
+
+  describe '#object_type' do
+    it 'returns `:featured_collection`' do
+      expect(subject.object_type).to eq :featured_collection
+    end
+  end
+
+  describe '#to_log_human_identifier' do
+    subject { Fabricate(:collection) }
+
+    it 'returns the account name' do
+      expect(subject.to_log_human_identifier).to eq subject.account.acct
+    end
+  end
+
+  describe '#to_log_permalink' do
+    it 'includes the URI of the collection' do
+      expect(subject.to_log_permalink).to eq ActivityPub::TagManager.instance.uri_for(subject)
     end
   end
 end
