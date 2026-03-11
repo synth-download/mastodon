@@ -5,7 +5,7 @@ ruby '>= 3.2.0', '< 3.5.0'
 
 gem 'propshaft'
 gem 'puma', '~> 7.0'
-gem 'rails', '~> 8.0'
+gem 'rails', '~> 8.1.0'
 gem 'thor', '~> 1.2'
 
 gem 'dotenv'
@@ -24,11 +24,11 @@ gem 'ruby-vips', '~> 2.2', require: false
 
 gem 'active_model_serializers', '~> 0.10'
 gem 'addressable', '~> 2.8'
-gem 'bootsnap', '~> 1.19.0', require: false
+gem 'bootsnap', require: false
 gem 'browser'
 gem 'charlock_holmes', '~> 0.7.7'
 gem 'chewy', '~> 7.3'
-gem 'devise', '~> 4.9'
+gem 'devise'
 gem 'devise-two-factor'
 
 group :pam_authentication, optional: true do
@@ -55,7 +55,7 @@ gem 'hiredis-client'
 gem 'htmlentities', '~> 4.3'
 gem 'http', '~> 5.3.0'
 gem 'http_accept_language', '~> 2.1'
-gem 'httplog', '~> 1.7.0', require: false
+gem 'httplog', '~> 1.8.0', require: false
 gem 'i18n'
 gem 'idn-ruby', require: 'idn'
 gem 'inline_svg'
@@ -110,12 +110,12 @@ group :opentelemetry do
   gem 'opentelemetry-instrumentation-active_job', '~> 0.10.0', require: false
   gem 'opentelemetry-instrumentation-active_model_serializers', '~> 0.24.0', require: false
   gem 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.24.0', require: false
-  gem 'opentelemetry-instrumentation-excon', '~> 0.26.0', require: false
-  gem 'opentelemetry-instrumentation-faraday', '~> 0.30.0', require: false
-  gem 'opentelemetry-instrumentation-http', '~> 0.27.0', require: false
-  gem 'opentelemetry-instrumentation-http_client', '~> 0.26.0', require: false
-  gem 'opentelemetry-instrumentation-net_http', '~> 0.26.0', require: false
-  gem 'opentelemetry-instrumentation-pg', '~> 0.34.0', require: false
+  gem 'opentelemetry-instrumentation-excon', '~> 0.27.0', require: false
+  gem 'opentelemetry-instrumentation-faraday', '~> 0.31.0', require: false
+  gem 'opentelemetry-instrumentation-http', '~> 0.28.0', require: false
+  gem 'opentelemetry-instrumentation-http_client', '~> 0.27.0', require: false
+  gem 'opentelemetry-instrumentation-net_http', '~> 0.27.0', require: false
+  gem 'opentelemetry-instrumentation-pg', '~> 0.35.0', require: false
   gem 'opentelemetry-instrumentation-rack', '~> 0.29.0', require: false
   gem 'opentelemetry-instrumentation-rails', '~> 0.39.0', require: false
   gem 'opentelemetry-instrumentation-redis', '~> 0.28.0', require: false
@@ -130,16 +130,13 @@ group :test do
   # Adds RSpec Error/Warning annotations to GitHub PRs on the Files tab
   gem 'rspec-github', '~> 3.0', require: false
 
-  # RSpec helpers for email specs
-  gem 'email_spec'
-
   # Extra RSpec extension methods and helpers for sidekiq
   gem 'rspec-sidekiq', '~> 5.0'
 
   # Browser integration testing
   gem 'capybara', '~> 3.39'
   gem 'capybara-playwright-driver'
-  gem 'playwright-ruby-client', '1.57.0', require: false # Pinning the exact version as it needs to be kept in sync with the installed npm package
+  gem 'playwright-ruby-client', '1.57.1', require: false # Pinning the exact version as it needs to be kept in sync with the installed npm package
 
   # Used to reset the database between system tests
   gem 'database_cleaner-active_record'
@@ -181,14 +178,14 @@ group :development do
 
   # Enhanced error message pages for development
   gem 'better_errors', '~> 2.9'
-  gem 'binding_of_caller', '~> 1.0'
+  gem 'binding_of_caller'
 
   # Preview mail in the browser
   gem 'letter_opener', '~> 1.8'
   gem 'letter_opener_web', '~> 3.0'
 
   # Security analysis CLI tools
-  gem 'brakeman', '~> 7.0', require: false
+  gem 'brakeman', '~> 8.0', require: false
   gem 'bundler-audit', '~> 0.9', require: false
 
   # Linter CLI for HAML files
@@ -235,3 +232,5 @@ gem 'hcaptcha', '~> 7.1'
 gem 'mail', '~> 2.8'
 
 gem 'vite_rails', '~> 3.0.19'
+
+gem 'prism'
