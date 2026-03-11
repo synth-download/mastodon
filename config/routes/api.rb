@@ -13,7 +13,11 @@ namespace :api, format: false do
     resources :async_refreshes, only: :show
 
     resources :collections, only: [:show, :create, :update, :destroy] do
-      resources :items, only: [:create, :destroy], controller: 'collection_items'
+      resources :items, only: [:create, :destroy], controller: 'collection_items' do
+        member do
+          post :revoke
+        end
+      end
     end
   end
 
@@ -81,6 +85,7 @@ namespace :api, format: false do
     resources :suggestions, only: [:index, :destroy]
     resources :scheduled_statuses, only: [:index, :show, :update, :destroy]
     resources :preferences, only: [:index]
+    resources :donation_campaigns, only: [:index]
 
     resources :annual_reports, only: [:index, :show] do
       member do
@@ -119,9 +124,11 @@ namespace :api, format: false do
     resources :markers, only: [:index, :create]
     resources :gifs, only: [:index]
 
-    namespace :profile do
-      resource :avatar, only: :destroy
-      resource :header, only: :destroy
+    resource :profile, only: [:show, :update] do
+      scope module: :profile do
+        resource :avatar, only: :destroy
+        resource :header, only: :destroy
+      end
     end
 
     namespace :apps do
