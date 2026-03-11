@@ -19,8 +19,10 @@ jobs:
           TZ: Etc/UTC
         run: |
           echo mastodon_version_prerelease=nightly.$(date +'%Y-%m-%d')>> $GITHUB_OUTPUT
+          echo mastodon_build_date=$(date +'%Y-%m-%d')>> $GITHUB_OUTPUT
     outputs:
       prerelease: ${{ steps.version_vars.outputs.mastodon_version_prerelease }}
+      builddate: ${{ steps.version_vars.outputs.mastodon_build_date }}
 
   build-image:
     needs: compute-suffix
@@ -38,6 +40,7 @@ jobs:
       tags: |
         type=raw,value=edge
         type=raw,value=nightly
+        type=raw,value=${{ needs.compute-suffix.outputs.builddate }}
         type=schedule,pattern=${{ needs.compute-suffix.outputs.prerelease }}
     secrets: inherit
 
@@ -57,6 +60,7 @@ jobs:
       tags: |
         type=raw,value=edge
         type=raw,value=nightly
+        type=raw,value=${{ needs.compute-suffix.outputs.builddate }}
         type=schedule,pattern=${{ needs.compute-suffix.outputs.prerelease }}
     secrets: inherit
 
@@ -76,5 +80,6 @@ jobs:
       tags: |
         type=raw,value=edge
         type=raw,value=nightly
+        type=raw,value=${{ needs.compute-suffix.outputs.builddate }}
         type=schedule,pattern=${{ needs.compute-suffix.outputs.prerelease }}
     secrets: inherit
