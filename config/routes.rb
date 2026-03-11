@@ -12,7 +12,7 @@ class RedirectWithVary < ActionDispatch::Routing::PathRedirect
 end
 
 def redirect_with_vary(path)
-  RedirectWithVary.new(301, path)
+  RedirectWithVary.new(301, path, caller(1..1).first)
 end
 
 Rails.application.routes.draw do
@@ -96,13 +96,14 @@ Rails.application.routes.draw do
   get '/authorize_follow', to: redirect { |_, request| "/authorize_interaction?#{request.params.to_query}" }
 
   concern :account_resources do
+    resources :collections, only: [:show], constraints: { id: /\d+/ }
     resources :followers, only: [:index], controller: :follower_accounts
     resources :following, only: [:index], controller: :following_accounts
 
     scope module: :activitypub do
       resource :outbox, only: [:show]
       resource :inbox, only: [:create]
-      resources :collections, only: [:show]
+      resources :collections, only: [:show], as: :actor_collections, constraints: { id: Regexp.union(ActivityPub::CollectionsController::SUPPORTED_COLLECTIONS) }
       resource :followers_synchronization, only: [:show]
       resources :quote_authorizations, only: [:show]
     end
@@ -123,6 +124,10 @@ Rails.application.routes.draw do
 
   scope path: 'ap', as: 'ap' do
     resources :accounts, path: 'users', only: [:show], param: :id, concerns: :account_resources do
+      resources :collection_items, only: [:show]
+      resources :feature_authorizations, only: [:show], module: :activitypub
+      resources :featured_collections, only: [:index], module: :activitypub
+
       resources :statuses, only: [:show] do
         member do
           get :activity
