@@ -325,8 +325,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_152331) do
   end
 
   create_table "bubble_domains", force: :cascade do |t|
-    t.string "domain", default: "", null: false
     t.datetime "created_at", null: false
+    t.string "domain", default: "", null: false
     t.datetime "updated_at", null: false
     t.index ["domain"], name: "index_bubble_domains_on_domain", unique: true
   end
@@ -1167,10 +1167,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_152331) do
 
   create_table "status_reactions", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.bigint "status_id", null: false
-    t.string "name", default: "", null: false
-    t.bigint "custom_emoji_id"
     t.datetime "created_at", null: false
+    t.bigint "custom_emoji_id"
+    t.string "name", default: "", null: false
+    t.bigint "status_id", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "status_id", "name"], name: "index_status_reactions_on_account_id_and_status_id", unique: true
     t.index ["custom_emoji_id"], name: "index_status_reactions_on_custom_emoji_id"
