@@ -52,6 +52,19 @@ RSpec.describe 'Donation campaigns' do
         end
       end
 
+      context 'when the donation campaign returns bad response' do
+        before do
+          stub_request(:get, "#{api_url}?platform=web&seed=#{seed}&locale=en").to_return(body: 'Cats & Dogs', status: 200)
+        end
+
+        it 'handles the error and returns http empty' do
+          get '/api/v1/donation_campaigns', headers: headers
+
+          expect(response)
+            .to have_http_status(204)
+        end
+      end
+
       context 'when the donation campaign API returns a campaign' do
         let(:campaign_json) do
           {
@@ -78,7 +91,7 @@ RSpec.describe 'Donation campaigns' do
         end
 
         before do
-          stub_request(:get, "#{api_url}?platform=web&seed=#{seed}&locale=en").to_return(body: Oj.dump(campaign_json), status: 200)
+          stub_request(:get, "#{api_url}?platform=web&seed=#{seed}&locale=en").to_return(body: JSON.generate(campaign_json), status: 200)
         end
 
         it 'returns the expected campaign' do
