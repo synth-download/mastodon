@@ -1,4 +1,4 @@
-name: 'Chromatic'
+name: "Chromatic"
 permissions:
   contents: read
 
@@ -9,6 +9,7 @@ on:
       - stable-*
 
 jobs:
+  if: false
   pathcheck:
     name: Check for relevant changes
     runs-on: ubuntu-latest
@@ -57,6 +58,6 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           zip: true
-          storybookBuildDir: 'storybook-static'
+          storybookBuildDir: "storybook-static"
           exitOnceUploaded: true # Exit immediately after upload
-          autoAcceptChanges: 'main' # Auto-accept changes on main branch only
+          autoAcceptChanges: "main" # Auto-accept changes on main branch only

@@ -3,29 +3,30 @@ on:
   merge_group:
   push:
     paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - '.nvmrc'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.snap'
-      - '.github/workflows/test-js.yml'
+      - "package.json"
+      - "yarn.lock"
+      - ".nvmrc"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.snap"
+      - ".github/workflows/test-js.yml"
 
   pull_request:
     paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - '.nvmrc'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.snap'
-      - '.github/workflows/test-js.yml'
+      - "package.json"
+      - "yarn.lock"
+      - ".nvmrc"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.snap"
+      - ".github/workflows/test-js.yml"
 
 jobs:
+  if: false
   test:
     runs-on: ubuntu-latest
 

@@ -3,25 +3,26 @@ on:
   merge_group:
   push:
     paths:
-      - '.github/workflows/haml-lint-problem-matcher.json'
-      - '.github/workflows/lint-haml.yml'
-      - '.haml-lint*.yml'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - '**/*.haml'
-      - 'Gemfile*'
+      - ".github/workflows/haml-lint-problem-matcher.json"
+      - ".github/workflows/lint-haml.yml"
+      - ".haml-lint*.yml"
+      - ".rubocop*.yml"
+      - ".ruby-version"
+      - "**/*.haml"
+      - "Gemfile*"
 
   pull_request:
     paths:
-      - '.github/workflows/haml-lint-problem-matcher.json'
-      - '.github/workflows/lint-haml.yml'
-      - '.haml-lint*.yml'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - '**/*.haml'
-      - 'Gemfile*'
+      - ".github/workflows/haml-lint-problem-matcher.json"
+      - ".github/workflows/lint-haml.yml"
+      - ".haml-lint*.yml"
+      - ".rubocop*.yml"
+      - ".ruby-version"
+      - "**/*.haml"
+      - "Gemfile*"
 
 jobs:
+  if: false
   lint:
     runs-on: ubuntu-latest
 

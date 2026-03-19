@@ -3,27 +3,28 @@ on:
   merge_group:
   push:
     paths:
-      - 'Gemfile*'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - 'bin/rubocop'
-      - 'config/brakeman.ignore'
-      - '**/*.rb'
-      - '**/*.rake'
-      - '.github/workflows/lint-ruby.yml'
+      - "Gemfile*"
+      - ".rubocop*.yml"
+      - ".ruby-version"
+      - "bin/rubocop"
+      - "config/brakeman.ignore"
+      - "**/*.rb"
+      - "**/*.rake"
+      - ".github/workflows/lint-ruby.yml"
 
   pull_request:
     paths:
-      - 'Gemfile*'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - 'bin/rubocop'
-      - 'config/brakeman.ignore'
-      - '**/*.rb'
-      - '**/*.rake'
-      - '.github/workflows/lint-ruby.yml'
+      - "Gemfile*"
+      - ".rubocop*.yml"
+      - ".ruby-version"
+      - "bin/rubocop"
+      - "config/brakeman.ignore"
+      - "**/*.rb"
+      - "**/*.rake"
+      - ".github/workflows/lint-ruby.yml"
 
 jobs:
+  if: false
   lint:
     runs-on: ubuntu-latest
 

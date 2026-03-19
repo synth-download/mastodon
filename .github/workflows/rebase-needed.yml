@@ -2,7 +2,7 @@ name: PR Needs Rebase
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: "0 * * * *"
 
 permissions:
   pull-requests: write
@@ -20,8 +20,8 @@ jobs:
       - name: Check for merge conflicts
         uses: eps1lon/actions-label-merge-conflict@1df065ebe6e3310545d4f4c4e862e43bdca146f0 # v3
         with:
-          dirtyLabel: 'rebase needed :construction:'
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          dirtyLabel: "rebase needed :construction:"
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
           commentOnClean: This pull request has resolved merge conflicts and is ready for review.
           commentOnDirty: This pull request has merge conflicts that must be resolved before it can be merged.
           retryMax: 30

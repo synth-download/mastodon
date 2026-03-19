@@ -2,13 +2,14 @@ name: Build container release images
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 permissions:
   contents: read
   packages: write
 
 jobs:
+  if: false
   check-latest-stable:
     runs-on: ubuntu-latest
     outputs:

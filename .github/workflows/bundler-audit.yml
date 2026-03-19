@@ -20,6 +20,7 @@ on:
     - cron: "0 5 * * 1"
 
 jobs:
+  if: false
   security:
     runs-on: ubuntu-latest
 

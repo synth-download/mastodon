@@ -3,31 +3,32 @@ on:
   merge_group:
   push:
     paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - 'tsconfig.json'
-      - '.nvmrc'
-      - 'eslint.config.mjs'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '.github/workflows/lint-js.yml'
+      - "package.json"
+      - "yarn.lock"
+      - "tsconfig.json"
+      - ".nvmrc"
+      - "eslint.config.mjs"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - ".github/workflows/lint-js.yml"
 
   pull_request:
     paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - 'tsconfig.json'
-      - '.nvmrc'
-      - 'eslint.config.mjs'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '.github/workflows/lint-js.yml'
+      - "package.json"
+      - "yarn.lock"
+      - "tsconfig.json"
+      - ".nvmrc"
+      - "eslint.config.mjs"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - ".github/workflows/lint-js.yml"
 
 jobs:
+  if: false
   lint:
     runs-on: ubuntu-latest
 

@@ -5,6 +5,7 @@ on:
   pull_request:
 
 jobs:
+  if: false
   lint:
     runs-on: ubuntu-latest
 

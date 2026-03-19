@@ -3,8 +3,8 @@ name: Crowdin / Upload translations
 on:
   push:
     branches:
-      - 'main'
-      - 'stable-*'
+      - "main"
+      - "stable-*"
     paths:
       - crowdin-glitch.yml
       - app/javascript/flavours/glitch/locales/en.json
@@ -17,6 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  if: false
   upload-translations:
     runs-on: ubuntu-latest
     if: github.repository == 'glitch-soc/mastodon'
