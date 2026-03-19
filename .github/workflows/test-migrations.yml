@@ -1,26 +1,9 @@
 name: Historical data migration test
 
 on:
-  merge_group:
-  push:
-    paths:
-      - "Gemfile*"
-      - ".ruby-version"
-      - "**/*.rb"
-      - ".github/workflows/test-migrations.yml"
-      - "lib/tasks/tests.rake"
-      - "lib/tasks/db.rake"
-
-  pull_request:
-    paths:
-      - "Gemfile*"
-      - ".ruby-version"
-      - "**/*.rb"
-      - ".github/workflows/test-migrations.yml"
-      - "lib/tasks/tests.rake"
+  workflow_dispatch:
 
 jobs:
-  if: false
   test:
     runs-on: ubuntu-latest
 

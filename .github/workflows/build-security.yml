@@ -7,7 +7,6 @@ permissions:
   packages: write
 
 jobs:
-  if: false
   compute-suffix:
     runs-on: ubuntu-latest
     steps:

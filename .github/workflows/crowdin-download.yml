@@ -1,7 +1,5 @@
 name: Crowdin / Download translations
 on:
-  schedule:
-    - cron: "17 4 * * *" # Every day
   workflow_dispatch:
 
 permissions:
@@ -9,7 +7,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  if: false
   download-translations:
     runs-on: ubuntu-latest
     if: github.repository == 'glitch-soc/mastodon'

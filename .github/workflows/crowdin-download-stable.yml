@@ -7,7 +7,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  if: false
   download-translations-stable:
     runs-on: ubuntu-latest
     if: github.repository == 'glitch-soc/mastodon'

@@ -1,32 +1,8 @@
 name: JavaScript Testing
 on:
-  merge_group:
-  push:
-    paths:
-      - "package.json"
-      - "yarn.lock"
-      - ".nvmrc"
-      - "**/*.js"
-      - "**/*.jsx"
-      - "**/*.ts"
-      - "**/*.tsx"
-      - "**/*.snap"
-      - ".github/workflows/test-js.yml"
-
-  pull_request:
-    paths:
-      - "package.json"
-      - "yarn.lock"
-      - ".nvmrc"
-      - "**/*.js"
-      - "**/*.jsx"
-      - "**/*.ts"
-      - "**/*.tsx"
-      - "**/*.snap"
-      - ".github/workflows/test-js.yml"
+  workflow_dispatch:
 
 jobs:
-  if: false
   test:
     runs-on: ubuntu-latest
 

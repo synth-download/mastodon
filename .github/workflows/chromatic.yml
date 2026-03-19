@@ -3,13 +3,9 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches-ignore:
-      - renovate/*
-      - stable-*
+  workflow_dispatch:
 
 jobs:
-  if: false
   pathcheck:
     name: Check for relevant changes
     runs-on: ubuntu-latest
