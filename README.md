@@ -1,4 +1,4 @@
-# <img src="https://synth.download/assets/synth.download/synth.png" height="128"> Merpstodon
+# <img src="https://github.com/synth-download/mastodon/raw/main/public/merpstodon.svg" height="128"> Merpstodon
 
 A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very minor changes that runs on [our Mastodon instance](https://merping.synth.download).
 
@@ -9,6 +9,8 @@ Changes currently including
 - Audio files are converted to opus instead of mp3.
 - More webp support, like tootctl; static emojis/avatars/headers previews use webp.
 - Custom Synth.download theme
+
+We only build and push nightly container images. While builds are usually stable (as we use them in production), considering using them at your own risk.
 
 ---
 
