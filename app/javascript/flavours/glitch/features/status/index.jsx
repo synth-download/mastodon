@@ -162,8 +162,8 @@ class Status extends ImmutablePureComponent {
   };
 
   componentDidMount () {
-    attachFullscreenListener(this.onFullScreenChange);
     this.props.dispatch(fetchStatus(this.props.params.statusId, { forceFetch: true }));
+    attachFullscreenListener(this.onFullScreenChange);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -171,7 +171,6 @@ class Status extends ImmutablePureComponent {
     let updated = false;
 
     if (props.params.statusId && state.statusId !== props.params.statusId) {
-      props.dispatch(fetchStatus(props.params.statusId, { forceFetch: true }));
       update.threadExpanded = undefined;
       update.statusId = props.params.statusId;
       updated = true;
@@ -534,8 +533,8 @@ class Status extends ImmutablePureComponent {
     this.statusNode = c;
   };
 
-  componentDidUpdate (prevProps) {
-    const { status, descendantsIds } = this.props;
+  componentDidUpdate(prevProps) {
+    const { status, descendantsIds, params } = this.props;
 
     const isSameStatus = status && (prevProps.status?.get('id') === status.get('id'));
 
@@ -546,6 +545,14 @@ class Status extends ImmutablePureComponent {
       if (newRepliesIds.length) {
         this.setState({newRepliesIds});
       }
+    }
+
+    if (params.statusId && prevProps.params.statusId !== params.statusId) {
+      this.props.dispatch(fetchStatus(params.statusId, { forceFetch: true }));
+    }
+
+    if (status && status.get('id') !== this.state.loadedStatusId) {
+      this.setState({ showMedia: defaultMediaVisibility(this.props.status), loadedStatusId: status.get('id') });
     }
   }
 
