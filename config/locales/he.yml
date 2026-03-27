@@ -810,6 +810,8 @@ he:
         administrator_description: משתמשים עם הרשאה זו יוכלו לעקוף כל הרשאה
         delete_user_data: מחיקת כל נתוני המשתמש
         delete_user_data_description: מאפשר למשתמשים למחוק נתוני משתמשים אחרים ללא דיחוי
+        invite_bypass_approval: הזמנה להרשם ללא הליך בדיקה
+        invite_bypass_approval_description: להרשות למשתמשים אלו להזמין א.נשים להרשם לשרת תוך עקיפת מנגנון הפיקוח על ההרשמה
         invite_users: הזמנת משתמשים
         invite_users_description: מאפשר למשתמשים להזמין אנשים חדשים לשרת
         manage_announcements: ניהול הכרזות
@@ -1271,7 +1273,6 @@ he:
   application_mailer:
     notification_preferences: שינוי העדפות דוא"ל
     salutation: "%{name},"
-    settings: 'שינוי הגדרות דוא"ל: %{link}'
     unsubscribe: בטל מנוי
     view: 'תצוגה:'
     view_profile: צפיה בפרופיל
@@ -1337,6 +1338,7 @@ he:
       invited_by: 'ניתן להצטרף אל %{domain} הודות להזמנה מאת:'
       preamble: אלו נקבעים ונאכפים ע"י המנחים של %{domain}.
       preamble_invited: לפני ההמשך יש להתחשב בחוקי המקום כפי שקבעו מנהלי הדיון על %{domain}.
+      read_more: לקריאה נוספת
       title: כמה חוקים בסיסיים.
       title_invited: קיבלת הזמנה.
     security: אבטחה
@@ -1732,21 +1734,6 @@ he:
     failed_sign_in_html: נסיון כניסה כושל בשיטת %{method} מכתובת %{ip} (%{browser})
     successful_sign_in_html: נסיון כניסה מוצלח בשיטה %{method} מכתובת %{ip} (%{browser})
     title: הסטוריית אימותים
-  mail_subscriptions:
-    unsubscribe:
-      action: כן, לבטל הרשמה
-      complete: הפסקת הרשמה
-      confirmation_html: יש לאשר את ביטול ההרשמה להודעות %{type} ממסטודון בשרת %{domain} לכתובת הדואל %{email}. תמיד אפשר להרשם מחדש ב<a href="%{settings_path}">כיוונוני הודעות דואל</a>.
-      emails:
-        notification_emails:
-          favourite: הודעות דואל לגבי חיבובים
-          follow: הודעות דואל לגבי עוקבים חדשים
-          follow_request: הודעות דואל לגבי בקשות מעקב
-          mention: הודעות דואל לגבי איזכורים
-          reblog: הודעות דואל לגבי הידהודים
-      resubscribe_html: אם ביטול ההרשמה היה בטעות, ניתן להרשם מחדש מתוך <a href="%{settings_path}">מסך הגדרות ההרשמה</a> שלך.
-      success_html: לא יגיעו אליך יותר הודעות %{type} משרת מסטודון %{domain} לכתובת הדואל %{email}.
-      title: הפסקת הרשמה
   media_attachments:
     validations:
       images_and_video: לא ניתן להוסיף וידאו להודעה שכבר מכילה תמונות

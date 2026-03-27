@@ -778,6 +778,8 @@ tr:
         administrator_description: Bu izne sahip kullanıcılar tüm diğer izinleri atlıyorlar
         delete_user_data: Kullanıcı Verilerini Silme
         delete_user_data_description: Kullanıcıların, diğer kullanıcıların verisini gecikme olmaksızın silmesine izin verir
+        invite_bypass_approval: Kullanıcıları incelemeden davet et
+        invite_bypass_approval_description: Bu kullanıcılar tarafından sunucuya davet edilen kişilerin moderasyon onayını atlamasına izin verir
         invite_users: Kullanıcıları Davet Etme
         invite_users_description: Kullanıcıların yeni kişileri sunucuya davet etmesine izin verir
         manage_announcements: Duyuruları Yönetme
@@ -1229,7 +1231,6 @@ tr:
   application_mailer:
     notification_preferences: E-posta tercihlerini değiştir
     salutation: "%{name},"
-    settings: 'E-posta tercihlerini değiştir: %{link}'
     unsubscribe: Abonelikten çık
     view: 'Görüntüle:'
     view_profile: Profili görüntüle
@@ -1295,6 +1296,7 @@ tr:
       invited_by: 'Aşağıdakinden aldığınız davet sayesinde %{domain} sunucusuna katılabilirsiniz:'
       preamble: Bunlar, %{domain} moderatörleri tarafından ayarlanmış ve uygulanmıştır.
       preamble_invited: Devam etmeden önce, %{domain} moderatörleri tarafından belirlenmiş temel kuralları gözden geçirin.
+      read_more: Devamını okuyun
       title: Bazı temel kurallar.
       title_invited: Davet edildiniz.
     security: Güvenlik
@@ -1650,21 +1652,6 @@ tr:
     failed_sign_in_html: "%{method} yöntemiyle %{ip} (%{browser}) adresinden başarısız oturum açma girişimi"
     successful_sign_in_html: "%{method} yöntemiyle %{ip} (%{browser}) adresinden başarılı oturum açma"
     title: Kimlik doğrulama geçmişi
-  mail_subscriptions:
-    unsubscribe:
-      action: Evet, abonelikten çık
-      complete: Abonelikten çık
-      confirmation_html: '%{domain} üzerindeki Mastodon için %{type} almayı durdurarak %{email} adresinize aboneliğinizi iptal etmek istediğinizden emin misiniz? <a href="%{settings_path}">e-posta bildirim ayarlarınızdan</a> her zaman yeniden abone olabilirsiniz.'
-      emails:
-        notification_emails:
-          favourite: favori bildirim e-postaları
-          follow: takip bildirim e-postaları
-          follow_request: takip isteği bildirim e-postaları
-          mention: bahsetme bildirim e-postaları
-          reblog: öne çıkanlar bildirim e-postaları
-      resubscribe_html: Abonelikten yanlışlıkla çıktıysanız, <a href="%{settings_path}">e-posta bildirim ayarlarınızdan</a> yeniden abone olabilirsiniz.
-      success_html: Artık %{email} adresindeki e-postanıza %{domain} üzerindeki Mastodon için %{type} almayacaksınız.
-      title: Abonelikten çık
   media_attachments:
     validations:
       images_and_video: Zaten resim içeren bir duruma video eklenemez

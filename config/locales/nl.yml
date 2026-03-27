@@ -778,6 +778,8 @@ nl:
         administrator_description: Deze gebruikers hebben volledige rechten en kun dus overal bij
         delete_user_data: Gebruikersgegevens verwijderen
         delete_user_data_description: Staat gebruikers toe om de gegevens van andere gebruikers zonder vertraging te verwijderen
+        invite_bypass_approval: Gebruikers uitnodigen zonder beoordeling
+        invite_bypass_approval_description: Staat het toe dat mensen die door deze gebruikers voor deze server zijn uitgenodigd, niet door moderatoren beoordeeld hoeven te worden
         invite_users: Gebruikers uitnodigen
         invite_users_description: Staat gebruikers toe om nieuwe mensen voor de server uit te nodigen
         manage_announcements: Aankondigingen beheren
@@ -1229,7 +1231,6 @@ nl:
   application_mailer:
     notification_preferences: E-mailvoorkeuren wijzigen
     salutation: "%{name},"
-    settings: 'E-mailvoorkeuren wijzigen: %{link}'
     unsubscribe: Afmelden
     view: 'Bekijk:'
     view_profile: Profiel bekijken
@@ -1279,7 +1280,7 @@ nl:
     progress:
       confirm: E-mailadres bevestigen
       details: Jouw gegevens
-      list: Voortgang aanmelding
+      list: Voortgang registratie
       review: Onze beoordeling
       rules: Regels accepteren
     providers:
@@ -1295,6 +1296,7 @@ nl:
       invited_by: 'Je kunt je registreren op %{domain} dankzij de uitnodiging die je hebt ontvangen van:'
       preamble: Deze zijn vastgesteld en worden gehandhaafd door de moderatoren van %{domain}.
       preamble_invited: Voordat je verder gaat, moet je eerst kennisnemen van de basisregels die door de moderatoren van %{domain} zijn vastgesteld.
+      read_more: Meer lezen
       title: Enkele basisregels.
       title_invited: Je bent uitgenodigd.
     security: Beveiliging
@@ -1650,21 +1652,6 @@ nl:
     failed_sign_in_html: Mislukte inlogpoging met %{method} van %{ip} (%{browser})
     successful_sign_in_html: Succesvol ingelogd met %{method} van %{ip} (%{browser})
     title: Inloggeschiedenis
-  mail_subscriptions:
-    unsubscribe:
-      action: Ja, afmelden
-      complete: Afgemeld
-      confirmation_html: Weet je zeker dat je je wilt afmelden voor het ontvangen van %{type} van Mastodon op %{domain} op je e-mailadres %{email}? Je kunt je altijd opnieuw abonneren in jouw <a href="%{settings_path}">instellingen voor e-mailmeldingen</a>.
-      emails:
-        notification_emails:
-          favourite: e-mailmeldingen voor favorieten
-          follow: e-mailmeldingen voor nieuwe volgers
-          follow_request: e-mailmeldingen voor volgverzoeken
-          mention: e-mailmeldingen voor vermeldingen
-          reblog: e-mailmeldingen voor boosts
-      resubscribe_html: Als je je per ongeluk hebt afgemeld, kun je je opnieuw abonneren in jouw <a href="%{settings_path}">instellingen voor e-mailmeldingen</a>.
-      success_html: Je ontvangt niet langer %{type} van Mastodon op %{domain} op je e-mailadres %{email}.
-      title: Afmelden
   media_attachments:
     validations:
       images_and_video: Een video kan niet aan een bericht met afbeeldingen worden gekoppeld

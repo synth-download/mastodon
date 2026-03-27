@@ -810,6 +810,8 @@ be:
         administrator_description: Карыстальнікі з гэтым дазволам будуць абыходзіць усе абмежаванні
         delete_user_data: Выдаленне даных карыстальнікаў
         delete_user_data_description: Дазваляе карыстальнікам без затрымкі выдаляць даныя іншых карыстальнікаў
+        invite_bypass_approval: Запрашаць карыстальнікаў без разгляду
+        invite_bypass_approval_description: Дазваляе людзям, якіх запрасілі на сервер гэтыя карыстальнікі, абыходзіць ухвалу мадэратараў
         invite_users: Запрашэнне карыстальнікаў
         invite_users_description: Дазваляе запрашаць новых людзей на сервер
         manage_announcements: Кіраванне аб’явамі
@@ -1271,7 +1273,6 @@ be:
   application_mailer:
     notification_preferences: Змяніць налады эл. пошты
     salutation: "%{name},"
-    settings: 'Змяніць налады эл. пошты: %{link}'
     unsubscribe: Адпісацца
     view: 'Паглядзець:'
     view_profile: Паглядзець профіль
@@ -1337,6 +1338,7 @@ be:
       invited_by: 'Вы можаце далучыцца да %{domain} дзякуючы запрашэнню, якое вы атрымалі ад:'
       preamble: Правілы вызначаныя мадэратарамі дамена %{domain}.
       preamble_invited: Перш чым працягнуць, азнаёмцеся з асноўнымі правіламі, усталяванымі мадэратарамі %{domain}.
+      read_more: Падрабязней
       title: Некалькі базавых правілаў.
       title_invited: Вас запрасілі.
     security: Бяспека
@@ -1732,21 +1734,6 @@ be:
     failed_sign_in_html: Няўдалая спроба ўваходу праз %{method} з %{ip} (%{browser})
     successful_sign_in_html: Паспяховы ўваход праз %{method} з %{ip} (%{browser})
     title: Гісторыя ўваходаў
-  mail_subscriptions:
-    unsubscribe:
-      action: Так, адпісацца
-      complete: Адпісаны
-      confirmation_html: Вы ўпэўнены, што жадаеце адмовіцца ад атрымання %{type} з Mastodon на дамене %{domain} на сваю электронную пошту %{email}? Вы заўсёды можаце паўторна падпісацца ў <a href="%{settings_path}">наладах апавяшчэнняў па электроннай пошце</a>.
-      emails:
-        notification_emails:
-          favourite: апавяшчэнні на пошту пра упадабанае
-          follow: апавяшчэнні на пошту пра падпіскі
-          follow_request: апавяшчэнні на пошту пра запыты на падпіску
-          mention: апавяшчэнні на пошту пра згадванні
-          reblog: апавяшчэнні на пошту пра пашырэнні
-      resubscribe_html: Калі вы адмовіліся ад падпіскі памылкова, вы можаце зноў падпісацца ў <a href="%{settings_path}">наладах апавяшчэнняў па электроннай пошце</a>.
-      success_html: Вы больш не будзеце атрымліваць %{type} на сваю электронную пошту %{email} ад Mastodon на дамене %{domain}.
-      title: Адпісацца
   media_attachments:
     validations:
       images_and_video: Немагчыма далучыць відэа да допісу, які ўжо змяшчае выявы

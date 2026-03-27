@@ -781,6 +781,8 @@ fr-CA:
         administrator_description: Les utilisateur⋅rice⋅s ayant cette autorisation pourront contourner toutes les autorisations
         delete_user_data: Supprimer les données de l'utilisateur⋅rice
         delete_user_data_description: Permet aux utilisateur⋅rice⋅s de supprimer sans délai les données des autres utilisateur⋅rice⋅s
+        invite_bypass_approval: Inviter des utilisateurs sans vérifications
+        invite_bypass_approval_description: Permet aux personnes invitées sur le serveur par ces utilisateur·rice·s de s'inscrire sans être soumises à l'approbation de la modération
         invite_users: Inviter des utilisateur⋅rice⋅s
         invite_users_description: Permet aux utilisateur⋅rice⋅s d'inviter de nouvelles personnes sur le serveur
         manage_announcements: Gérer les annonces
@@ -1232,7 +1234,6 @@ fr-CA:
   application_mailer:
     notification_preferences: Modification des préférences de la messagerie
     salutation: "%{name},"
-    settings: 'Modifier les préférences de la messagerie : %{link}'
     unsubscribe: Se désabonner
     view: 'Voir :'
     view_profile: Voir le profil
@@ -1298,6 +1299,7 @@ fr-CA:
       invited_by: 'Vous pouvez rejoindre %{domain} grâve à l''invitation reçue de:'
       preamble: Celles-ci sont définies et appliqués par les modérateurs de %{domain}.
       preamble_invited: Avant de continuer, veuillez lire les règles de base définies par les modérateurs de %{domain}.
+      read_more: Lire plus
       title: Quelques règles de base.
       title_invited: Vous avez été invité·e.
     security: Sécurité
@@ -1653,21 +1655,6 @@ fr-CA:
     failed_sign_in_html: Tentative de connexion échouée avec %{method} de %{ip} (%{browser})
     successful_sign_in_html: Connexion réussie avec %{method} de %{ip} (%{browser})
     title: Historique d'authentification
-  mail_subscriptions:
-    unsubscribe:
-      action: Oui, me désabonner
-      complete: Désabonné·e
-      confirmation_html: Êtes-vous sûr de vouloir vous désabonner de la réception de %{type} pour Mastodon sur %{domain} à votre adresse e-mail %{email} ? Vous pouvez toujours vous réabonner à partir de vos paramètres de <a href="%{settings_path}">notification par messagerie</a>.
-      emails:
-        notification_emails:
-          favourite: e-mails de notifications de favoris
-          follow: e-mails de notifications d’abonnements
-          follow_request: e-mails de demandes d’abonnements
-          mention: e-mails de notifications de mentions
-          reblog: e-mails de notifications de partages
-      resubscribe_html: Si vous vous êtes désinscrit par erreur, vous pouvez vous réinscrire à partir de vos <a href="%{settings_path}">paramètres de notification par e-mail</a>.
-      success_html: Vous ne recevrez plus de %{type} pour Mastodon sur %{domain} à votre adresse e-mail à %{email}.
-      title: Se désabonner
   media_attachments:
     validations:
       images_and_video: Impossible de joindre une vidéo à un message contenant déjà des images

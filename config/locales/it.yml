@@ -762,6 +762,7 @@ it:
       categories:
         administration: Amministrazione
         devops: DevOps
+        email: Email
         invites: Inviti
         moderation: Moderazione
         special: Speciale
@@ -778,6 +779,8 @@ it:
         administrator_description: Gli utenti con questo permesso saranno esentati da ogni permesso
         delete_user_data: Cancella dati utente
         delete_user_data_description: Consente agli utenti di eliminare subito i dati degli altri utenti
+        invite_bypass_approval: Invita utenti senza revisione
+        invite_bypass_approval_description: Permette alle persone invitate al server da questi utenti, di aggirare l'approvazione della moderazione
         invite_users: Invita Utenti
         invite_users_description: Consente agli utenti di invitare nuove persone su questo server
         manage_announcements: Gestisci Annunci
@@ -1229,7 +1232,6 @@ it:
   application_mailer:
     notification_preferences: Modifica le preferenze e-mail
     salutation: "%{name},"
-    settings: 'Modifica le preferenze e-mail: %{link}'
     unsubscribe: Disiscriviti
     view: 'Guarda:'
     view_profile: Mostra profilo
@@ -1651,21 +1653,6 @@ it:
     failed_sign_in_html: Tentativo di accesso fallito con %{method} da %{ip} (%{browser})
     successful_sign_in_html: Accesso riuscito con %{method} da %{ip} (%{browser})
     title: Cronologia delle autenticazioni
-  mail_subscriptions:
-    unsubscribe:
-      action: Sì, annulla l'iscrizione
-      complete: Iscrizione annullata
-      confirmation_html: Si è sicuri di voler annullare l'iscrizione per non ricevere %{type} per Mastodon su %{domain} sulla tua e-mail %{email}? Puoi sempre reiscriverti dalle tue <a href="%{settings_path}">impostazioni di notifica e-mail</a>.
-      emails:
-        notification_emails:
-          favourite: e-mail di notifica preferite
-          follow: segui le e-mail di notifica
-          follow_request: segui le e-mail di richiesta
-          mention: menziona le e-mail di notifica
-          reblog: e-mail di notifica per le condivisioni
-      resubscribe_html: Se hai annullato l'iscrizione per errore, puoi reiscriverti tramite le <a href="%{settings_path}">impostazioni di notifica e-mail</a>.
-      success_html: Non riceverai più %{type} per Mastodon su %{domain} al tuo indirizzo e-mail %{email}.
-      title: Disiscriviti
   media_attachments:
     validations:
       images_and_video: Impossibile allegare video a un post che contiene già immagini
