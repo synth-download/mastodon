@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
-import { useParams } from 'react-router';
+import { useHistory } from 'react-router';
 
 import { List as ImmutableList } from 'immutable';
 
+import { useAccount } from '@/flavours/glitch/hooks/useAccount';
+import { isServerFeatureEnabled } from '@/flavours/glitch/utils/environment';
 import { fetchEndorsedAccounts } from 'flavours/glitch/actions/accounts';
 import { fetchFeaturedTags } from 'flavours/glitch/actions/featured_tags';
 import { Account } from 'flavours/glitch/components/account';
@@ -35,20 +37,26 @@ import { EmptyMessage } from './components/empty_message';
 import { FeaturedTag } from './components/featured_tag';
 import type { TagMap } from './components/featured_tag';
 
-interface Params {
-  acct?: string;
-  id?: string;
-}
-
 const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
   multiColumn,
 }) => {
   const accountId = useAccountId();
+  const account = useAccount(accountId);
   const { suspended, blockedBy, hidden } = useAccountVisibility(accountId);
   const forceEmptyState = suspended || blockedBy || hidden;
-  const { acct = '' } = useParams<Params>();
 
   const dispatch = useAppDispatch();
+
+  const history = useHistory();
+  useEffect(() => {
+    if (
+      account &&
+      !account.show_featured &&
+      isServerFeatureEnabled('profile_redesign')
+    ) {
+      history.push(`/@${account.acct}`);
+    }
+  }, [account, history]);
 
   useEffect(() => {
     if (accountId) {
@@ -103,8 +111,11 @@ const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
     );
   }
 
+  const noTags =
+    featuredTags.isEmpty() || isServerFeatureEnabled('profile_redesign');
+
   if (
-    featuredTags.isEmpty() &&
+    noTags &&
     featuredAccountIds.isEmpty() &&
     listedCollections.length === 0
   ) {
@@ -143,6 +154,7 @@ const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
                   key={item.id}
                   collection={item}
                   withoutBorder={index === listedCollections.length - 1}
+                  withAuthorHandle={false}
                   positionInList={index + 1}
                   listSize={listedCollections.length}
                 />
@@ -150,7 +162,7 @@ const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
             </ItemList>
           </>
         )}
-        {!featuredTags.isEmpty() && (
+        {!noTags && (
           <>
             <h4 className='column-subheading'>
               <FormattedMessage
@@ -166,7 +178,7 @@ const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
                   aria-posinset={index + 1}
                   aria-setsize={featuredTags.size}
                 >
-                  <FeaturedTag tag={tag} account={acct} />
+                  <FeaturedTag tag={tag} account={account?.acct ?? ''} />
                 </Article>
               ))}
             </ItemList>

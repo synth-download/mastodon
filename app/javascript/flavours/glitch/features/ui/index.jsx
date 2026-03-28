@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 import { Redirect, Route, withRouter } from 'react-router-dom';
@@ -17,6 +17,7 @@ import { synchronouslySubmitMarkers, submitMarkers, fetchMarkers } from 'flavour
 import { fetchNotifications } from 'flavours/glitch/actions/notification_groups';
 import { INTRODUCTION_VERSION } from 'flavours/glitch/actions/onboarding';
 import { AlertsController } from 'flavours/glitch/components/alerts_controller';
+import { injectIntl } from '@/flavours/glitch/components/intl';
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { HoverCardController } from 'flavours/glitch/components/hover_card_controller';
 import { Permalink } from 'flavours/glitch/components/permalink';
@@ -26,7 +27,7 @@ import { layoutFromWindow } from 'flavours/glitch/is_mobile';
 import { selectUnreadNotificationGroupsCount } from 'flavours/glitch/selectors/notifications';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 import { checkAnnualReport } from '@/flavours/glitch/reducers/slices/annual_report';
-import { isClientFeatureEnabled } from '@/flavours/glitch/utils/environment';
+import { isServerFeatureEnabled } from '@/flavours/glitch/utils/environment';
 
 import { uploadCompose, resetCompose, changeComposeSpoilerness } from '../../actions/compose';
 import { clearHeight } from '../../actions/height_cache';
@@ -191,7 +192,7 @@ class SwitchingColumnsArea extends PureComponent {
     }
 
     const profileRedesignRoutes = [];
-    if (isClientFeatureEnabled('profile_editing')) {
+    if (isServerFeatureEnabled('profile_redesign')) {
       profileRedesignRoutes.push(
         <WrappedRoute key="edit" path='/profile/edit' component={AccountEdit} content={children} />,
         <WrappedRoute key="featured_tags" path='/profile/featured_tags' component={AccountEditFeaturedTags} content={children} />
