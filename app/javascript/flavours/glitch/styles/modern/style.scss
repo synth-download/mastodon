@@ -2638,6 +2638,7 @@ button.icon-button {
     height: max-content;
     border-radius: 24px;
     margin-top: auto;
+    inset-inline-end: 0px !important;
     transform: translateY(100vh) !important;
     transition: transform 0.2s cubic-bezier(0, 0, 1, 0), opacity 1s;
   }
