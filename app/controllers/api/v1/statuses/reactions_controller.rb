@@ -39,7 +39,7 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
 
     relationships = StatusRelationshipsPresenter.new([@status], current_account.id, reactions_map: { @status.id => reactions }, attributes_map: { @status.id => { reactions_count: count } })
     render json: @status, serializer: REST::StatusSerializer, relationships: relationships
-  rescue Mastodon::NotPermittedError
+  rescue ActiveRecord::RecordNotFound, Mastodon::NotPermittedError
     not_found
   end
 
