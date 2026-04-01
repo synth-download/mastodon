@@ -71,6 +71,7 @@ export interface BaseApiAccountJSON {
   remote_limit_reason?: string;
   memorial?: boolean;
   hide_collections: boolean;
+  email_subscriptions?: boolean;
 }
 
 // See app/serializers/rest/muted_account_serializer.rb
