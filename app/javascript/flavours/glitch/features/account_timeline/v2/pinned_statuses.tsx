@@ -18,7 +18,6 @@ import { selectTimelineByKey } from '@/flavours/glitch/selectors/timelines';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 import IconPinned from '@/images/icons/icon_pinned.svg?react';
 
-import { isRedesignEnabled } from '../common';
 import { PinnedBadge } from '../components/badges';
 
 import { useAccountContext } from './context';
@@ -87,10 +86,6 @@ export const renderPinnedStatusHeader: StatusHeaderRenderFn = ({
 
 export const PinnedShowAllButton: FC = () => {
   const { onShowAllPinned } = useAccountContext();
-
-  if (!isRedesignEnabled()) {
-    return null;
-  }
 
   return (
     <Button
