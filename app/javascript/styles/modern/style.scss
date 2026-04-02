@@ -1713,7 +1713,7 @@ button.icon-button {
   padding-bottom: 120px;
 }
 .account__header__image {
-  height: 0;
+  height: 0 !important;
   padding-bottom: 35%;
   border-radius: var(--panel-radius) var(--panel-radius) 0 0;
   position: sticky;
@@ -2819,4 +2819,7 @@ button.icon-button {
 }
 .emoji-picker-dropdown__modifiers {
   top: 16px;
+}
+._feat_account_edit__section {
+  z-index: 1;
 }
