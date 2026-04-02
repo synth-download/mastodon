@@ -1,8 +1,9 @@
-# <img src="https://github.com/synth-download/mastodon/raw/main/public/merpstodon.svg" height="128"> Merpstodon
+# <img src="https://github.com/synth-download/mastodon/raw/main/public/merpstodon.svg" height="128"> synth-soc
 
 A very light fork of [Chuckya](https://github.com/TheEssem/mastodon) with very minor changes that runs on [our Mastodon instance](https://merping.synth.download).
 
 Changes currently including
+
 - Patches for PGroonga full text search support, over Elasticsearch
 - Advanced lists. Listen to keywords, exclude boosts, only include posts with media. With optional https://relay.fedi.buzz ingress.
 - Remove favorite and reaction federation restrictions; federate likes and reacts to all followers.
