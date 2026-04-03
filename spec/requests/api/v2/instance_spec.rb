@@ -95,6 +95,7 @@ RSpec.describe 'Instances' do
         api_versions: include(
           mastodon: anything,
           chuckya: anything,
+          'net.iceshrimp.scheduled_boosts': anything,
           'download.synth.keyword_lists': anything
         )
       )
