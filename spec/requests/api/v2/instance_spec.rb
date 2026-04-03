@@ -87,7 +87,8 @@ RSpec.describe 'Instances' do
       include(
         api_versions: include(
           mastodon: anything,
-          chuckya: anything
+          chuckya: anything,
+          'net.iceshrimp.scheduled_boosts': anything
         )
       )
     end

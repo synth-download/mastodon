@@ -47,6 +47,7 @@ module Mastodon
       {
         mastodon: 7,
         chuckya: 4,
+        'net.iceshrimp.scheduled_boosts': 1,
       }
     end
 
