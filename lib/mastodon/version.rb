@@ -48,6 +48,7 @@ module Mastodon
         mastodon: 9,
         glitch: 1,
         chuckya: 5,
+        'download.synth.keyword_lists': 1,
       }
     end
 
