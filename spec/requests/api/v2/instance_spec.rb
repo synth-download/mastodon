@@ -87,7 +87,8 @@ RSpec.describe 'Instances' do
       include(
         api_versions: include(
           mastodon: anything,
-          chuckya: anything
+          chuckya: anything,
+          'download.synth.keyword_lists': anything
         )
       )
     end
