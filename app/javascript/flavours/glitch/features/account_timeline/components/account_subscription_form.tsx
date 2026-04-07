@@ -12,13 +12,10 @@ import type {
   ValidationErrorResponse,
   ValidationError,
 } from 'flavours/glitch/api_types/errors';
-import { A11yLiveRegion } from 'flavours/glitch/components/a11y_live_region';
 import { Button } from 'flavours/glitch/components/button';
-import { CalloutInline } from 'flavours/glitch/components/callout_inline';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import type { FieldStatus } from 'flavours/glitch/components/form_fields';
-import formFieldClasses from 'flavours/glitch/components/form_fields/form_field_wrapper.module.scss';
-import { TextInput } from 'flavours/glitch/components/form_fields/text_input_field';
+import { TextInputField } from 'flavours/glitch/components/form_fields/text_input_field';
 import { useAppSelector } from 'flavours/glitch/store';
 
 import classes from './redesign.module.scss';
@@ -34,7 +31,7 @@ const messages = defineMessages({
   },
   email: {
     id: 'email_subscriptions.email',
-    defaultMessage: 'Email address',
+    defaultMessage: 'Email',
   },
 });
 
@@ -159,33 +156,19 @@ export const AccountSubscriptionForm: React.FC<{ accountId: string }> = ({
             }}
           />
         </h2>
-        <FormattedMessage
-          id='email_subscriptions.form.lead'
-          defaultMessage='Get posts in your inbox without creating a Mastodon account.'
-        />
       </div>
 
       <div className={classes.bannerInputButton}>
-        <div className={formFieldClasses.wrapper}>
-          <TextInput
-            id={`${accessibilityId}-input`}
-            type='email'
-            value={email}
-            onChange={handleChange}
-            placeholder='name@email.com'
-            aria-label={intl.formatMessage(messages.email)}
-            aria-describedby={errors.email ? `${accessibilityId}-status` : ''}
-          />
-
-          <A11yLiveRegion
-            className={formFieldClasses.status}
-            id={`${accessibilityId}-status`}
-          >
-            {errors.email && (
-              <CalloutInline {...fieldStatusFromErrors(intl, errors.email)} />
-            )}
-          </A11yLiveRegion>
-        </div>
+        <TextInputField
+          id={`${accessibilityId}-input`}
+          type='email'
+          value={email}
+          onChange={handleChange}
+          label={intl.formatMessage(messages.email)}
+          status={
+            errors.email ? fieldStatusFromErrors(intl, errors.email) : undefined
+          }
+        />
 
         <Button type='submit' loading={submitting}>
           <FormattedMessage
@@ -197,8 +180,8 @@ export const AccountSubscriptionForm: React.FC<{ accountId: string }> = ({
 
       <div className={classes.bannerDisclaimer}>
         <FormattedMessage
-          id='email_subscriptions.form.disclaimer'
-          defaultMessage='You can unsubscribe at any time. For more information, refer to the <a>Privacy Policy</a>.'
+          id='email_subscriptions.form.bottom'
+          defaultMessage='Get posts in your inbox without creating a Mastodon account. Unsubscribe at any time. For more information, refer to the <a>Privacy Policy</a>.'
           values={{ a: (str) => <Link to='/privacy-policy'>{str}</Link> }}
         />
       </div>
