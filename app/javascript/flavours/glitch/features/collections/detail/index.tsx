@@ -11,6 +11,7 @@ import { useAccountHandle } from '@/flavours/glitch/components/display_name/defa
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import ShareIcon from '@/material-icons/400-24px/share.svg?react';
 import type { ApiCollectionJSON } from 'flavours/glitch/api_types/collections';
+import { Badge } from 'flavours/glitch/components/badge';
 import { Callout } from 'flavours/glitch/components/callout';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
@@ -138,7 +139,7 @@ const CollectionHeader: React.FC<{ collection: ApiCollectionJSON }> = ({
     <header className={classes.header}>
       <div className={classes.titleWithMenu}>
         <div className={classes.titleWrapper}>
-          {tag && <span className={classes.tag}>#{tag.name}</span>}
+          {tag && <Badge label={`#${tag.name}`} icon={null} />}
           <h2 className={classes.name}>{name}</h2>
           <AuthorNote id={account_id} />
         </div>
