@@ -8,8 +8,6 @@ import { me } from '@/flavours/glitch/initial_state';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import { changeCompose, focusCompose } from 'flavours/glitch/actions/compose';
 import type { ApiCollectionJSON } from 'flavours/glitch/api_types/collections';
-import { AvatarById } from 'flavours/glitch/components/avatar';
-import { AvatarGroup } from 'flavours/glitch/components/avatar_group';
 import { Button } from 'flavours/glitch/components/button';
 import { CopyLinkField } from 'flavours/glitch/components/form_fields';
 import { IconButton } from 'flavours/glitch/components/icon_button';
@@ -20,7 +18,7 @@ import {
 } from 'flavours/glitch/components/modal_shell';
 import { useAppDispatch } from 'flavours/glitch/store';
 
-import { AuthorNote } from '.';
+import { CollectionPreviewCard } from './collection_preview_card';
 import classes from './share_modal.module.scss';
 
 const messages = defineMessages({
@@ -95,24 +93,13 @@ export const CollectionShareModal: React.FC<{
         />
 
         <div className={classes.preview}>
-          <div>
-            <h2 className={classes.previewHeading}>{collection.name}</h2>
-            <AuthorNote id={collection.account_id} />
-          </div>
-          <AvatarGroup>
-            {collection.items.slice(0, 5).map(({ account_id }) => {
-              if (!account_id) return;
-              return (
-                <AvatarById key={account_id} accountId={account_id} size={28} />
-              );
-            })}
-          </AvatarGroup>
+          <CollectionPreviewCard collection={collection} />
         </div>
 
         <CopyLinkField
           label={intl.formatMessage({
             id: 'collection.share_modal.share_link_label',
-            defaultMessage: 'Invite share link',
+            defaultMessage: 'Share link',
           })}
           value={collectionLink}
         />

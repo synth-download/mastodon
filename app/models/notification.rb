@@ -89,7 +89,7 @@ class Notification < ApplicationRecord
     }.freeze,
     collection_update: {
       filterable: false,
-    },
+    }.freeze,
   }.freeze
 
   TYPES = PROPERTIES.keys.freeze
