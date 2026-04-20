@@ -4,7 +4,7 @@ de:
     hints:
       account:
         attribution_domains: Eine Domain pro Zeile. Dadurch können falsche Zuschreibungen unterbunden werden.
-        discoverable: Dadurch kann dein Profil in Sammlungen präsentiert werden. Ebenfalls können deine öffentlichen Beiträge in verschiedenen Bereichen auf Mastodon vorgestellt oder empfohlen werden.
+        discoverable: Dadurch kann dein Profil in Sammlungen von anderen Profilen vorgestellt werden. Ebenfalls können deine öffentlichen Beiträge in verschiedenen Bereichen auf Mastodon vorgestellt oder empfohlen werden.
         display_name: Dein richtiger Name oder dein Fantasiename.
         fields: Deine Website, Pronomen, dein Alter – alles, was du möchtest.
         indexable: Deine öffentlichen Beiträge können in den Suchergebnissen auf Mastodon erscheinen. Profile, die bereits mit deinen Beiträgen interagiert haben, können deine Beiträge immer auffinden.
@@ -337,13 +337,13 @@ de:
       notification_emails:
         appeal: Jemand hat Einspruch gegen eine Maßnahme erhoben
         digest: Zusammenfassung senden
-        favourite: wenn jemand meinen Beitrag favorisiert
+        favourite: Jemand favorisierte meinen Beitrag
         follow: Ein neues Profil folgt mir
-        follow_request: Ein Profil fragt an, mir zu folgen
-        mention: Ich wurde erwähnt
+        follow_request: Jemand möchte mir folgen
+        mention: Jemand erwähnte mich
         pending_account: Ein neues Konto muss überprüft werden
         quote: Jemand zitierte meinen Beitrag
-        reblog: wenn jemand meinen Beitrag teilt
+        reblog: Jemand teilte meinen Beitrag
         report: Eine neue Meldung wurde eingereicht
         software_updates:
           all: Über alle Updates informieren
@@ -356,6 +356,7 @@ de:
         hint: Zusätzliche Informationen
         text: Regel
       settings:
+        email_subscriptions: E-Mail-Abonnement aktivieren
         indexable: Profilseite in Suchmaschinen einbeziehen
         show_application: App anzeigen, über die ich einen Beitrag veröffentlicht habe
       tag:
