@@ -185,16 +185,21 @@ export function cleanExtraEmojis(extraEmojis?: CustomEmojiMapArg | null) {
   if (!extraEmojis) {
     return null;
   }
-
-  if (!Array.isArray(extraEmojis) && !isList(extraEmojis)) {
-    return extraEmojis;
+  if (Array.isArray(extraEmojis)) {
+    return extraEmojis.reduce<ExtraCustomEmojiMap>(
+      (acc, emoji) => ({ ...acc, [emoji.shortcode]: emoji }),
+      {},
+    );
   }
-
-  const map: ExtraCustomEmojiMap = {};
-  extraEmojis.forEach((emoji: any) => {
-    map[emoji.shortcode] = emoji;
-  });
-  return map;
+  if (isList(extraEmojis)) {
+    return extraEmojis
+      .toJS()
+      .reduce<ExtraCustomEmojiMap>(
+        (acc, emoji) => ({ ...acc, [emoji.shortcode]: emoji }),
+        {},
+      );
+  }
+  return extraEmojis;
 }
 
 /**
