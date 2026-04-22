@@ -3,7 +3,7 @@ import { PureComponent } from 'react';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
-import Toggle from 'react-toggle';
+import { Toggle } from 'flavours/glitch/components/form_fields';
 
 export default class SettingToggle extends PureComponent {
 

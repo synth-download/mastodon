@@ -7,8 +7,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 
 import { NonceProvider } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import Toggle from 'react-toggle';
 
+import { Toggle } from 'flavours/glitch/components/form_fields';
 import { maxFeedHashtags } from 'flavours/glitch/initial_state';
 
 import { injectIntl } from '@/flavours/glitch/components/intl';
