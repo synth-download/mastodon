@@ -107,6 +107,12 @@ RSpec.describe ThemeHelper do
       context 'when theme was not changed in settings' do
         it { is_expected.to eq(['glitch', 'default']) }
       end
+
+      context 'when theme is changed to invalid value' do
+        before { Setting.theme = 'fakethemename' }
+
+        it { is_expected.to eq('default') }
+      end
     end
 
     context 'when user is signed in' do
