@@ -7,6 +7,8 @@ import { useHistory } from 'react-router-dom';
 import { isFulfilled } from '@reduxjs/toolkit';
 
 import { ComboboxMenuItem } from '@/mastodon/components/form_fields/combobox_field';
+import { useAccount } from '@/mastodon/hooks/useAccount';
+import { useCurrentAccountId } from '@/mastodon/hooks/useAccountId';
 import { languages } from '@/mastodon/initial_state';
 import {
   hasSpecialCharacters,
@@ -36,13 +38,15 @@ import {
 } from 'mastodon/reducers/slices/collections';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
+import { getCollectionPath } from '../utils';
+
 import classes from './styles.module.scss';
 import { WizardStepTitle } from './wizard_step_title';
 
 export const CollectionDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { id, name, description, topic, discoverable, sensitive, accountIds } =
+  const { id, name, description, topic, discoverable, sensitive, items } =
     useAppSelector((state) => state.collections.editor);
 
   const handleNameChange = useCallback(
@@ -93,6 +97,9 @@ export const CollectionDetails: React.FC = () => {
     [dispatch],
   );
 
+  const accountId = useCurrentAccountId();
+  const { acct: currentUserName } = useAccount(accountId) ?? {};
+
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -116,7 +123,7 @@ export const CollectionDetails: React.FC = () => {
           description,
           discoverable,
           sensitive,
-          account_ids: accountIds,
+          account_ids: items.map((item) => item.account_id),
         };
         if (topic) {
           payload.tag_name = topic;
@@ -128,8 +135,8 @@ export const CollectionDetails: React.FC = () => {
           }),
         ).then((result) => {
           if (isFulfilled(result)) {
-            history.replace(`/collections`);
-            history.push(`/collections/${result.payload.collection.id}`, {
+            history.replace(`/@${currentUserName}/collections`);
+            history.push(getCollectionPath(result.payload.collection.id), {
               newCollection: true,
             });
           }
@@ -145,7 +152,8 @@ export const CollectionDetails: React.FC = () => {
       sensitive,
       dispatch,
       history,
-      accountIds,
+      items,
+      currentUserName,
     ],
   );
 
@@ -331,6 +339,10 @@ const TopicField: React.FC = () => {
     [topic],
   );
 
+  const isCurrentTopicOnlySuggestion =
+    tags.length === 1 && tags[0]?.id === 'new';
+  const hideTagSuggestions = !tags.length || isCurrentTopicOnlySuggestion;
+
   return (
     <ComboboxField
       required={false}
@@ -369,7 +381,7 @@ const TopicField: React.FC = () => {
             }
           : undefined
       }
-      suppressMenu={!tags.length}
+      suppressMenu={hideTagSuggestions}
     />
   );
 };

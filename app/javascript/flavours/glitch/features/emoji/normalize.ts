@@ -193,6 +193,7 @@ export function cleanExtraEmojis(extraEmojis?: CustomEmojiMapArg | null) {
   for (const emoji of emojiArray) {
     emojis[emoji.shortcode] = emoji;
   }
+
   return emojis;
 }
 

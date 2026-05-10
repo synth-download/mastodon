@@ -109,6 +109,7 @@ fr:
         status_page_url: URL d'une page où les gens peuvent voir l'état de ce serveur en cas de panne
         theme: Thème que verront les utilisateur·rice·s déconnecté·e·s ainsi que les nouveaux·elles utilisateur·rice·s.
         thumbnail: Une image d'environ 2:1 affichée à côté des informations de votre serveur.
+        thumbnail_description: Une description de l'image pour aider les personnes ayant une déficience visuelle à comprendre son contenu.
         trendable_by_default: Ignorer l'examen manuel du contenu tendance. Des éléments individuels peuvent toujours être supprimés des tendances après coup.
         trends: Les tendances montrent quels messages, hashtags et actualités gagnent en popularité sur votre serveur.
         wrapstodon: Offrez aux comptes locaux de générer un récapitulatif annuel de leur utilisation de Mastodon. Cette fonctionnalité est disponible chaque année du 10 au 31 décembre, et est accessible pour les comptes ayant publié au moins un message Public ou Public discret et utilisé au moins un hashtag dans l'année.
@@ -160,6 +161,7 @@ fr:
           other: Nous devons vérifier que vous avez au moins %{count} ans pour utiliser %{domain}. Cette information ne sera pas conservée.
         role: Le rôle définit les autorisations de l'utilisateur⋅rice.
       user_role:
+        collection_limit: Limite le nombre de collections qu'un compte avec ce rôle peut créer. Veuillez noter que si vous diminuez cette limite, les comptes qui la dépassent ne perdront pas de collections. Mais ile ne pourront pas en créer de nouvelles.
         color: Couleur à attribuer au rôle dans l'interface, au format hexadécimal RVB
         highlighted: Cela rend le rôle visible publiquement
         name: Nom public du rôle, si le rôle est configuré pour être affiché en tant que badge
@@ -182,7 +184,7 @@ fr:
           name: Étiquette
           value: Contenu
         indexable: Inclure mes messages publics dans les résultats de recherche
-        show_collections: Afficher les profils abonnés et suivis sur le profil
+        show_collections: Afficher les abonnements et les abonné·e·s sur le profil
         unlocked: Accepter automatiquement les nouveaux abonnés
       account_alias:
         acct: Identifiant de l’ancien compte
@@ -212,9 +214,9 @@ fr:
       appeal:
         text: Expliquez pourquoi cette décision devrait être annulée
       defaults:
-        autofollow: Invitation à suivre votre compte
+        autofollow: Inviter à suivre votre compte
         avatar: Image de profil
-        bot: Ceci est un robot
+        bot: Ceci est un compte automatisé
         chosen_languages: Filtrer les langues
         confirm_new_password: Confirmation du nouveau mot de passe
         confirm_password: Confirmation du mot de passe
@@ -316,6 +318,7 @@ fr:
         status_page_url: URL de la page de l'état du serveur
         theme: Thème par défaut
         thumbnail: Miniature du serveur
+        thumbnail_description: Texte alternatif de la miniature
         trendable_by_default: Autoriser les tendances sans révision préalable
         trends: Activer les tendances
         wrapstodon: Activer Wrapstodon
@@ -386,6 +389,7 @@ fr:
         role: Rôle
         time_zone: Fuseau horaire
       user_role:
+        collection_limit: Nombre maximum de collections par compte
         color: Couleur du badge
         highlighted: Afficher le rôle en tant que badge sur les profils des utilisateur·rice·s
         name: Nom
