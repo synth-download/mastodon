@@ -318,8 +318,6 @@ async function toLoadedLocale(localeString: string) {
   }
   return locale;
 }
-import { maxFeedHashtags } from 'flavours/glitch/initial_state';
-
 
 export class LocaleNotLoadedError extends Error {
   constructor(locale: Locale) {
@@ -332,7 +330,7 @@ async function hasLocale(locale: Locale, db: Database): Promise<boolean> {
   if (loadedLocales.has(locale)) {
     return true;
   }
-  const rowCount = await db.count(locale);import { maxFeedHashtags } from 'flavours/glitch/initial_state';
+  const rowCount = await db.count(locale);
 
 
   return !!rowCount;
