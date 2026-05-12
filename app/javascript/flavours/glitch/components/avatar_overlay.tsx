@@ -63,14 +63,7 @@ export const AvatarOverlay: React.FC<Props> = ({
 
     overlayElement = (
       <div className='account__emoji' data-emoji-name={emoji.name}>
-        <Emoji
-          code={code}
-          customEmoji={emojis}
-          //emoji={emoji.name}
-          //hovered={hovering}
-          //url={emoji.url}
-          //staticUrl={emoji.static_url}
-        />
+        <Emoji code={code} customEmoji={emojis} />
       </div>
     );
   }

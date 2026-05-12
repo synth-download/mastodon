@@ -129,7 +129,7 @@ export interface ApiStatusJSON {
 
   // chuckya additions
   reactions_count: number;
-  reactions: ApiStatusReactionJSON;
+  reactions: ApiStatusReactionJSON[];
   conversation_id: number;
 }
 
