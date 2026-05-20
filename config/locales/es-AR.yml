@@ -345,12 +345,19 @@ es-AR:
       updated_msg: "¡Anuncio actualizado exitosamente!"
     collections:
       accounts: Cuentas
+      back_to_account: Volver a la página de la cuenta
+      back_to_report: Volver a la página de la denuncia
+      batch:
+        add_to_report: Agregar a la denuncia N°%{id}
+        report: Denunciar
       collection_title: Colección de %{name}
       contents: Contenidos
+      no_collection_selected: No se cambió ninguna colección, ya que ninguna fue seleccionada
       number_of_accounts:
         one: 1 cuenta
         other: "%{count} cuentas"
       open: Abrir
+      title: Colecciones de cuentas - @%{name}
       view_publicly: Ver públicamente
     critical_update_pending: Actualización crítica pendiente
     custom_emojis:
@@ -484,8 +491,10 @@ es-AR:
         title: Bloquear nuevo dominio de correo electrónico
       no_email_domain_block_selected: No se cambiaron bloqueos de dominio de correo electrónico, ya que no se seleccionó ninguno
       not_permitted: No permitidos
+      reset: Restablecer
       resolved_dns_records_hint_html: El nombre de dominio resuelve los siguientes dominios MX, los cuales son responsables en última instancia de aceptar el correo electrónico. Bloquear un dominio MX bloqueará los registros de cualquier dirección de correo electrónico que utilice el mismo dominio MX, incluso si el nombre de dominio visible es diferente. <strong>Tené cuidado de no bloquear los principales proveedores de correo electrónico.</strong>
       resolved_through_html: Resuelto a través de %{domain}
+      search: Buscar
       title: Dominios bloqueados de correo electrónico
     email_subscriptions:
       accounts:
