@@ -110,6 +110,7 @@ const Reaction: FC<{
       className={classNames('reactions-bar__item', {
         active: reaction.get('me'),
       })}
+      disabled={(reaction.get('name') as string).includes('@')}
       onClick={handleClick}
       style={style}
     >
