@@ -9,6 +9,7 @@ class NormalizeStatusReactionVariationSelectors < ActiveRecord::Migration[8.1]
   def up
     StatusReaction.where(custom_emoji_id: nil).find_each do |react|
       react.name = Emoji.normalize(react.name)
+      react.save!
     end
   end
 end
