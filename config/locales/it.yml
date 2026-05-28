@@ -956,10 +956,16 @@ it:
           disabled: Richiedi un ruolo utente specifico
           public: Tutti
       landing_page:
+        hints:
+          about_html: Una pagina con la descrizione, informazioni di contatto, regole e altre informazioni riguardanti questo server.
+          local_feed_html: Un feed in diretta con i post più recenti da parte degli utenti su questo server.
+          overview_html: Una pagina che mostra la descrizione del tuo server insieme ai post locali più recenti da parte degli utenti su questo server.
+          trends_html: Una pagina che mostra i contenuti popolari su questo server in questo momento.
         values:
-          about: Info
-          local_feed: Feed locale
-          trends: Tendenze
+          about: Pagina delle Info
+          local_feed: Feed locale in diretta
+          overview: Panoramica
+          trends: Di tendenza
       registrations:
         moderation_recommandation: Assicurati di avere un team di moderazione adeguato e reattivo prima di aprire le registrazioni a tutti!
         preamble: Controlla chi può creare un account sul tuo server.
@@ -979,6 +985,7 @@ it:
     site_uploads:
       delete: Cancella il file caricato
       destroyed_msg: Caricamento sito eliminato!
+    skip_to_content: Vai al contenuto
     software_updates:
       critical_update: 'Critico: ti preghiamo di aggiornare rapidamente'
       description: Si consiglia di mantenere aggiornata l'installazione di Mastodon per beneficiare delle ultime correzioni e funzionalità. Inoltre, a volte è fondamentale aggiornare Mastodon in modo tempestivo per evitare problemi di sicurezza. Per queste ragioni, Mastodon verifica la presenza di aggiornamenti ogni 30 minuti e ti avviserà in base alle tue preferenze di notifica e-mail.
@@ -1862,7 +1869,7 @@ it:
     quoted_update:
       subject: "%{name} ha modificato un post che hai citato"
     reblog:
-      body: 'Il tuo status è stato condiviso da %{name}:'
+      body: 'Il tuo post è stato condiviso da %{name}:'
       subject: "%{name} ha condiviso il tuo status"
       title: Nuova condivisione
     severed_relationships:
@@ -2112,7 +2119,7 @@ it:
     exceptions: Eccezioni
     explanation: L'eliminazione automatica viene eseguita con bassa priorità. Potrebbe verificarsi un ritardo tra il raggiungimento della soglia di età e la rimozione.
     ignore_favs: Ignora preferiti
-    ignore_reblogs: Ignora condivisioni
+    ignore_reblogs: Ignora le condivisioni
     interaction_exceptions: Eccezioni basate sulle interazioni
     interaction_exceptions_explanation: I post che superano temporaneamente la soglia dei preferiti o delle condivisioni potrebbero essere conservati anche se in seguito vengono diminuiti.
     keep_direct: Conserva messaggi diretti
@@ -2139,7 +2146,7 @@ it:
     min_age_label: Soglia di età
     min_favs: Conserva i post preferiti più di
     min_favs_hint: Non cancella nessuno dei tuoi post che ha ricevuto almeno questo numero di preferiti. Lascia vuoto per cancellare i post indipendentemente dal loro numero di preferiti
-    min_reblogs: Conserva i post condivisi più di
+    min_reblogs: Mantieni i post condivisi almeno
     min_reblogs_hint: Non cancella nessuno dei tuoi post che è stato condiviso più di questo numero di volte. Lascia vuoto per cancellare i post indipendentemente dal loro numero di condivisioni
   stream_entries:
     sensitive_content: Materiale sensibile

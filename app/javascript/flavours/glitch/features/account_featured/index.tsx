@@ -19,7 +19,7 @@ import {
 } from '@/flavours/glitch/components/scrollable_list/components';
 import type { TruncatedListItemInfo } from '@/flavours/glitch/components/truncated_list';
 import { TruncatedListItems } from '@/flavours/glitch/components/truncated_list';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 import Column from '@/flavours/glitch/features/ui/components/column';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useAccountId } from '@/flavours/glitch/hooks/useAccountId';

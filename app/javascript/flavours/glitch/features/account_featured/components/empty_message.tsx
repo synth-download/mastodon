@@ -2,14 +2,15 @@ import { useCallback } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
-import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { openModal } from '@/flavours/glitch/actions/modal';
 import { Button } from '@/flavours/glitch/components/button';
+import { DisplayName } from '@/flavours/glitch/components/display_name';
 import { EmptyState } from '@/flavours/glitch/components/empty_state';
 import { LimitedAccountHint } from '@/flavours/glitch/components/limited_account_hint';
 import { areCollectionsEnabled } from '@/flavours/glitch/features/collections/utils';
+import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useCurrentAccountId } from '@/flavours/glitch/hooks/useAccountId';
 import { useAppDispatch } from '@/flavours/glitch/store';
 
@@ -28,8 +29,8 @@ export const EmptyMessage: React.FC<EmptyMessageProps> = ({
   blockedBy,
   withoutAddCollectionButton,
 }) => {
-  const { acct } = useParams<{ acct?: string }>();
   const me = useCurrentAccountId();
+  const account = useAccount(accountId);
 
   const dispatch = useAppDispatch();
 
@@ -116,12 +117,12 @@ export const EmptyMessage: React.FC<EmptyMessageProps> = ({
       />
     );
   } else {
-    if (acct) {
+    if (account) {
       title = (
         <FormattedMessage
           id='empty_column.account_featured.other'
           defaultMessage='{acct} has not featured anything yet.'
-          values={{ acct }}
+          values={{ acct: <DisplayName variant='simple' account={account} /> }}
         />
       );
     } else {
