@@ -57,7 +57,6 @@ import { selectUnreadNotificationGroupsCount } from 'flavours/glitch/selectors/n
 import { useAppSelector, useAppDispatch } from 'flavours/glitch/store';
 
 import { AnnualReportNavItem } from '../annual_report/nav_item';
-import { areCollectionsEnabled } from '../collections/utils';
 
 import { DisabledAccountBanner } from './components/disabled_account_banner';
 import { FollowedTagsPanel } from './components/followed_tags_panel';
@@ -391,18 +390,16 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
                 text={intl.formatMessage(messages.bookmarks)}
               />
             </li>
-            {areCollectionsEnabled() && (
-              <li>
-                <ColumnLink
-                  transparent
-                  to={`/@${account?.acct}/collections`}
-                  icon='collections'
-                  iconComponent={CollectionsIcon}
-                  activeIconComponent={CollectionsActiveIcon}
-                  text={intl.formatMessage(messages.collections)}
-                />
-              </li>
-            )}
+            <li>
+              <ColumnLink
+                transparent
+                to={`/@${account?.acct}/collections`}
+                icon='collections'
+                iconComponent={CollectionsIcon}
+                activeIconComponent={CollectionsActiveIcon}
+                text={intl.formatMessage(messages.collections)}
+              />
+            </li>
             <li>
               <ColumnLink
                 transparent
