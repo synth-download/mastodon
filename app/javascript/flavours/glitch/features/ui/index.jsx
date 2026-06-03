@@ -557,7 +557,8 @@ class UI extends PureComponent {
     if (currentItemIndex === -1) {
       focusColumn(1);
     } else {
-      focusItemSibling(currentItemIndex, -1);
+      const wasHandled = focusItemSibling(currentItemIndex, -1);
+      return wasHandled;
     }
   };
 
@@ -566,7 +567,8 @@ class UI extends PureComponent {
     if (currentItemIndex === -1) {
       focusColumn(1);
     } else {
-      focusItemSibling(currentItemIndex, 1);
+      const wasHandled = focusItemSibling(currentItemIndex, 1);
+      return wasHandled;
     }
   };
 
