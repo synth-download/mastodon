@@ -13,7 +13,7 @@ import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import { fetchList } from 'flavours/glitch/actions/lists';
 import { createList, updateList } from 'flavours/glitch/actions/lists_typed';
-import { apiGetAccounts } from 'flavours/glitch/api/lists';
+import { apiGetListAccounts } from 'flavours/glitch/api/lists';
 import type { ApiAccountJSON } from 'flavours/glitch/api_types/accounts';
 import type { RepliesPolicyType } from 'flavours/glitch/api_types/lists';
 import { Avatar } from 'flavours/glitch/components/avatar';
@@ -197,7 +197,7 @@ const MembersLink: React.FC<{
   const [avatarAccounts, setAvatarAccounts] = useState<ApiAccountJSON[]>([]);
 
   useEffect(() => {
-    void apiGetAccounts(id)
+    void apiGetListAccounts(id)
       .then((data) => {
         setAvatarCount(data.length);
         setAvatarAccounts(data.slice(0, 3));
