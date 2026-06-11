@@ -9,6 +9,7 @@ jobs:
   pathcheck:
     name: Check for relevant changes
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       changed: ${{ steps.filter.outputs.src }}
     steps:
@@ -35,6 +36,7 @@ jobs:
   chromatic:
     name: Run Chromatic
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: pathcheck
     if: github.repository == 'mastodon/mastodon' && needs.pathcheck.outputs.changed == 'true'
     steps:

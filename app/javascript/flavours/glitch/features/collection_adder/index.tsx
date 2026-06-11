@@ -15,7 +15,7 @@ import { IconButton } from 'flavours/glitch/components/icon_button';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 import { MAX_COLLECTION_ACCOUNT_COUNT } from '../collections/editor/accounts';
-import { useCollectionsCreatedBy } from '../collections/overview/created_by_you';
+import { useCollectionsCreatedBy } from '../collections/overview/created_by_account';
 
 import { CollectionToggle } from './collection_toggle';
 
