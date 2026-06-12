@@ -7,6 +7,8 @@ import { List, Map } from 'immutable';
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
+import { FocusTargetProvider } from '@/flavours/glitch/components/navigation_focus_target';
+import { Router } from '@/flavours/glitch/components/router';
 import type { RootState } from 'flavours/glitch/store';
 import { useAppSelector } from 'flavours/glitch/store';
 
@@ -27,9 +29,13 @@ describe('<AltTextModal />', () => {
 
   const renderComponent = () => {
     return render(
-      <IntlProvider locale='en' messages={{}}>
-        <AltTextModal mediaId={mediaId} onClose={handleClose} />
-      </IntlProvider>,
+      <Router>
+        <FocusTargetProvider>
+          <IntlProvider locale='en' messages={{}}>
+            <AltTextModal mediaId={mediaId} onClose={handleClose} />
+          </IntlProvider>
+        </FocusTargetProvider>
+      </Router>,
     );
   };
 
