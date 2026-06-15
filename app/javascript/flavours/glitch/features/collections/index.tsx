@@ -4,6 +4,7 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { DisplayNameSimple } from 'flavours/glitch/components/display_name/simple';
@@ -74,7 +75,9 @@ export const Collections: React.FC<{
 
       <Scrollable>
         <header className={classes.header}>
-          <h1 className={classes.heading}>{pageTitleHtml}</h1>
+          <NavigationFocusTarget as='h1' className={classes.heading}>
+            {pageTitleHtml}
+          </NavigationFocusTarget>
           <TabList plain>
             <TabLink exact to={`/@${account?.acct}/collections`}>
               {intl.formatMessage(createdByTabMessage, {

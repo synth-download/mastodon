@@ -9,6 +9,7 @@ import { fetchServer } from 'flavours/glitch/actions/server';
 import type { ApiCollectionJSON } from 'flavours/glitch/api_types/collections';
 import { Button } from 'flavours/glitch/components/button';
 import { IconButton } from 'flavours/glitch/components/icon_button';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { useAccount } from 'flavours/glitch/hooks/useAccount';
 import { useAppDispatch } from 'flavours/glitch/store';
 
@@ -23,12 +24,12 @@ const CollectionThanks: React.FC<{
 }> = ({ onClose }) => {
   return (
     <>
-      <h3 className='report-dialog-modal__title'>
+      <NavigationFocusTarget as='h1' className='report-dialog-modal__title'>
         <FormattedMessage
           id='report.thanks.title_actionable'
           defaultMessage="Thanks for reporting, we'll look into this."
         />
-      </h3>
+      </NavigationFocusTarget>
 
       <div className='flex-spacer' />
 

@@ -29,8 +29,14 @@ import {
 } from '../editor';
 import classes from '../styles.module.scss';
 
-const CreateButton: React.FC = () => (
-  <Link to='/collections/new' className='button button--compact'>
+export const NewCollectionButton: React.FC<{ onClick?: () => void }> = ({
+  onClick,
+}) => (
+  <Link
+    to='/collections/new'
+    className='button button--compact'
+    onClick={onClick}
+  >
     <Icon id='plus' icon={AddIcon} />
     <FormattedMessage {...editorMessages.newCollection} />
   </Link>
@@ -100,7 +106,7 @@ export const CollectionsCreatedByAccount: React.FC = () => {
             />
           }
         >
-          <CreateButton />
+          <NewCollectionButton />
         </EmptyState>
       );
     } else {
@@ -132,7 +138,7 @@ export const CollectionsCreatedByAccount: React.FC = () => {
             }}
           />
         </h2>
-        {showCreateButton && <CreateButton />}
+        {showCreateButton && <NewCollectionButton />}
       </div>
       <ItemList>
         {isOwnCollectionPage && !canCreateMoreCollections && (
