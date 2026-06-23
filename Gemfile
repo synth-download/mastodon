@@ -233,5 +233,5 @@ gem 'mail', '~> 2.8'
 
 gem 'vite_rails'
 
-gem 'prism'
 gem 'base58', '~> 0.2.3'
+gem 'prism'
