@@ -38,6 +38,7 @@ Changes previously in Chuckya that are now in vanilla Mastodon:
 
 - Unicode emojis use [`jdecked/twemoji`](https://github.com/jdecked/twemoji) v15 graphics (mastodon/mastodon#28404)
 - Polls can be posted alongside media
+- Avatar/header alt text
 
 Setup instructions are the same as [glitch-soc's](https://glitch-soc.github.io/docs); just replace the glitch-soc repo URL with `https://github.com/TheEssem/mastodon`.
 
