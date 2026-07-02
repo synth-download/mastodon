@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 
@@ -10,7 +10,6 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { ContentWarning } from 'flavours/glitch/components/content_warning';
 import { PictureInPicturePlaceholder } from 'flavours/glitch/components/picture_in_picture_placeholder';
-import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
 import { withOptionalRouter, WithOptionalRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
@@ -22,6 +21,7 @@ import { MediaGallery, Video, Audio } from '../features/ui/util/async-components
 import { SensitiveMediaContext } from '../features/ui/util/sensitive_media_context';
 import { displayMedia, visibleReactions } from '../initial_state';
 
+import { injectIntl } from './intl';
 import AttachmentList from './attachment_list';
 import { StatusHeader } from './status/header'
 import { getHashtagBarForStatus } from './hashtag_bar';
@@ -31,6 +31,9 @@ import StatusContent from './status_content';
 import StatusIcons from './status_icons';
 import StatusPrepend from './status_prepend';
 import { StatusReactions } from './status_reactions';
+import { CollectionPreviewCard } from '../features/collections/components/collection_preview_card';
+import { compareUrls } from '../utils/compare_urls';
+import { FOCUS_TARGET } from './navigation_focus_target';
 
 const domParser = new DOMParser();
 
@@ -81,7 +84,6 @@ class Status extends ImmutablePureComponent {
   static contextType = SensitiveMediaContext;
 
   static propTypes = {
-    identity: identityContextPropShape,
     containerId: PropTypes.string,
     id: PropTypes.string,
     status: ImmutablePropTypes.map,
@@ -394,9 +396,9 @@ class Status extends ImmutablePureComponent {
       window.open(path, '_blank', 'noopener');
     } else {
       if (history.location.pathname.replace('/deck/', '/') === path) {
-        history.replace(path);
+        history.replace(path, {focusTarget: FOCUS_TARGET.POST});
       } else {
-        history.push(path);
+        history.push(path, {focusTarget: FOCUS_TARGET.POST});
       }
     }
   };
@@ -481,7 +483,6 @@ class Status extends ImmutablePureComponent {
       onOpenMedia,
       notification,
       history,
-      identity,
       ...other
     } = this.props;
     let attachments = null;
@@ -570,7 +571,7 @@ class Status extends ImmutablePureComponent {
         );
       } else if (['image', 'gifv', 'unknown'].includes(status.getIn(['media_attachments', 0, 'type'])) || status.get('media_attachments').size > 1) {
         media.push(
-          <Bundle fetchComponent={MediaGallery} loading={this.renderLoadingMediaGallery}>
+          <Bundle fetchComponent={MediaGallery} loading={this.renderLoadingMediaGallery} key='gallery'>
             {Component => (
               <Component
                 media={attachments}
@@ -595,7 +596,7 @@ class Status extends ImmutablePureComponent {
         const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
 
         media.push(
-          <Bundle fetchComponent={Audio} loading={this.renderLoadingAudioPlayer} >
+          <Bundle fetchComponent={Audio} loading={this.renderLoadingAudioPlayer} key='audio'>
             {Component => (
               <Component
                 src={attachment.get('url')}
@@ -622,7 +623,7 @@ class Status extends ImmutablePureComponent {
         const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
 
         media.push(
-          <Bundle fetchComponent={Video} loading={this.renderLoadingVideoPlayer} >
+          <Bundle fetchComponent={Video} loading={this.renderLoadingVideoPlayer} key='video'>
             {Component => (<Component
               preview={attachment.get('preview_url')}
               frameRate={attachment.getIn(['meta', 'original', 'frame_rate'])}
@@ -647,14 +648,30 @@ class Status extends ImmutablePureComponent {
         mediaIcons.push('video-camera');
       }
     } else if (status.get('card') && settings.get('inline_preview_cards') && !this.props.muted && !status.get('quote')) {
-      media.push(
-        <Card
-          key={`${status.get('id')}-${status.get('edited_at')}`}
-          card={status.get('card')}
-          sensitive={status.get('sensitive')}
-        />,
-      );
+      const cardUrl = status.getIn(['card', 'url']);
+
+      const taggedCollection = (
+        status.get('tagged_collections')
+      ).find((item) => compareUrls(item.get('url'), cardUrl));
+      if (taggedCollection) {
+        media.push(<CollectionPreviewCard collection={taggedCollection.toJS()} headingLevel='h2' />);
+      } else {
+        media.push(
+          <Card
+            key={`${status.get('id')}-${status.get('edited_at')}`}
+            card={status.get('card')}
+            sensitive={status.get('sensitive')}
+          />,
+        );
+      }
       mediaIcons.push('link');
+    } else if (status.get('tagged_collections').size && !status.get('quote') && settings.get('inline_preview_cards') && !this.props.muted) {
+      const firstLinkedCollection = status.get('tagged_collections').first();
+      if (firstLinkedCollection) {
+        media = (
+          <CollectionPreviewCard collection={firstLinkedCollection.toJS()} headingLevel='h2' />
+        );
+      }
     }
 
     if (status.get('poll')) {
@@ -701,19 +718,20 @@ class Status extends ImmutablePureComponent {
           account={account}
           avatarSize={avatarSize}
           onHeaderClick={this.handleHeaderClick}
-        >
-          <StatusIcons
-            status={status}
-            mediaIcons={mediaIcons}
-            settings={settings.get('status_icons')}
-          />
-        </StatusHeader>
+          contentBeforeDate={
+            <StatusIcons
+              status={status}
+              mediaIcons={mediaIcons}
+              settings={settings.get('status_icons')}
+            />
+          }
+        />
       );
 
     return (
       <Hotkeys handlers={handlers} focusable={!unfocusable}>
         <div
-          className={classNames('status__wrapper', 'focusable', `status__wrapper-${status.get('visibility')}`, { 'status__wrapper-reply': !!status.get('in_reply_to_id'), unread })}
+          className={classNames('status__wrapper', 'focusable', `status__wrapper-${status.get('visibility')}`, { 'status__wrapper-reply': !!status.get('in_reply_to_id'), 'status__wrapper--in-thread': !!rootId, unread })}
           {...selectorAttribs}
           tabIndex={unfocusable ? null : 0}
           data-featured={featured ? 'true' : null}
@@ -767,12 +785,8 @@ class Status extends ImmutablePureComponent {
             {!expanded && <MentionsPlaceholder status={status} />}
 
             <StatusReactions
-              statusId={status.get('id')}
-              reactions={status.get('reactions')}
-              numVisible={visibleReactions}
-              addReaction={this.props.onReactionAdd}
-              removeReaction={this.props.onReactionRemove}
-              canReact={this.props.identity.signedIn}
+              id={status.get('id')}
+              reactions={status.get('reactions').toArray()}
             />
 
             {(showActions && !isQuotedPost) &&
@@ -792,4 +806,4 @@ class Status extends ImmutablePureComponent {
 
 }
 
-export default withOptionalRouter(injectIntl((withIdentity(Status))));
+export default withOptionalRouter(injectIntl((Status)));

@@ -151,7 +151,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
   end
 
   def virtual_tags
-    object.active_mentions.to_a.sort_by(&:id) + object.tags + object.emojis
+    object.active_mentions.to_a.sort_by(&:id) + object.tags + object.emojis + object.tagged_objects.map(&:object)
   end
 
   def atom_uri
@@ -273,6 +273,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
     attribute :focal_point, if: :focal_point?
     attribute :width, if: :width?
     attribute :height, if: :height?
+    attribute :duration, if: :duration?
 
     has_one :icon, serializer: ActivityPub::ImageSerializer, if: :thumbnail?
 
@@ -316,12 +317,20 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
       object.file.meta&.dig('original', 'height').present?
     end
 
+    def duration?
+      object.file.meta&.dig('original', 'duration').present?
+    end
+
     def width
       object.file.meta.dig('original', 'width')
     end
 
     def height
       object.file.meta.dig('original', 'height')
+    end
+
+    def duration
+      object.file.meta.dig('original', 'duration').seconds.iso8601
     end
   end
 
@@ -361,8 +370,9 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
     end
   end
 
-  class CustomEmojiSerializer < ActivityPub::EmojiSerializer
-  end
+  class CustomEmojiSerializer < ActivityPub::EmojiSerializer; end
+
+  class CollectionSerializer < ActivityPub::FeaturedCollectionSerializer; end
 
   class OptionSerializer < ActivityPub::Serializer
     class RepliesSerializer < ActivityPub::Serializer

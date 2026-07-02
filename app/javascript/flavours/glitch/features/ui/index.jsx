@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 import { Redirect, Route, withRouter } from 'react-router-dom';
@@ -17,6 +17,7 @@ import { synchronouslySubmitMarkers, submitMarkers, fetchMarkers } from 'flavour
 import { fetchNotifications } from 'flavours/glitch/actions/notification_groups';
 import { INTRODUCTION_VERSION } from 'flavours/glitch/actions/onboarding';
 import { AlertsController } from 'flavours/glitch/components/alerts_controller';
+import { injectIntl } from '@/flavours/glitch/components/intl';
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { HoverCardController } from 'flavours/glitch/components/hover_card_controller';
 import { Permalink } from 'flavours/glitch/components/permalink';
@@ -26,13 +27,12 @@ import { layoutFromWindow } from 'flavours/glitch/is_mobile';
 import { selectUnreadNotificationGroupsCount } from 'flavours/glitch/selectors/notifications';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 import { checkAnnualReport } from '@/flavours/glitch/reducers/slices/annual_report';
-import { isClientFeatureEnabled } from '@/flavours/glitch/utils/environment';
 
 import { uploadCompose, resetCompose, changeComposeSpoilerness } from '../../actions/compose';
 import { clearHeight } from '../../actions/height_cache';
 import { fetchServer, fetchServerTranslationLanguages } from '../../actions/server';
 import { expandHomeTimeline } from '../../actions/timelines';
-import { initialState, me, owner, singleUserMode, trendsEnabled, landingPage, localLiveFeedAccess, disableHoverCards } from '../../initial_state';
+import { initialState, me, owner, singleUserMode, trendsEnabled, landingPage, localLiveFeedAccess, disableHoverCards, domain } from '../../initial_state';
 
 import BundleColumnError from './components/bundle_column_error';
 import { NavigationBar } from './components/navigation_bar';
@@ -90,13 +90,13 @@ import {
   Quotes,
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
-import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem } from './util/focusUtils';
+import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem, getFocusedColumnIndex } from './util/focusUtils';
 import { WrappedSwitch, WrappedRoute } from './util/react_router_helpers';
+import { CustomHomepage } from 'flavours/glitch/features/custom_homepage';
 
 // Dummy import, to make sure that <Status /> ends up in the application bundle.
 // Without this it ends up in ~8 very commonly used bundles.
 import '../../components/status';
-import { areCollectionsEnabled } from '../collections/utils';
 import { getNavigationSkipLinkId, SkipLinks } from './components/skip_links';
 
 const messages = defineMessages({
@@ -106,7 +106,11 @@ const messages = defineMessages({
 const mapStateToProps = state => ({
   layout: state.getIn(['meta', 'layout']),
   hasComposingContents: state.getIn(['compose', 'text']).trim().length !== 0 || state.getIn(['compose', 'media_attachments']).size > 0 || state.getIn(['compose', 'poll']) !== null || state.getIn(['compose', 'quoted_status_id']) !== null,
-  canUploadMore: !state.getIn(['compose', 'media_attachments']).some(x => ['audio', 'video'].includes(x.get('type'))) && state.getIn(['compose', 'media_attachments']).size < 4,
+  canUploadMore:
+    !state.getIn(['compose', 'media_attachments']).some(x => ['audio', 'video'].includes(x.get('type')))
+    && state.getIn(['compose', 'media_attachments']).size < state.getIn(['server', 'server', 'item', 'configuration', 'statuses', 'max_media_attachments']),
+  isUploadEnabled:
+    state.getIn(['compose', 'isDragDisabled']) !== true,
   isWide: state.getIn(['local_settings', 'stretch']),
   fullWidthColumns: state.getIn(['local_settings', 'fullwidth_columns']),
   unreadNotifications: selectUnreadNotificationGroupsCount(state),
@@ -182,29 +186,17 @@ class SwitchingColumnsArea extends PureComponent {
       rootRedirect = '/explore';
     } else if (localLiveFeedAccess === 'public' && landingPage === 'local_feed') {
       rootRedirect = '/public/local';
+    } else if (landingPage === 'overview') {
+      rootRedirect = '/overview';
     } else {
       rootRedirect = '/about';
     }
 
-    const profileRedesignRoutes = [];
-    if (isClientFeatureEnabled('profile_editing')) {
-      profileRedesignRoutes.push(
-        <WrappedRoute key="edit" path='/profile/edit' component={AccountEdit} content={children} />,
-        <WrappedRoute key="featured_tags" path='/profile/featured_tags' component={AccountEditFeaturedTags} content={children} />
-      )
-    } else {
-      // If profile editing is not enabled, redirect to the home timeline as the current editing pages are outside React Router.
-      profileRedesignRoutes.push(
-        <Redirect key="edit-redirect" from='/profile/edit' to='/' exact />,
-        <Redirect key="featured-tags-redirect" from='/profile/featured_tags' to='/' exact />,
-      );
-    }
-
     return (
       <ColumnsContextProvider multiColumn={!singleColumn}>
-        <ColumnsArea ref={this.setRef} singleColumn={singleColumn}>
+        <ColumnsArea ref={this.setRef} singleColumn={singleColumn} domain={domain} minimalShell={!signedIn && landingPage === 'overview' && pathName.startsWith('/overview')}>
           <WrappedSwitch>
-            <Redirect from='/' to={{pathname: rootRedirect, state: this.props.location.state}} exact />
+            <Redirect from='/' to={{pathname: rootRedirect, state: {...this.props.location.state, focusTarget: false}}} exact />
 
             {singleColumn ? <Redirect from='/deck' to='/home' exact /> : null}
             {singleColumn && pathName.startsWith('/deck/') ? <Redirect from={pathName} to={{...this.props.location, pathname: pathName.slice(5)}} /> : null}
@@ -240,17 +232,21 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/bookmarks' component={BookmarkedStatuses} content={children} />
             <WrappedRoute path='/pinned' component={PinnedStatuses} content={children} />
 
-            <WrappedRoute path={['/start', '/start/profile']} exact component={OnboardingProfile} content={children} />
-            <WrappedRoute path='/start/follows' component={OnboardingFollows} content={children} />
+            <WrappedRoute path='/start/profile' exact component={OnboardingProfile} content={children} />
+            <WrappedRoute path={['/start', '/start/follows']} exact component={OnboardingFollows} content={children} />
             <WrappedRoute path='/directory' component={Directory} content={children} />
             <WrappedRoute path='/explore' component={Explore} content={children} />
             <WrappedRoute path='/search' component={Search} content={children} />
             <WrappedRoute path={['/publish', '/statuses/new']} component={Compose} content={children} />
 
-            {...profileRedesignRoutes}
+            <WrappedRoute path='/profile/edit' component={AccountEdit} content={children} />
+            <WrappedRoute path='/profile/featured_tags' component={AccountEditFeaturedTags} content={children} />
 
             <WrappedRoute path={['/@:acct', '/accounts/:id']} exact component={AccountTimeline} content={children} />
             <WrappedRoute path={['/@:acct/featured', '/accounts/:id/featured']} component={AccountFeatured} content={children} />
+            <WrappedRoute path={['/@:acct/collections']} component={Collections} content={children} key='collections-list' />
+            <WrappedRoute path={['/collections/new', '/collections/:id/edit']} component={CollectionsEditor} content={children} key='collections-editor' />
+            <WrappedRoute path='/collections/:id' component={CollectionDetail} content={children} key='collections-detail' />
             <WrappedRoute path='/@:acct/tagged/:tagged?' exact component={AccountTimeline} content={children} />
             <WrappedRoute path={['/@:acct/with_replies', '/accounts/:id/with_replies']} component={AccountTimeline} content={children} componentParams={{ withReplies: true }} />
             <WrappedRoute path={['/accounts/:id/followers', '/users/:acct/followers', '/@:acct/followers']} component={Followers} content={children} />
@@ -275,13 +271,8 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/followed_tags' component={FollowedTags} content={children} />
             <WrappedRoute path='/mutes' component={Mutes} content={children} />
             <WrappedRoute path='/lists' component={Lists} content={children} />
-            {areCollectionsEnabled() &&
-              [
-                <WrappedRoute path={['/collections/new', '/collections/:id/edit']} component={CollectionsEditor} content={children} key='collections-editor' />,
-                <WrappedRoute path='/collections/:id' component={CollectionDetail} content={children} key='collections-detail' />,
-                <WrappedRoute path='/collections' component={Collections} content={children} key='collections-list' />
-              ]
-            }
+
+            <Route path='/overview' component={CustomHomepage} />
             <Route component={BundleColumnError} />
           </WrappedSwitch>
         </ColumnsArea>
@@ -342,6 +333,9 @@ class UI extends PureComponent {
   };
 
   handleDragEnter = (e) => {
+    if (!this.props.isUploadEnabled) {
+      return;
+    }
     e.preventDefault();
 
     if (!this.dragTargets) {
@@ -358,6 +352,9 @@ class UI extends PureComponent {
   };
 
   handleDragOver = (e) => {
+    if (!this.props.isUploadEnabled) {
+      return;
+    }
     if (this.dataTransferIsText(e.dataTransfer)) return false;
 
     e.preventDefault();
@@ -373,6 +370,9 @@ class UI extends PureComponent {
   };
 
   handleDrop = (e) => {
+    if (!this.props.isUploadEnabled) {
+      return;
+    }
     if (this.dataTransferIsText(e.dataTransfer)) return;
 
     e.preventDefault();
@@ -445,7 +445,6 @@ class UI extends PureComponent {
     document.addEventListener('dragover', this.handleDragOver, false);
     document.addEventListener('drop', this.handleDrop, false);
     document.addEventListener('dragleave', this.handleDragLeave, false);
-    document.addEventListener('dragend', this.handleDragEnd, false);
 
     if ('serviceWorker' in  navigator) {
       navigator.serviceWorker.addEventListener('message', this.handleServiceWorkerPostMessage);
@@ -505,7 +504,6 @@ class UI extends PureComponent {
     document.removeEventListener('dragover', this.handleDragOver);
     document.removeEventListener('drop', this.handleDrop);
     document.removeEventListener('dragleave', this.handleDragLeave);
-    document.removeEventListener('dragend', this.handleDragEnd);
   }
 
   setRef = c => {
@@ -557,18 +555,18 @@ class UI extends PureComponent {
   handleMoveUp = () => {
     const currentItemIndex = getFocusedItemIndex();
     if (currentItemIndex === -1) {
-      focusColumn(1);
+      return focusColumn(getFocusedColumnIndex());
     } else {
-      focusItemSibling(currentItemIndex, -1);
+      return focusItemSibling(currentItemIndex, -1);
     }
   };
 
   handleMoveDown = () => {
     const currentItemIndex = getFocusedItemIndex();
     if (currentItemIndex === -1) {
-      focusColumn(1);
+      return focusColumn(getFocusedColumnIndex());
     } else {
-      focusItemSibling(currentItemIndex, 1);
+      return focusItemSibling(currentItemIndex, 1);
     }
   };
 
@@ -691,13 +689,18 @@ class UI extends PureComponent {
       cheat: this.handleDonate,
     };
 
+    const minimalShell = !this.props.identity.signedIn && landingPage === 'overview';
+
     return (
       <Hotkeys global handlers={handlers}>
         <div className={className} ref={this.setRef}>
-          <SkipLinks
-            multiColumn={layout === 'multi-column'}
-            onFocusGettingStartedColumn={this.handleHotkeyGoToStart}
-          />
+          {!minimalShell && (
+            <SkipLinks
+              multiColumn={layout === 'multi-column'}
+              onFocusGettingStartedColumn={this.handleHotkeyGoToStart}
+            />
+          )}
+
           {moved && (<div className='flash-message alert'>
             <FormattedMessage
               id='moved_to_warning'
@@ -720,7 +723,7 @@ class UI extends PureComponent {
             {children}
           </SwitchingColumnsArea>
 
-          <NavigationBar />
+          {!minimalShell && <NavigationBar />}
           {layout !== 'mobile' && <PictureInPicture />}
           <AlertsController />
           {!disableHoverCards && <HoverCardController />}

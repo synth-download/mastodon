@@ -23,6 +23,10 @@ module SettingsHelper
       )
   end
 
+  def user_settings_collection(value)
+    UserSettings.definition_for(value)&.in || []
+  end
+
   def author_attribution_name(account)
     return if account.nil?
 
@@ -61,6 +65,10 @@ module SettingsHelper
         content_tag(:span, t("simple_form.hints.defaults.setting_default_content_type_#{variant}"), class: 'hint'),
       ]
     )
+  end
+
+  def time_zone_options
+    ActiveSupport::TimeZone.all.map { |tz| ["(GMT#{tz.now.formatted_offset}) #{tz.name}", tz.tzinfo.name] }
   end
 
   private

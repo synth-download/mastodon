@@ -2,11 +2,9 @@ import type {
   ChangeEvent,
   ChangeEventHandler,
   ComponentPropsWithoutRef,
-  Dispatch,
   FC,
   ReactNode,
   RefObject,
-  SetStateAction,
 } from 'react';
 import { useCallback, useId, useRef } from 'react';
 
@@ -25,7 +23,7 @@ import { TextInput } from './text_input_field';
 
 export type EmojiInputProps = {
   value?: string;
-  onChange?: Dispatch<SetStateAction<string>>;
+  onChange?: (newValue: string) => void;
   counterMax?: number;
   recommended?: boolean;
 } & Omit<CommonFieldWrapperProps, 'wrapperClassName'>;
@@ -37,7 +35,7 @@ export const EmojiTextInputField: FC<
   value,
   label,
   hint,
-  hasError,
+  status,
   maxLength,
   counterMax = maxLength,
   recommended,
@@ -49,7 +47,7 @@ export const EmojiTextInputField: FC<
   const wrapperProps = {
     label,
     hint,
-    hasError,
+    status,
     counterMax,
     recommended,
     disabled,
@@ -84,7 +82,7 @@ export const EmojiTextAreaField: FC<
   recommended,
   disabled,
   hint,
-  hasError,
+  status,
   ...otherProps
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -92,7 +90,7 @@ export const EmojiTextAreaField: FC<
   const wrapperProps = {
     label,
     hint,
-    hasError,
+    status,
     counterMax,
     recommended,
     disabled,
@@ -122,7 +120,7 @@ const EmojiFieldWrapper: FC<
     children: (
       inputProps: InputProps & { onChange: ChangeEventHandler },
     ) => ReactNode;
-    inputRef: RefObject<HTMLTextAreaElement | HTMLInputElement>;
+    inputRef: RefObject<HTMLTextAreaElement | HTMLInputElement | null>;
   }
 > = ({
   value,
@@ -138,12 +136,15 @@ const EmojiFieldWrapper: FC<
 
   const handlePickEmoji = useCallback(
     (emoji: string) => {
-      onChange?.((prev) => {
-        const position = inputRef.current?.selectionStart ?? prev.length;
-        return insertEmojiAtPosition(prev, emoji, position);
-      });
+      if (!value) {
+        onChange?.('');
+        return;
+      }
+      const position = inputRef.current?.selectionStart ?? value.length;
+      const newValue = insertEmojiAtPosition(value, emoji, position);
+      onChange?.(newValue);
     },
-    [onChange, inputRef],
+    [inputRef, value, onChange],
   );
 
   const handleChange = useCallback(

@@ -90,7 +90,7 @@ export const DropdownMenuItemContent: React.FC<{ item: MenuItem }> = ({
   );
 };
 
-export const DropdownMenu = <Item = MenuItem>({
+export const DropdownMenu = <Item = MenuItem,>({
   items,
   loading,
   scrollable,
@@ -296,6 +296,7 @@ interface DropdownProps<Item extends object | null = MenuItem> {
   children?: React.ReactElement;
   icon?: string;
   iconComponent?: IconProp;
+  iconClassName?: string;
   items?: Item[];
   loading?: boolean;
   title?: string;
@@ -326,6 +327,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
   children,
   icon,
   iconComponent,
+  iconClassName,
   items,
   loading,
   title = 'Menu',
@@ -350,7 +352,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
   );
   const [currentId] = useState(id++);
   const open = currentId === openDropdownId;
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
   const prefetchAccountId = status
     ? status.getIn(['account', 'id'])
@@ -499,6 +501,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
         iconComponent={iconComponent}
         title={title}
         active={open}
+        className={iconClassName}
         {...buttonProps}
       />
     );
@@ -515,7 +518,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
         offset={offset}
         placement={placement}
         flip
-        target={buttonRef}
+        target={buttonRef as React.RefObject<HTMLButtonElement>}
         popperConfig={popperConfig}
       >
         {({ props, arrowProps, placement }) => (

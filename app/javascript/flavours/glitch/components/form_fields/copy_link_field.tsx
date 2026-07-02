@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 
 import classNames from 'classnames';
 
-import { CopyIconButton } from 'flavours/glitch/components/copy_icon_button';
+import { CopyIconButton } from '@/flavours/glitch/components/copy_button';
 
 import classes from './copy_link_field.module.scss';
 import { FormFieldWrapper } from './form_field_wrapper';
@@ -22,11 +22,11 @@ interface CopyLinkFieldProps extends CommonFieldWrapperProps, TextInputProps {
 
 export const CopyLinkField = forwardRef<HTMLInputElement, CopyLinkFieldProps>(
   (
-    { id, label, hint, hasError, value, required, className, ...otherProps },
+    { id, label, hint, status, value, required, className, ...otherProps },
     ref,
   ) => {
     const intl = useIntl();
-    const inputRef = useRef<HTMLInputElement | null>();
+    const inputRef = useRef<HTMLInputElement>(null);
     const handleFocus = useCallback(() => {
       inputRef.current?.select();
     }, []);
@@ -48,7 +48,7 @@ export const CopyLinkField = forwardRef<HTMLInputElement, CopyLinkFieldProps>(
         label={label}
         hint={hint}
         required={required}
-        hasError={hasError}
+        status={status}
         inputId={id}
       >
         {(inputProps) => (

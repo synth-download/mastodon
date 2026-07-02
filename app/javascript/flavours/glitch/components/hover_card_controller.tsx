@@ -14,6 +14,10 @@ import { useTimeout } from 'flavours/glitch/hooks/useTimeout';
 const offset = [-12, 4] as OffsetValue;
 const enterDelay = 750;
 const leaveDelay = 150;
+// Only open the card if the mouse was moved within this time,
+// to avoid triggering the card without intentional mouse movement
+// (e.g. when content changed underneath the mouse cursor)
+const activeMovementThreshold = 150;
 const popperConfig = { strategy: 'fixed' } as UsePopperOptions;
 
 const isHoverCardAnchor = (element: HTMLElement) =>
@@ -23,11 +27,11 @@ export const HoverCardController: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [accountId, setAccountId] = useState<string | undefined>();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const isUsingTouchRef = useRef(false);
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [setLeaveTimeout, cancelLeaveTimeout] = useTimeout();
   const [setEnterTimeout, cancelEnterTimeout, delayEnterTimeout] = useTimeout();
   const [setScrollTimeout] = useTimeout();
+  const lastMouseMoveTime = useRef<number>(0);
 
   const handleClose = useCallback(() => {
     cancelEnterTimeout();
@@ -45,6 +49,7 @@ export const HoverCardController: React.FC = () => {
 
   useEffect(() => {
     let isScrolling = false;
+    let isUsingTouch = false;
     let currentAnchor: HTMLElement | null = null;
     let currentTitle: string | null = null;
 
@@ -66,7 +71,7 @@ export const HoverCardController: React.FC = () => {
     const handleTouchStart = () => {
       // Keeping track of touch events to prevent the
       // hover card from being displayed on touch devices
-      isUsingTouchRef.current = true;
+      isUsingTouch = true;
     };
 
     const handleMouseEnter = (e: MouseEvent) => {
@@ -78,33 +83,40 @@ export const HoverCardController: React.FC = () => {
         return;
       }
 
-      // Bail out if a touch is active
-      if (isUsingTouchRef.current) {
-        return;
-      }
+      // This 0ms timeout is needed to push processing of this code
+      // until after the mousemove event was run, in order to be able
+      // to track the most recent value of lastMouseMoveTime.current
+      setTimeout(() => {
+        // Check if mouse moved within the active movement threshold
+        const timeSinceLastMove = Date.now() - lastMouseMoveTime.current;
+        const hasRecentMovement = timeSinceLastMove < activeMovementThreshold;
 
-      // We've entered an anchor
-      if (!isScrolling && isHoverCardAnchor(target)) {
-        cancelLeaveTimeout();
+        // Bail out if we're scrolling, a touch is active,
+        // or if there was no active mouse movement
+        if (isScrolling || !hasRecentMovement || isUsingTouch) {
+          return;
+        }
 
-        currentAnchor?.removeAttribute('aria-describedby');
-        currentAnchor = target;
+        // We've entered an anchor
+        if (isHoverCardAnchor(target)) {
+          cancelLeaveTimeout();
 
-        currentTitle = target.getAttribute('title');
-        target.removeAttribute('title');
+          currentAnchor?.removeAttribute('aria-describedby');
+          currentAnchor = target;
 
-        setEnterTimeout(() => {
-          open(target);
-        }, enterDelay);
-      }
+          currentTitle = target.getAttribute('title');
+          target.removeAttribute('title');
 
-      // We've entered the hover card
-      if (
-        !isScrolling &&
-        (target === currentAnchor || target === cardRef.current)
-      ) {
-        cancelLeaveTimeout();
-      }
+          setEnterTimeout(() => {
+            open(target);
+          }, enterDelay);
+        }
+
+        // We've entered the hover card
+        if (target === currentAnchor || target === cardRef.current) {
+          cancelLeaveTimeout();
+        }
+      }, 0);
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
@@ -140,11 +152,20 @@ export const HoverCardController: React.FC = () => {
       setScrollTimeout(handleScrollEnd, 100);
     };
 
-    const handleMouseMove = () => {
-      if (isUsingTouchRef.current) {
-        isUsingTouchRef.current = false;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isUsingTouch) {
+        isUsingTouch = false;
       }
+
+      const hasMoved =
+        Math.max(Math.abs(e.movementX), Math.abs(e.movementY)) > 0;
+
+      if (!hasMoved) {
+        return;
+      }
+
       delayEnterTimeout(enterDelay);
+      lastMouseMoveTime.current = Date.now();
     };
 
     document.body.addEventListener('touchstart', handleTouchStart, {

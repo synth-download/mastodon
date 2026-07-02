@@ -13,12 +13,12 @@ type Props = Omit<ComponentPropsWithoutRef<'input'>, 'type'> & {
 export const CheckboxField = forwardRef<
   HTMLInputElement,
   Props & CommonFieldWrapperProps
->(({ id, label, hint, hasError, required, ...otherProps }, ref) => (
+>(({ id, label, hint, status, required, ...otherProps }, ref) => (
   <FormFieldWrapper
     label={label}
     hint={hint}
     required={required}
-    hasError={hasError}
+    status={status}
     inputId={id}
     inputPlacement='inline-start'
   >
@@ -30,7 +30,7 @@ CheckboxField.displayName = 'CheckboxField';
 
 export const Checkbox = forwardRef<HTMLInputElement, Props>(
   ({ className, size, indeterminate, ...otherProps }, ref) => {
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleRef = useCallback(
       (element: HTMLInputElement | null) => {

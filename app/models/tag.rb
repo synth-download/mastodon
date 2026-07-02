@@ -5,18 +5,18 @@
 # Table name: tags
 #
 #  id                  :bigint(8)        not null, primary key
-#  name                :string           default(""), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  usable              :boolean
-#  trendable           :boolean
-#  listable            :boolean
-#  reviewed_at         :datetime
-#  requested_review_at :datetime
+#  display_name        :string
 #  last_status_at      :datetime
+#  listable            :boolean
 #  max_score           :float
 #  max_score_at        :datetime
-#  display_name        :string
+#  name                :string           default(""), not null
+#  requested_review_at :datetime
+#  reviewed_at         :datetime
+#  trendable           :boolean
+#  usable              :boolean
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 
 class Tag < ApplicationRecord
@@ -41,11 +41,12 @@ class Tag < ApplicationRecord
   HASHTAG_LAST_SEQUENCE = '([[:word:]_]*[[:alpha:]][[:word:]_]*)'
   HASHTAG_NAME_PAT = "#{HASHTAG_FIRST_SEQUENCE}|#{HASHTAG_LAST_SEQUENCE}".freeze
 
-  HASHTAG_RE = /(?<=^|\s)[#＃](#{HASHTAG_NAME_PAT})/
+  HASHTAG_RE = /(?<=^|[[:space:]])[#＃](#{HASHTAG_NAME_PAT})/
   HASHTAG_NAME_RE = /\A(#{HASHTAG_NAME_PAT})\z/i
   HASHTAG_INVALID_CHARS_RE = /[^[:alnum:]\u0E47-\u0E4E#{HASHTAG_SEPARATORS}]/
 
   RECENT_STATUS_LIMIT = 1000
+  RECENT_STATUS_MAX_AGE = 1.year
 
   validates :name, presence: true, format: { with: HASHTAG_NAME_RE }
   validates :display_name, format: { with: HASHTAG_NAME_RE }
@@ -58,11 +59,11 @@ class Tag < ApplicationRecord
   scope :listable, -> { where(listable: [true, nil]) }
   scope :trendable, -> { Setting.trendable_by_default ? where(trendable: [true, nil]) : where(trendable: true) }
   scope :not_trendable, -> { where(trendable: false) }
-  scope :suggestions_for_account, ->(account) { recently_used(account).not_featured_by(account) }
+  scope :suggestions_for_account, ->(account) { recently_used(account).having('count(statuses.id) > 1').not_featured_by(account) }
   scope :not_featured_by, ->(account) { where.not(id: account.featured_tags.select(:tag_id)) }
   scope :recently_used, lambda { |account|
                           joins(:statuses)
-                            .where(statuses: { id: account.statuses.select(:id).limit(RECENT_STATUS_LIMIT) })
+                            .where(statuses: { id: account.statuses.select(:id).where(id: (Mastodon::Snowflake.id_at(RECENT_STATUS_MAX_AGE.ago)..)).limit(RECENT_STATUS_LIMIT) })
                             .group(:id).order(Arel.star.count.desc)
                         }
   scope :matches_name, ->(term) { where(arel_table[:name].lower.matches(arel_table.lower("#{sanitize_sql_like(normalize_value_for(:name, term))}%"), nil, true)) } # Search with case-sensitive to use B-tree index
@@ -128,7 +129,7 @@ class Tag < ApplicationRecord
     end
 
     def search_for(term, limit = 5, offset = 0, options = {})
-      stripped_term = term.strip
+      stripped_term = term.to_s.strip
       options.reverse_merge!({ exclude_unlistable: true, exclude_unreviewed: false })
 
       query = Tag.matches_name(stripped_term)

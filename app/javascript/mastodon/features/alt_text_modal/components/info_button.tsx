@@ -46,7 +46,7 @@ export const InfoButton: React.FC = () => {
         placement='top'
         onHide={handleClick}
         offset={[5, 5]}
-        target={triggerRef}
+        target={triggerRef as React.RefObject<HTMLButtonElement>}
       >
         {({ props }) => (
           <div // eslint-disable-line jsx-a11y/no-noninteractive-element-interactions
@@ -59,6 +59,7 @@ export const InfoButton: React.FC = () => {
           >
             <FormattedMessage
               id='info_button.what_is_alt_text'
+              // eslint-disable-next-line formatjs/prefer-full-sentence
               defaultMessage='<h1>What is alt text?</h1>
 
             <p>Alt text provides image descriptions for people with vision impairments, low-bandwidth connections, or those seeking extra context.</p>

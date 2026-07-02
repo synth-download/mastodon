@@ -11,16 +11,17 @@ Here are some of the changes compared to glitch-soc:
 - Configurable media attachment limits
 - Additional moderation tools for admins
 - Command-line interface for managing username blocks
-- Polls can be posted alongside media (glitch-soc/mastodon#2524)
 - Polls can have only one option
-- Restores status trend half-life to 2 hours
+- Allows configuring status trend half-life time
 - Allows dashes in custom emote names
 - Emojis can be put side-by-side
 - Minor media attachment tweaks
 
-Changes previously in Chuckya that made their way into vanilla Mastodon:
+Changes previously in Chuckya that are now in vanilla Mastodon:
 
 - Unicode emojis use [`jdecked/twemoji`](https://github.com/jdecked/twemoji) v15 graphics (mastodon/mastodon#28404)
+- Polls can be posted alongside media
+- Avatar/header alt text
 
 Setup instructions are the same as [glitch-soc's](https://glitch-soc.github.io/docs); just replace the glitch-soc repo URL with `https://github.com/TheEssem/mastodon`.
 
@@ -48,7 +49,7 @@ Mastodon Glitch Edition is a fork of [Mastodon](https://github.com/mastodon/mast
 
 <p align="center">
   <a style="text-decoration:none" href="https://www.youtube.com/watch?v=IPSbNdBmWKE">
-    <img alt="Mastodon hero image" src="https://github.com/user-attachments/assets/ef53f5e9-c0d8-484d-9f53-00efdebb92c3" />
+    <img alt="Mastodon hero image" src="./docs/hero-nodes.gif" />
   </a>
 </p>
 
@@ -100,10 +101,11 @@ Mastodon is a **free, open-source social network server** based on [ActivityPub]
 
 ### Requirements
 
-- **Ruby** 3.2+
+- **Ruby** 3.3+
 - **PostgreSQL** 14+
 - **Redis** 7.0+
-- **Node.js** 20+
+- **Node.js** 22+
+- **FFmpeg** 5.1+
 
 This repository includes deployment configurations for **Docker and docker-compose**, as well as for other environments like Heroku and Scalingo. For Helm charts, reference the [mastodon/chart repository](https://github.com/mastodon/chart). A [**standalone** installation guide](https://docs.joinmastodon.org/admin/install/) is available in the main documentation.
 

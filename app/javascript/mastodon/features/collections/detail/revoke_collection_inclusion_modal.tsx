@@ -3,8 +3,11 @@ import { useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import { showAlert } from 'mastodon/actions/alerts';
+import { openModal } from 'mastodon/actions/modal';
+import type { ApiCollectionJSON } from 'mastodon/api_types/collections';
 import type { BaseConfirmationModalProps } from 'mastodon/features/ui/components/confirmation_modals/confirmation_modal';
 import { ConfirmationModal } from 'mastodon/features/ui/components/confirmation_modals/confirmation_modal';
+import { me } from 'mastodon/initial_state';
 import { revokeCollectionInclusion } from 'mastodon/reducers/slices/collections';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
@@ -16,13 +19,31 @@ const messages = defineMessages({
   revokeCollectionInclusionMessage: {
     id: 'confirmations.revoke_collection_inclusion.message',
     defaultMessage:
-      "This action is permanent, and the curator won't be able to re-add you to the collection later on.",
+      "The curator won't be able to re-add you to this collection for 24 hours. To prevent them from adding you to collections permanently, you can block them.",
   },
   revokeCollectionInclusionConfirm: {
     id: 'confirmations.revoke_collection_inclusion.confirm',
     defaultMessage: 'Remove me',
   },
 });
+
+export function useConfirmRevoke(collection?: ApiCollectionJSON | null) {
+  const dispatch = useAppDispatch();
+  const { id, items = [] } = collection ?? {};
+  const ownCollectionItemId = items.find((item) => item.account_id === me)?.id;
+
+  return useCallback(() => {
+    void dispatch(
+      openModal({
+        modalType: 'REVOKE_COLLECTION_INCLUSION',
+        modalProps: {
+          collectionId: id,
+          collectionItemId: ownCollectionItemId,
+        },
+      }),
+    );
+  }, [dispatch, id, ownCollectionItemId]);
+}
 
 export const RevokeCollectionInclusionModal: React.FC<
   {
