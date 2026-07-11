@@ -256,7 +256,7 @@ class ActivityPub::ProcessAccountService < BaseService
     if value.is_a?(Hash) && value['type'] == 'Image'
       url = first_of_value(value['url'])
       url = url['href'] if url.is_a?(Hash)
-      description = value['summary'].presence || value['name'].presence
+      description = first_lang_string(value, 'summary').presence || first_lang_string(value, 'name').presence
       description = description.strip[0...MediaAttachment::MAX_DESCRIPTION_HARD_LENGTH_LIMIT] if description.present?
     else
       url = value
@@ -271,7 +271,7 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def public_keys
-    @public_keys ||= fep_521a_public_keys.presence || legacy_public_keys
+    @public_keys ||= (fep_521a_public_keys + legacy_public_keys).uniq { |key| key[:uri] }
   end
 
   def legacy_public_keys
@@ -305,8 +305,6 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def fep_521a_public_keys
-    return if @json['assertionMethod'].blank?
-
     as_array(@json['assertionMethod']).take(MAX_PUBLIC_KEYS).filter_map do |value|
       next if value.nil?
 
@@ -336,21 +334,8 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def key_from_multikey(value)
-    tag, key = Multibase.decode_multicodec(value)
-
-    case tag
-    when :'rsa-pub'
-      [:rsa, OpenSSL::PKey::RSA.new(key).to_pem]
-    when :'ed25519-pub'
-      asn1 = OpenSSL::ASN1::Sequence(
-        [
-          OpenSSL::ASN1::Sequence([OpenSSL::ASN1::ObjectId('ED25519')]),
-          OpenSSL::ASN1::BitString(key),
-        ]
-      )
-      [:ed25519, OpenSSL::PKey.read(asn1.to_der).public_to_pem]
-    end
-  rescue ArgumentError
+    Multibase.decode_key_to_pem(value)
+  rescue Multibase::Error
     nil
   end
 
