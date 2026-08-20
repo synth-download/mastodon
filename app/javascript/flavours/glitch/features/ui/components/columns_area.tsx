@@ -1,18 +1,20 @@
 import {
   Children,
   cloneElement,
-  createContext,
   forwardRef,
   isValidElement,
+  lazy,
+  Suspense,
   useCallback,
-  useContext,
 } from 'react';
 
 import classNames from 'classnames';
 
 import type { List, Record } from 'immutable';
 
+import { ColumnIndexContext } from '@/flavours/glitch/components/column/context';
 import { useAppSelector } from '@/flavours/glitch/store';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import { Footer } from 'flavours/glitch/features/custom_homepage/components/footer';
 import { Header } from 'flavours/glitch/features/custom_homepage/components/header';
 import { CollapsibleNavigationPanel } from 'flavours/glitch/features/navigation_panel';
@@ -39,6 +41,12 @@ import { BundleColumnError } from './bundle_column_error';
 import { ColumnLoading } from './column_loading';
 import { ComposePanel, RedirectToMobileComposeIfNeeded } from './compose_panel';
 import DrawerLoading from './drawer_loading';
+
+const LazyRedesignNavigationPanel = lazy(() =>
+  import('@/flavours/glitch/features/navigation_panel/redesign').then(
+    ({ RedesignNavigationPanel }) => ({ default: RedesignNavigationPanel }),
+  ),
+);
 
 const componentMap = {
   COMPOSE: Compose,
@@ -70,9 +78,6 @@ const TabsBarPortal = () => {
 
   return <div id='tabs-bar__portal' ref={setRef} />;
 };
-
-export const ColumnIndexContext = createContext(1);
-export const useColumnIndexContext = () => useContext(ColumnIndexContext);
 
 interface Column {
   uuid: string;
@@ -125,8 +130,16 @@ export const ColumnsArea = forwardRef<
       <div className='columns-area__panels'>
         <div className='columns-area__panels__pane columns-area__panels__pane--compositional'>
           <div className='columns-area__panels__pane__inner'>
-            {renderComposePanel && <ComposePanel />}
-            <RedirectToMobileComposeIfNeeded />
+            {isRedesignEnabled() ? (
+              <Suspense>
+                <LazyRedesignNavigationPanel />
+              </Suspense>
+            ) : (
+              <>
+                {renderComposePanel && <ComposePanel />}
+                <RedirectToMobileComposeIfNeeded />
+              </>
+            )}
           </div>
         </div>
 
