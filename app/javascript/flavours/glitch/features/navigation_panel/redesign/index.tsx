@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
@@ -6,20 +6,26 @@ import {
   PenNibIcon,
   HouseIcon,
   MagnifyingGlassIcon,
+  RssSimpleIcon,
   BellIcon,
-  BellRingingIcon,
   ChatCircleIcon,
   BookmarkSimpleIcon,
 } from '@phosphor-icons/react';
 
+import { fetchLists } from '@/flavours/glitch/actions/lists';
+import { fetchFollowedHashtags } from '@/flavours/glitch/actions/tags_typed';
+import { FOCUS_TARGET } from '@/flavours/glitch/components/navigation_focus_target';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import { openNewComposer } from '@/flavours/glitch/reducers/slices/composer';
+import { getOrderedLists } from '@/flavours/glitch/selectors/lists';
 import { selectUnreadNotificationGroupsCount } from '@/flavours/glitch/selectors/notifications';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
+import FediIcon from '@/images/icons/icon_fediverse.svg?react';
 
-import { NavigationAccountCard } from './account_card';
+import { NavigationAccountCardAndMenu } from './account_card_and_menu';
 import { NavigationFooterLinks } from './footer_links';
 import { NavigationHeader } from './header';
+import { ListSection } from './list_section';
 import { NavigationLink } from './navigation_link';
 import classes from './styles.module.scss';
 
@@ -31,6 +37,32 @@ const messages = defineMessages({
       'Label for the main navigation; should not contain the word "navigation".',
   },
 });
+
+function useCustomFeeds() {
+  const dispatch = useAppDispatch();
+  const customFeeds = useAppSelector((state) => getOrderedLists(state));
+
+  useEffect(() => {
+    void dispatch(fetchLists());
+  }, [dispatch]);
+
+  return {
+    customFeeds,
+  };
+}
+
+function useFollowedHashtags() {
+  const dispatch = useAppDispatch();
+  const { tags, stale } = useAppSelector((state) => state.followedTags);
+
+  useEffect(() => {
+    if (stale) {
+      void dispatch(fetchFollowedHashtags());
+    }
+  }, [dispatch, stale]);
+
+  return { followedHashtags: tags };
+}
 
 export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
   siteName,
@@ -45,6 +77,9 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
   const openComposer = useCallback(() => {
     dispatch(openNewComposer({ type: 'post' }));
   }, [dispatch]);
+
+  const { customFeeds } = useCustomFeeds();
+  const { followedHashtags } = useFollowedHashtags();
 
   return (
     <nav
@@ -69,36 +104,121 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
             <NavigationLink to='/home' iconComponent={HouseIcon}>
               <FormattedMessage id='tabs_bar.home' defaultMessage='Home' />
             </NavigationLink>
-            <NavigationLink to='/explore' iconComponent={MagnifyingGlassIcon}>
+            <NavigationLink
+              to={{
+                pathname: '/explore',
+                state: { focusTarget: FOCUS_TARGET.SEARCH },
+              }}
+              iconComponent={MagnifyingGlassIcon}
+            >
               <FormattedMessage
                 id='tabs_bar.explore'
                 defaultMessage='Explore'
               />
             </NavigationLink>
             <NavigationLink
-              to='/notifications'
-              iconComponent={
-                notificationsCount > 0 ? BellRingingIcon : BellIcon
-              }
-              badgeCount={notificationsCount}
+              withSpaceAfter
+              to='/public/local'
+              iconComponent={FediIcon}
             >
               <FormattedMessage
-                id='tabs_bar.notifications'
-                defaultMessage='Notifications'
+                id='tabs_bar.fediverse_feeds'
+                defaultMessage='Fediverse Feeds'
               />
             </NavigationLink>
-            <NavigationLink to='/conversations' iconComponent={ChatCircleIcon}>
-              <FormattedMessage
-                id='tabs_bar.messages'
-                defaultMessage='Messages'
-              />
-            </NavigationLink>
-            <NavigationLink to='/bookmarks' iconComponent={BookmarkSimpleIcon}>
-              <FormattedMessage id='tabs_bar.saved' defaultMessage='Saved' />
-            </NavigationLink>
+            <ListSection
+              title={
+                <FormattedMessage
+                  id='tabs_bar.custom_feeds'
+                  defaultMessage='Custom feeds'
+                />
+              }
+              action={{
+                label: (
+                  <FormattedMessage
+                    id='tabs_bar.create_custom_feed'
+                    defaultMessage='Create feed'
+                  />
+                ),
+                link: '/lists/new',
+              }}
+              emptyMessage={
+                <FormattedMessage
+                  id='tabs_bar.custom_feeds_empty'
+                  defaultMessage='You have no custom feeds yet.'
+                />
+              }
+            >
+              {customFeeds.map((feed) => (
+                <NavigationLink
+                  key={feed.id}
+                  to={`/lists/${feed.id}`}
+                  iconComponent={RssSimpleIcon}
+                >
+                  {feed.title}
+                </NavigationLink>
+              ))}
+            </ListSection>
+
+            {followedHashtags.length > 0 && (
+              <ListSection
+                title={
+                  <FormattedMessage
+                    id='navigation_bar.followed_tags'
+                    defaultMessage='Followed hashtags'
+                  />
+                }
+                action={{
+                  label: (
+                    <FormattedMessage
+                      id='navigation_bar.followed_tags_view_all'
+                      defaultMessage='View all'
+                    />
+                  ),
+                  link: '/followed_tags',
+                }}
+              >
+                {followedHashtags.slice(0, 4).map((tag) => (
+                  <NavigationLink key={tag.name} to={`/tags/${tag.name}`}>
+                    #{tag.name}
+                  </NavigationLink>
+                ))}
+              </ListSection>
+            )}
           </ul>
           <footer className={classes.footer}>
-            <NavigationAccountCard />
+            <ul className={classes.footerNav}>
+              <NavigationLink
+                stacked
+                to='/notifications'
+                iconComponent={BellIcon}
+                badgeCount={notificationsCount}
+              >
+                <FormattedMessage
+                  id='tabs_bar.notifications'
+                  defaultMessage='Notifications'
+                />
+              </NavigationLink>
+              <NavigationLink
+                stacked
+                to='/conversations'
+                iconComponent={ChatCircleIcon}
+              >
+                <FormattedMessage
+                  id='tabs_bar.messages'
+                  defaultMessage='Messages'
+                  description='Message refers to a direct message. For languages where this is confusing, "chat" or "direct message" can be used.'
+                />
+              </NavigationLink>
+              <NavigationLink
+                stacked
+                to='/bookmarks'
+                iconComponent={BookmarkSimpleIcon}
+              >
+                <FormattedMessage id='tabs_bar.saved' defaultMessage='Saved' />
+              </NavigationLink>
+            </ul>
+            <NavigationAccountCardAndMenu />
             <NavigationFooterLinks siteName={siteName} />
           </footer>
         </>

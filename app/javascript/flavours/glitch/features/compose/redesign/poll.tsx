@@ -27,8 +27,8 @@ import {
 import { useAppSelector, useAppDispatch } from '@/flavours/glitch/store';
 import { DAY, HOUR, MINUTE } from '@/flavours/glitch/utils/time';
 
+import classes from './attachments.module.scss';
 import { selectComposePoll } from './selectors';
-import classes from './styles.module.scss';
 
 const messages = defineMessages({
   option_placeholder: {
@@ -187,8 +187,8 @@ export const ComposePoll: React.FC = () => {
             className={classNames(
               classes.pollDurationSelect,
               buttonClasses.base,
-              buttonClasses.solid,
               buttonClasses.tonal,
+              buttonClasses.neutral,
               buttonClasses.xs,
             )}
           >
