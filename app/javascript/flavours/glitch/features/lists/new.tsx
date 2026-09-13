@@ -9,9 +9,11 @@ import { isFulfilled } from '@reduxjs/toolkit';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
 import { NotSignedInIndicator } from '@/flavours/glitch/components/not_signed_in_indicator';
 import { useIdentity } from '@/flavours/glitch/identity_context';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
@@ -32,164 +34,56 @@ import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import type { List } from 'flavours/glitch/models/list';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
-import { messages as membersMessages } from './members';
-
-const messages = defineMessages({
+const messagesLegacy = defineMessages({
   edit: { id: 'column.edit_list', defaultMessage: 'Edit list' },
   create: { id: 'column.create_list', defaultMessage: 'Create list' },
+  manageMembers: {
+    id: 'column.list_members',
+    defaultMessage: 'Manage list members',
+  },
+  nameFieldLabel: { id: 'lists.list_name', defaultMessage: 'List name' },
+  showRepliesTo: {
+    id: 'lists.show_replies_to',
+    defaultMessage: 'Include replies from list members to',
+  },
+  replyPolicyList: {
+    id: 'lists.replies_policy.list',
+    defaultMessage: 'Members of the list',
+  },
+  exclusiveHint: {
+    id: 'lists.exclusive_hint',
+    defaultMessage:
+      'If someone is on this list, hide them in your Home feed to avoid seeing their posts twice.',
+  },
 });
 
-const KeywordPills: React.FC<{
-  keywords: string[];
-  onRemove: (keyword: string) => void;
-}> = ({ keywords, onRemove }) => {
-  if (keywords.length === 0) return null;
+const messagesRedesign = defineMessages({
+  edit: { id: 'column.edit_custom_feed', defaultMessage: 'Edit Custom Feed' },
+  create: {
+    id: 'column.create_custom_feed',
+    defaultMessage: 'Create Custom Feed',
+  },
+  manageMembers: {
+    id: 'custom_feeds.manage_accounts',
+    defaultMessage: 'Manage feed members',
+  },
+  nameFieldLabel: { id: 'custom_feeds.feed_name', defaultMessage: 'Feed name' },
+  showRepliesTo: {
+    id: 'custom_feeds.show_replies_to',
+    defaultMessage: 'Include replies from feed members to',
+  },
+  replyPolicyList: {
+    id: 'custom_feeds.replies_policy.members',
+    defaultMessage: 'Members of the feed',
+  },
+  exclusiveHint: {
+    id: 'custom_feeds.exclusive_hint',
+    defaultMessage:
+      'If someone is in this custom feed, hide them in your Home feed to avoid seeing their posts twice.',
+  },
+});
 
-  return (
-    <div className='keyword-pills'>
-      {keywords.map((keyword, index) => (
-        <div key={index} className='keyword-pill'>
-          <span className='keyword-pill__text'>{keyword}</span>
-          <button
-            type='button'
-            className='keyword-pill__remove'
-            onClick={() => onRemove(keyword)}
-            aria-label={`Remove ${keyword}`}
-          >
-            <Icon id='close' icon={CloseIcon} size={12} />
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const REGEX_PATTER_REGEX = RegExp(/^\/(.+)\/$/);
-
-const validateKeyword = (
-  keyword: string,
-): { valid: boolean; error?: string } => {
-  const trimmed = keyword.trim();
-
-  if (!trimmed) {
-    return { valid: false, error: 'Keyword cannot be empty' };
-  }
-
-  if (REGEX_PATTER_REGEX.test(trimmed)) {
-    try {
-      new RegExp(trimmed + 'i');
-      return { valid: true };
-    } catch (e) {
-      return {
-        valid: false,
-        error: `Invalid regex pattern: ${e instanceof Error ? e.message : 'Unknown error'}`,
-      };
-    }
-  }
-
-  return { valid: true };
-};
-
-const KeywordInput: React.FC<{
-  label: React.ReactNode;
-  id: string;
-  value: string[];
-  onChange: (keywords: string[]) => void;
-  placeholder?: string;
-}> = ({ label, id, value, onChange, placeholder }) => {
-  const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
-      setError(null);
-    },
-    [],
-  );
-
-  const commitKeyword = useCallback(() => {
-    const newKeyword = inputValue.trim();
-    const validation = validateKeyword(newKeyword);
-
-    if (!validation.valid) {
-      setError(validation.error || 'Invalid keyword');
-      return;
-    }
-
-    if (newKeyword && !value.includes(newKeyword)) {
-      onChange([...value, newKeyword]);
-      setInputValue('');
-      setError(null);
-    }
-  }, [inputValue, value, onChange]);
-
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      commitKeyword();
-    },
-    [commitKeyword],
-  );
-
-  const handleInputKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        commitKeyword();
-      } else if (
-        e.key === 'Backspace' &&
-        inputValue === '' &&
-        value.length > 0
-      ) {
-        const lastKeyword = value[value.length - 1];
-        onChange(value.slice(0, -1));
-        if (lastKeyword) {
-          e.preventDefault();
-          setInputValue(lastKeyword);
-        }
-      }
-    },
-    [inputValue, value, onChange, commitKeyword],
-  );
-
-  const handleRemoveKeyword = useCallback(
-    (keywordToRemove: string) => {
-      onChange(value.filter((keyword) => keyword !== keywordToRemove));
-    },
-    [value, onChange],
-  );
-
-  return (
-    <div className='input with_label'>
-      <div className='label_input'>
-        <label htmlFor={id}>{label}</label>
-        <form
-          onSubmit={handleSubmit}
-          className='label_input__wrapper keyword-input-wrapper'
-          noValidate
-        >
-          <KeywordPills keywords={value} onRemove={handleRemoveKeyword} />
-          <input
-            id={id}
-            type='text'
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-            placeholder={placeholder || 'Type a keyword and press Enter to add'}
-            inputMode='text'
-            enterKeyHint='done'
-            autoComplete='off'
-            aria-label={typeof label === 'string' ? label : undefined}
-            className={`${error && 'keyword-input-wrapper__input_error'} keyword-input-wrapper__input`}
-          />
-          {error && <p className='keyword-input-wrapper__error'>{error}</p>}
-          <button type='submit' style={{ display: 'none' }} aria-hidden />
-        </form>
-      </div>
-    </div>
-  );
-};
+const messages = isRedesignEnabled() ? messagesRedesign : messagesLegacy;
 
 const MembersLink: React.FC<{
   id: string;
@@ -213,7 +107,7 @@ const MembersLink: React.FC<{
     <Link to={`/lists/${id}/members`} className='app-form__link'>
       <div className='app-form__link__text'>
         <strong>
-          {intl.formatMessage(membersMessages.manageMembers)}
+          {intl.formatMessage(messages.manageMembers)}
           <Icon id='chevron_right' icon={ChevronRightIcon} />
         </strong>
         <FormattedMessage
@@ -236,6 +130,7 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const intl = useIntl();
 
   const {
     id,
@@ -382,9 +277,7 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
         <TextInputField
           required
           maxLength={30}
-          label={
-            <FormattedMessage id='lists.list_name' defaultMessage='List name' />
-          }
+          label={intl.formatMessage(messages.nameFieldLabel)}
           value={title}
           onChange={handleTitleChange}
           id='list_title'
@@ -393,34 +286,26 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
 
       <div className='fields-group'>
         <SelectField
-          label={
-            <FormattedMessage
-              id='lists.show_replies_to'
-              defaultMessage='Include replies from list members to'
-            />
-          }
+          label={intl.formatMessage(messages.showRepliesTo)}
           value={repliesPolicy}
           onChange={handleRepliesPolicyChange}
           id='list_replies_policy'
         >
-          <FormattedMessage
-            id='lists.replies_policy.none'
-            defaultMessage='No one'
-          >
-            {(msg) => <option value='none'>{msg}</option>}
-          </FormattedMessage>
-          <FormattedMessage
-            id='lists.replies_policy.list'
-            defaultMessage='Members of the list'
-          >
-            {(msg) => <option value='list'>{msg}</option>}
-          </FormattedMessage>
-          <FormattedMessage
-            id='lists.replies_policy.followed'
-            defaultMessage='Any followed user'
-          >
-            {(msg) => <option value='followed'>{msg}</option>}
-          </FormattedMessage>
+          <option value='none'>
+            <FormattedMessage
+              id='lists.replies_policy.none'
+              defaultMessage='No one'
+            />
+          </option>
+          <option value='list'>
+            {intl.formatMessage(messages.replyPolicyList)}
+          </option>
+          <option value='followed'>
+            <FormattedMessage
+              id='lists.replies_policy.followed'
+              defaultMessage='Any followed user'
+            />
+          </option>
         </SelectField>
       </div>
 
@@ -535,10 +420,7 @@ const NewList: React.FC<{ list?: List | null }> = ({ list }) => {
               />
             </strong>
             <span className='hint'>
-              <FormattedMessage
-                id='lists.exclusive_hint'
-                defaultMessage='If someone is on this list, hide them in your Home feed to avoid seeing their posts twice.'
-              />
+              {intl.formatMessage(messages.exclusiveHint)}
             </span>
           </div>
 
@@ -583,19 +465,21 @@ const NewListWrapper: React.FC<{
   }, [dispatch, signedIn, id]);
 
   const isLoading = id && !list;
+  const title = intl.formatMessage(id ? messages.edit : messages.create);
 
   return (
-    <Column
-      bindToDocument={!multiColumn}
-      label={intl.formatMessage(id ? messages.edit : messages.create)}
-    >
-      <ColumnHeader
-        title={intl.formatMessage(id ? messages.edit : messages.create)}
-        icon='list-ul'
-        iconComponent={ListAltIcon}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+    <Column bindToDocument={!multiColumn} label={title}>
+      {isRedesignEnabled() ? (
+        <ColumnHeader withBackButton title={title} />
+      ) : (
+        <LegacyColumnHeader
+          title={title}
+          icon='list-ul'
+          iconComponent={ListAltIcon}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
 
       <div className='scrollable'>
         {!signedIn ? (
@@ -608,9 +492,7 @@ const NewListWrapper: React.FC<{
       </div>
 
       <Helmet>
-        <title>
-          {intl.formatMessage(id ? messages.edit : messages.create)}
-        </title>
+        <title>{title}</title>
         <meta name='robots' content='noindex' />
       </Helmet>
     </Column>
