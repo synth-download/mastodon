@@ -3,22 +3,24 @@ import { useState, useMemo, useCallback, createRef } from 'react';
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import { Helmet } from 'react-helmet';
 import { useHistory } from 'react-router-dom';
 
-import Toggle from 'react-toggle';
+import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import AddPhotoAlternateIcon from '@/material-icons/400-24px/add_photo_alternate.svg?react';
 import EditIcon from '@/material-icons/400-24px/edit.svg?react';
 import PersonIcon from '@/material-icons/400-24px/person.svg?react';
 import { updateAccount } from 'flavours/glitch/actions/accounts';
 import { closeOnboarding } from 'flavours/glitch/actions/onboarding';
 import { Button } from 'flavours/glitch/components/button';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import {
   TextAreaField,
   TextInputField,
+  Toggle,
 } from 'flavours/glitch/components/form_fields';
 import { Icon } from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
@@ -71,6 +73,11 @@ export const Profile: React.FC<{
   const dispatch = useAppDispatch();
   const intl = useIntl();
   const history = useHistory();
+
+  const maxDisplayNameLength = useAppSelector(
+    (state) =>
+      state.server.server.item?.configuration.accounts.max_display_name_length,
+  );
 
   const handleDisplayNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +143,7 @@ export const Profile: React.FC<{
       }),
     )
       .then(() => {
-        history.push('/start/follows');
+        history.push('/home');
         dispatch(closeOnboarding());
         return '';
       })
@@ -158,12 +165,20 @@ export const Profile: React.FC<{
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.title)}
     >
-      <ColumnHeader
-        title={intl.formatMessage(messages.title)}
-        icon='person'
-        iconComponent={PersonIcon}
-        multiColumn={multiColumn}
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          withBackButton
+          title={intl.formatMessage(messages.title)}
+        />
+      ) : (
+        <LegacyColumnHeader
+          title={intl.formatMessage(messages.title)}
+          icon='person'
+          iconComponent={PersonIcon}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
 
       <div className='scrollable scrollable--flex'>
         <div className='simple_form app-form'>
@@ -217,7 +232,7 @@ export const Profile: React.FC<{
 
           <div className='fields-group'>
             <TextInputField
-              maxLength={30}
+              maxLength={maxDisplayNameLength ?? 40}
               label={
                 <FormattedMessage
                   id='onboarding.profile.display_name'
@@ -232,7 +247,7 @@ export const Profile: React.FC<{
               }
               value={displayName}
               onChange={handleDisplayNameChange}
-              hasError={!!errors?.display_name}
+              status={errors?.display_name ? 'error' : undefined}
               id='display_name'
             />
           </div>
@@ -254,7 +269,7 @@ export const Profile: React.FC<{
               }
               value={note}
               onChange={handleNoteChange}
-              hasError={!!errors?.note}
+              status={errors?.note ? 'error' : undefined}
               id='note'
             />
           </div>
@@ -300,8 +315,8 @@ export const Profile: React.FC<{
               <LoadingIndicator />
             ) : (
               <FormattedMessage
-                id='onboarding.profile.save_and_continue'
-                defaultMessage='Save and continue'
+                id='onboarding.profile.finish'
+                defaultMessage='Finish'
               />
             )}
           </Button>

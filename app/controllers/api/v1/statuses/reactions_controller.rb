@@ -6,6 +6,7 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
   before_action -> { doorkeeper_authorize! :write, :'write:favourites' }, only: [:create, :destroy]
   before_action -> { authorize_if_got_token! :read, :'read:accounts' }, only: [:index]
   before_action :require_user!, only: [:create, :destroy]
+  skip_before_action :set_status, only: [:destroy]
   after_action :insert_pagination_headers, only: [:index]
 
   def index
@@ -15,24 +16,22 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
   end
 
   def create
-    ReactService.new.call(current_account, @status, params[:id])
+    ReactService.new.call(current_account, @status, Emoji.normalize(params[:id]))
     render json: @status, serializer: REST::StatusSerializer
   end
 
   def destroy
-    react = current_account.status_reactions.find_by(status_id: params[:status_id], name: params[:id])
-
-    reactions = StatusReaction.select(
-      [:name, :custom_emoji_id, 'COUNT(*) as count', 'FALSE AS me']
-    ).where(status_id: @status.id)
+    name = Emoji.normalize(params[:id])
+    react = current_account.status_reactions.find_by(status_id: params[:status_id], name: name)
 
     if react
       @status = react.status
       count = [@status.reactions_count - 1, 0].max
-      reactions = reactions.where.not(id: react.id)
-      UnreactWorker.perform_async(current_account.id, @status.id, params[:id])
+      reactions = select_reactions.where.not(id: react.id)
+      UnreactWorker.perform_async(current_account.id, @status.id, name)
     else
       @status = Status.find(params[:status_id])
+      reactions = select_reactions
       count = @status.reactions_count
       authorize @status, :show?
     end
@@ -41,11 +40,17 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
 
     relationships = StatusRelationshipsPresenter.new([@status], current_account.id, reactions_map: { @status.id => reactions }, attributes_map: { @status.id => { reactions_count: count } })
     render json: @status, serializer: REST::StatusSerializer, relationships: relationships
-  rescue Mastodon::NotPermittedError
+  rescue ActiveRecord::RecordNotFound, Mastodon::NotPermittedError
     not_found
   end
 
   private
+
+  def select_reactions
+    StatusReaction.select(
+      [:name, :custom_emoji_id, 'COUNT(*) as count', 'FALSE AS me']
+    ).where(status_id: @status.id)
+  end
 
   def set_reactions
     ordered_reactions.select(

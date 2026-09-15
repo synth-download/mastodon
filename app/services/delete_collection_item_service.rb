@@ -1,18 +1,22 @@
 # frozen_string_literal: true
 
 class DeleteCollectionItemService
-  def call(collection_item)
+  def call(collection_item, revoke: false)
     @collection_item = collection_item
     @collection = collection_item.collection
-    @collection_item.destroy!
 
-    distribute_remove_activity if Mastodon::Feature.collections_federation_enabled?
+    if collection_item.local?
+      revoke ? @collection_item.revoke! : @collection_item.destroy!
+      distribute_remove_activity
+    else
+      collection_item.destroy!
+    end
   end
 
   private
 
   def distribute_remove_activity
-    ActivityPub::AccountRawDistributionWorker.perform_async(activity_json, @collection.account.id)
+    ActivityPub::CollectionRawDistributionWorker.perform_async(activity_json, @collection.id)
   end
 
   def activity_json

@@ -5,32 +5,32 @@
 # Table name: statuses
 #
 #  id                           :bigint(8)        not null, primary key
-#  uri                          :string
-#  text                         :text             default(""), not null
-#  created_at                   :datetime         not null
-#  updated_at                   :datetime         not null
-#  in_reply_to_id               :bigint(8)
-#  reblog_of_id                 :bigint(8)
-#  url                          :string
-#  sensitive                    :boolean          default(FALSE), not null
-#  visibility                   :integer          default("public"), not null
-#  spoiler_text                 :text             default(""), not null
-#  reply                        :boolean          default(FALSE), not null
-#  language                     :string
-#  conversation_id              :bigint(8)
-#  local                        :boolean
-#  account_id                   :bigint(8)        not null
-#  application_id               :bigint(8)
-#  in_reply_to_account_id       :bigint(8)
-#  local_only                   :boolean
-#  poll_id                      :bigint(8)
 #  content_type                 :string
 #  deleted_at                   :datetime
 #  edited_at                    :datetime
-#  trendable                    :boolean
-#  ordered_media_attachment_ids :bigint(8)        is an Array
 #  fetched_replies_at           :datetime
+#  language                     :string
+#  local                        :boolean
+#  local_only                   :boolean
+#  ordered_media_attachment_ids :bigint(8)        is an Array
 #  quote_approval_policy        :integer          default(0), not null
+#  reply                        :boolean          default(FALSE), not null
+#  sensitive                    :boolean          default(FALSE), not null
+#  spoiler_text                 :text             default(""), not null
+#  text                         :text             default(""), not null
+#  trendable                    :boolean
+#  uri                          :string
+#  url                          :string
+#  visibility                   :integer          default("public"), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  account_id                   :bigint(8)        not null
+#  application_id               :bigint(8)
+#  conversation_id              :bigint(8)
+#  in_reply_to_account_id       :bigint(8)
+#  in_reply_to_id               :bigint(8)
+#  poll_id                      :bigint(8)
+#  reblog_of_id                 :bigint(8)
 #
 
 class Status < ApplicationRecord
@@ -46,6 +46,20 @@ class Status < ApplicationRecord
   include Status::ThreadingConcern
   include Status::Visibility
   include Status::InteractionPolicyConcern
+
+  CACHEABLE_ASSOCIATIONS = [
+    :application,
+    :conversation,
+    :media_attachments,
+    :preloadable_poll,
+    :status_stat,
+    :tags,
+    account: [:account_stat, user: :role],
+    active_mentions: :account,
+    tagged_objects: :object,
+    preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
+    quote: { status: { account: [:account_stat, user: :role] } },
+  ].freeze
 
   MEDIA_ATTACHMENTS_LIMIT = (ENV['MAX_MEDIA_ATTACHMENTS'] || 4).to_i
   REMOTE_MEDIA_ATTACHMENTS_LIMIT = (ENV['MAX_REMOTE_MEDIA_ATTACHMENTS'] || 16).to_i
@@ -84,6 +98,7 @@ class Status < ApplicationRecord
   has_many :mentioned_accounts, through: :mentions, source: :account, class_name: 'Account'
   has_many :media_attachments, dependent: :nullify
   has_many :status_reactions, inverse_of: :status, dependent: :destroy
+  has_many :tagged_objects, dependent: :destroy
   has_many :quotes, foreign_key: 'quoted_status_id', inverse_of: :quoted_status, dependent: :nullify
 
   # The `dependent` option is enabled by the initial `mentions` association declaration
@@ -173,29 +188,11 @@ class Status < ApplicationRecord
   # the `dependent: destroy` callbacks remove relevant records
   before_destroy :unlink_from_conversations!, prepend: true
 
-  cache_associated :application,
-                   :media_attachments,
-                   :conversation,
-                   :status_stat,
-                   :tags,
-                   :preloadable_poll,
-                   quote: { status: { account: [:account_stat, user: :role] } },
-                   preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
-                   account: [:account_stat, user: :role],
-                   active_mentions: :account,
-                   reblog: [
-                     :application,
-                     :media_attachments,
-                     :conversation,
-                     :status_stat,
-                     :tags,
-                     :preloadable_poll,
-                     quote: { status: { account: [:account_stat, user: :role] } },
-                     preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
-                     account: [:account_stat, user: :role],
-                     active_mentions: :account,
-                   ],
-                   thread: :account
+  cache_associated(
+    *CACHEABLE_ASSOCIATIONS,
+    reblog: [*CACHEABLE_ASSOCIATIONS],
+    thread: :account
+  )
 
   delegate :domain, :indexable?, to: :account, prefix: true
 
@@ -465,15 +462,6 @@ class Status < ApplicationRecord
     end
   end
 
-  def marked_local_only?
-    # match both with and without U+FE0F (the emoji variation selector)
-    /#{local_only_emoji}\ufe0f?\z/.match?(content)
-  end
-
-  def local_only_emoji
-    '👁'
-  end
-
   def status_stat
     super || build_status_stat
   end
@@ -536,7 +524,7 @@ class Status < ApplicationRecord
     if reblog?
       self.local_only = reblog.local_only
     elsif local_only.nil?
-      self.local_only = marked_local_only?
+      self.local_only = false
     end
   end
 

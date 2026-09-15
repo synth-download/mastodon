@@ -44,9 +44,11 @@
         title: Endre E-postadressen til %{username}
       change_role:
         changed_msg: Rollen ble endret!
+        edit_roles: Administrer brukerroller
         label: Endre rolle
         no_role: Ingen rolle
         title: Endre rolle for %{username}
+      collections: Samlinger
       confirm: Bekreft
       confirmed: Bekreftet
       confirming: Bekrefte
@@ -128,6 +130,7 @@
       resubscribe: Abonner på nytt
       role: Rolle
       search: Søk
+      search_same_email_domain: Andre brukere med det samme epost domenet
       search_same_ip: Andre brukere med den samme IP-en
       security: Sikkerhet
       security_measures:
@@ -168,6 +171,7 @@
         approve_appeal: Godkjenn anke
         approve_user: Godkjenn bruker
         assigned_to_self_report: Tilordne rapport
+        change_email_user: Endre brukerens e-postadresse
         change_role_user: Endre rolle for brukeren
         confirm_user: Bekreft brukeren
         create_account_warning: Opprett en advarsel
@@ -275,6 +279,7 @@
       filter_by_user: Sorter etter bruker
       title: Revisionslogg
     announcements:
+      back: Tilbake til kunngjøringer
       destroyed_msg: Kunngjøringen er slettet!
       edit:
         title: Rediger kunngjøring
@@ -291,6 +296,9 @@
       unpublish: Avpubliser
       unpublished_msg: Kunngjøring upublisert!
       updated_msg: Kunngjøringen er oppdatert!
+    collections:
+      accounts: Kontoer
+      collection_title: Samling av %{name}
     critical_update_pending: Kritisk oppdatering avventer
     custom_emojis:
       assign_category: Tilegn kategori
@@ -565,7 +573,6 @@
       action_log: Revisjon logg
       action_taken_by: Handling utført av
       actions:
-        delete_description_html: De rapporterte innleggene vil bli slettet, og en advarsel vil bli tatt vare på for å hjelpe deg eskalere ved fremtidige overtredelser fra samme konto.
         mark_as_sensitive_description_html: Mediene i de rapporterte innleggene vil bli merket som følsomme, og en advarsel vil bli notert for å hjelpe deg eskalere ved fremtidige overtredelser fra samme konto.
         other_description_html: Se flere alternativer for å kontrollere kontoens atferd og tilpasse kommunikasjonen til den oppgitte kontoen.
         resolve_description_html: Ingen handling utføres mot den rapporterte kontoen, ingen advarsel gis, og rapporten lukkes.
@@ -586,7 +593,6 @@
       confirm: Bekreft
       confirm_action: Bekreft moderasjonshandling mot @%{acct}
       created_at: Rapportert
-      delete_and_resolve: Slettede innlegg
       forwarded: Videresendt
       forwarded_replies_explanation: Denne rapporten er fra en ekstern bruker og handler om eksternt innhold. Den er videresendt til deg fordi det rapporterte innholdet svarer til en av brukerne dine.
       forwarded_to: Videresendt til %{domain}
@@ -878,7 +884,6 @@
           one: Delt av %{count} person i løpet av den siste uken
           other: Delt av %{count} personer i løpet av den siste uken
         title: Populære lenker
-        usage_comparison: Delt %{today} ganger i dag, sammenlignet med %{yesterday} i går
       not_allowed_to_trend: Ikke tillatt å trende
       only_allowed: Kun tillatte
       pending_review: Avventer gjennomgang
@@ -919,7 +924,6 @@
         trendable: Kan vises under populært
         trending_rank: 'Populært #%{rank}'
         usable: Kan brukes
-        usage_comparison: Brukt %{today} ganger i dag, sammenlignet med %{yesterday} i går
         used_by_over_week:
           one: Brukt av en person i løpet av siste uke
           other: Brukes av %{count} personer i løpet av den siste uken
@@ -1157,8 +1161,6 @@
       your_appeal_pending: Du har levert en anke
       your_appeal_rejected: Anken din har blitt avvist
   edit_profile:
-    basic_information: Grunnleggende informasjon
-    hint_html: "<strong>Tilpass hva folk ser på din offentlige profil og ved siden av dine innlegg.</strong> Det er mer sannsynlig at andre mennesker følger deg tilbake og samhandler med deg når du har fylt ut en profil og et profilbilde."
     other: Annet
   errors:
     '400': Forespørselen du sendte inn var ugyldig eller feil.
@@ -1194,10 +1196,8 @@
     mutes: Du demper
     storage: Medialagring
   featured_tags:
-    add_new: Legg til ny
     errors:
       limit: Du har allerede fremhevet det maksimale antall emneknagger
-    hint_html: "<strong>Hva er utvalgte emneknagger?</strong> De vises frem tydelig på din offentlige profil, og lar folk bla i dine offentlige innlegg som spesifikt har de emneknaggene. De er et bra verktøy for å holde styr på kreative verk eller langtidsprosjekter."
   filters:
     contexts:
       account: Profiler
@@ -1269,7 +1269,6 @@
       empty: Tom CSV-fil
       incompatible_type: Ikke kompatibel med den valgte importtypen
       invalid_csv_file: 'Ugyldig CSV-fil. Feil: %{error}'
-      over_rows_processing_limit: inneholder flere enn %{count} rader
       too_large: Filen er for stor
     failures: Feil
     imported: Importert
@@ -1344,11 +1343,6 @@
     failed_sign_in_html: Mislykket innloggingsforsøk med %{method} fra %{ip} (%{browser})
     successful_sign_in_html: Vellykket innlogging med %{method} fra %{ip} (%{browser})
     title: Autentiseringshistorikk
-  mail_subscriptions:
-    unsubscribe:
-      action: Ja, avslutt abonnement
-      complete: Abonnement avsluttet
-      title: Avslutt abonnement
   media_attachments:
     validations:
       images_and_video: Kan ikke legge ved video på en status som allerede inneholder bilder
@@ -1370,7 +1364,6 @@
     incoming_migrations_html: For å flytte fra en annen konto til denne, må du først <a href="%{path}">sette opp et kontoalias</a>.
     moved_msg: Kontoen din omdirigeres nå til %{acct}, og følgerne dine blir flyttet over.
     not_redirecting: Kontoen din omdirigeres ikke til noen andre kontoer for øyeblikket.
-    on_cooldown: Du har nylig overført kontoen din. Denne funksjonen blir tilgjengelig igjen om %{count} dager.
     past_migrations: Tidligere migreringer
     proceed_with_move: Flytt følgere
     redirected_msg: Kontoen din omdirigeres nå til %{acct}.
@@ -1451,7 +1444,6 @@
     next: Neste
     older: Eldre
     prev: Forrige
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Du har allerede stemt i denne avstemningen
@@ -1517,9 +1509,6 @@
     descriptions:
       account: Offentlige innlegg fra @%{acct}
       tag: 'Offentlige innlegg merket med #%{hashtag}'
-  scheduled_statuses:
-    over_daily_limit: Du har overskredet grensen på %{limit} planlagte innlegg for i dag
-    over_total_limit: Du har overskredet grensen på %{limit} planlagte innlegg
   self_destruct:
     lead_html: Dessverre stenger <strong>%{domain}</strong> for alltid. Hvis du hadde en konto der vil du ikke kunne fortsette å bruke den, men du kan fremdeles be om en sikkerhetskopi av dataene dine.
     title: Denne serveren stenger

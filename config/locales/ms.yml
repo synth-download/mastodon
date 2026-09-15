@@ -553,7 +553,6 @@ ms:
       action_log: Log audit
       action_taken_by: Tindakan diambil oleh
       actions:
-        delete_description_html: Hantaran yang dilaporkan akan dihapuskan dan pelanggaran itu akan direkodkan bagi membantu anda menguruskan pelanggaran pada akaun yang sama di masa akan datang.
         mark_as_sensitive_description_html: Media di dalam hantaran yang dilaporkan akan ditandakan sebagai sensitif dan pelanggaran itu akan direkodkan bagi membantu anda menguruskan pelanggaran pada akaun yang sama di masa akan datang.
         other_description_html: Lihat lebih banyak pilihan untuk mengawal tingkah laku akaun dan menyesuaikan komunikasi ke akaun yang dilaporkan.
         resolve_description_html: Tiada tindakan akan diambil terhadap akaun yang dilaporkan, tiada pelanggaran direkodkan dan laporan akan ditutup.
@@ -574,7 +573,6 @@ ms:
       confirm: Konfirm
       confirm_action: Sahkan tindakan penyederhanaan terhadap @%{acct}
       created_at: Dilaporkan
-      delete_and_resolve: Padam hantaran
       forwarded: Dipanjangkan
       forwarded_to: Dipanjangkan ke %{domain}
       mark_as_resolved: Tanda sebagai sudah selesai
@@ -843,7 +841,6 @@ ms:
         shared_by_over_week:
           other: Dikongsi oleh %{count} orang sepanjang minggu lepas
         title: Pautan yang sedang sohor kini
-        usage_comparison: Dikongsi %{today} kali hari ini, berbanding %{yesterday} semalam
       not_allowed_to_trend: Tidak dibenarkan menjadi trend
       only_allowed: Hanya dibenarkan
       pending_review: Menunggu semak semula
@@ -883,7 +880,6 @@ ms:
         trendable: Boleh muncul di bawah sohor kini
         trending_rank: 'Sohor kini #%{rank}'
         usable: Boleh digunakan
-        usage_comparison: Digunakan %{today} kali hari ini, berbanding %{yesterday} semalam
         used_by_over_week:
           other: Digunakan oleh %{count} orang sepanjang minggu lepas
       trending: Sohor kini
@@ -1108,8 +1104,6 @@ ms:
       your_appeal_pending: Anda telah menghantar rayuan
       your_appeal_rejected: Rayuan anda telah ditolak
   edit_profile:
-    basic_information: Maklumat Asas
-    hint_html: "<strong>Sesuaikan perkara yang orang lihat pada profil awam anda dan di sebelah siaran anda.</strong> Orang lain lebih berkemungkinan mengikuti anda kembali dan berinteraksi dengan anda apabila anda mempunyai profil dan gambar profil yang telah diisi."
     other: Lain-lain
   errors:
     '400': Permintaan yang anda serahkan tidak sah atau salah bentuk.
@@ -1145,10 +1139,8 @@ ms:
     mutes: Redaman anda
     storage: Storan Media
   featured_tags:
-    add_new: Tambah baharu
     errors:
       limit: Anda telah memaparkan bilangan maksimum hashtag
-    hint_html: "<strong>Tampilkan hashtag paling penting anda pada profil anda.</strong> Alat yang hebat untuk menjejaki karya kreatif dan projek jangka panjang anda, hashtag yang ditampilkan dipaparkan dengan jelas pada profil anda dan membenarkan akses pantas kepada pos anda sendiri."
   filters:
     contexts:
       account: Profil
@@ -1207,7 +1199,6 @@ ms:
       empty: Fail CSV kosong
       incompatible_type: Tidak serasi dengan jenis import yang dipilih
       invalid_csv_file: 'Fail CSV tidak sah. Ralat: %{error}'
-      over_rows_processing_limit: mengandungi lebih daripada %{count} baris
       too_large: Fail terlalu besar
     failures: Kegagalan
     imported: Diimport
@@ -1278,14 +1269,6 @@ ms:
     failed_sign_in_html: Percubaan log masuk gagal dengan %{method} daripada %{ip} (%{browser})
     successful_sign_in_html: Log masuk yang berjaya dengan %{method} daripada %{ip} (%{browser})
     title: Sejarah pengesahan
-  mail_subscriptions:
-    unsubscribe:
-      action: Ya, nyahlanggan
-      complete: Menyahlanggan
-      emails:
-        notification_emails:
-          favourite: emel pemberitahuan sukaan
-      title: Hentikan langganan
   media_attachments:
     validations:
       images_and_video: Tidak boleh melampirkan video pada pos yang sudah mengandungi imej
@@ -1306,7 +1289,6 @@ ms:
     incoming_migrations_html: Untuk beralih dari akaun lain ke akaun ini, mula-mula anda perlu <a href="%{path}">membuat alias akaun</a>.
     moved_msg: Akaun anda kini mengubah hala ke %{acct} dan pengikut anda sedang dialihkan.
     not_redirecting: Akaun anda tidak mengubah hala ke mana-mana akaun lain pada masa ini.
-    on_cooldown: Anda telah memindahkan akaun anda baru-baru ini. Fungsi ini akan tersedia semula dalam %{count} hari.
     past_migrations: Penghijrahan yang lalu
     proceed_with_move: Pindah pengikut
     redirected_msg: Akaun anda kini mengubah hala ke %{acct}.
@@ -1387,7 +1369,6 @@ ms:
     next: Seterusnya
     older: Lebih lama
     prev: Sebelum ini
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Anda telah pun mengundi pada tinjauan pendapat ini
@@ -1450,9 +1431,6 @@ ms:
     descriptions:
       account: Pos awam daripada @%{acct}
       tag: 'Siaran awam ditandakan #%{hashtag}'
-  scheduled_statuses:
-    over_daily_limit: Anda telah melebihi had %{limit} pos berjadual untuk hari ini
-    over_total_limit: Anda telah melebihi had %{limit} pos berjadual
   self_destruct:
     lead_html: Malangnya, <strong>%{domain}</strong> akan ditutup secara kekal. Jika anda mempunyai akaun di situ, anda tidak akan dapat terus menggunakannya, tetapi anda masih boleh meminta sandaran data anda.
     title: Pelayan ini akan ditutup

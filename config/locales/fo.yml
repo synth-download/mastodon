@@ -671,7 +671,6 @@ fo:
       action_log: Skoðanarloggur
       action_taken_by: Atgerð tikin av
       actions:
-        delete_description_html: Meldaðu postarnir verða strikaðir og ein atsókn verður skrásett, soleiðis at tú veist, um onnur stig skulu takast, um sama konta ger fleiri brot í framtíðini.
         mark_as_sensitive_description_html: Miðlarnir í meldaðu postunum verða merkir sum viðkvæmir, og ein atsókn verður skrásett, soleiðis at tú veist, um onnur stig skulu takast, um sama konta ger fleiri brot í framtíðini.
         other_description_html: Sí fleiri valmøguleikar at stýra atferðini hjá kontuni og at tillagað samskiftið við meldaðu kontuni.
         resolve_description_html: Eingin atgerð verður tikin móti meldaðu kontuni, eingin atsókn verður skrásett og meldingin verður lukkað.
@@ -698,7 +697,6 @@ fo:
       confirm: Vátta
       confirm_action: Vátta umsjónaratgerð móti @%{acct}
       created_at: Meldað
-      delete_and_resolve: Strika postar
       forwarded: Víðarisent
       forwarded_replies_explanation: Hendan fráboðanin er frá einum fjarbrúkara og er viðvíkjandi tilfari á einum fjarum ambætara. Tað er sent til tín, tí fráboðaða innihaldið er í svari til ein av tínum brúkarum.
       forwarded_to: Víðarisent til %{domain}
@@ -875,11 +873,6 @@ fo:
           authenticated: Einans váttaðir brúkarar
           disabled: Krev serstakan brúkaraleiklut
           public: Øll
-      landing_page:
-        values:
-          about: Um
-          local_feed: Lokal rás
-          trends: Rák
       registrations:
         moderation_recommandation: Vinarliga tryggja tær, at tú hevur eitt nøktandi og klárt umsjónartoymi, áðreen tú letur upp fyri skrásetingum frá øllum!
         preamble: Stýr, hvør kann stovna eina kontu á tínum ambætara.
@@ -1074,7 +1067,6 @@ fo:
           one: Deilt av einum persóni seinastu vikuna
           other: Deilt av %{count} persónum seinastu vikuna
         title: Vælumtókt leinki
-        usage_comparison: Deilt %{today} ferð í dag, samanborið við %{yesterday} ferð í gjár
       not_allowed_to_trend: Ikki loyvt at gerast rák
       only_allowed: Einans loyvd
       pending_review: Bíðar eftir eftirkannan
@@ -1119,7 +1111,6 @@ fo:
         trendable: Kann síggjast undir ráki
         trending_rank: 'Rák #%{rank}'
         usable: Kann verða brúkt
-        usage_comparison: Brúkt %{today} ferð í dag, samanborið við %{yesterday} ferð í gjár
         used_by_over_week:
           one: Brúkt av einum brúkara seinastu vikuna
           other: Brúkt av %{count} brúkarum seinastu vikuna
@@ -1229,7 +1220,6 @@ fo:
   application_mailer:
     notification_preferences: Broyt teldupostastillingar
     salutation: "%{name}"
-    settings: 'Broyt teldupostastillingar: %{link}'
     unsubscribe: Strika hald
     view: 'Vís:'
     view_profile: Vís vanga
@@ -1412,8 +1402,6 @@ fo:
       your_appeal_pending: Tú hevur kært
       your_appeal_rejected: Kæra tín er vrakað
   edit_profile:
-    basic_information: Grundleggjandi upplýsingar
-    hint_html: "<strong>Tillaga tað, sum fólk síggja á tínum almenna vanga og við síðna av tínum postum.</strong> Sannlíkindini fyri, at onnur fylgja tær og virka saman við tær eru størri, tá tú hevur fylt út vangan og eina vangamynd."
     other: Onnur
   emoji_styles:
     auto: Sjálvvirkandi
@@ -1453,10 +1441,8 @@ fo:
     mutes: Tú doyvir
     storage: Miðlagoymsla
   featured_tags:
-    add_new: Legg afturat
     errors:
       limit: Tú hevur longu varpað loyvda talið av frámerkjum
-    hint_html: "<strong>Hvat eru varpaði frámerki?</strong> Tey verða víst sjónliga á almenna vanga tínum og loyva fólki at kaga gjøgnum tínar almennu postar, sum hava tey frámerkini. Tey eru serliga vælegnaði at fylgja við skapandi arbeiði ella langtíðarverkætlanum."
   filters:
     contexts:
       account: Vangar
@@ -1528,7 +1514,6 @@ fo:
       empty: Tóm CSV fíla
       incompatible_type: Ikki sambærligt við valda innflytingarslagnum
       invalid_csv_file: 'Ógildug CSV-fíla. Error: %{error}'
-      over_rows_processing_limit: hevur fleiri enn %{count} rekkjur
       too_large: Fílan er ov stór
     failures: Brek
     imported: Innflutt
@@ -1649,21 +1634,6 @@ fo:
     failed_sign_in_html: Miseydnað innritanarroynd við %{method} frá %{ip} (%{browser})
     successful_sign_in_html: Eydnað innritan við %{method} frá %{ip} (%{browser})
     title: Samgildissøga
-  mail_subscriptions:
-    unsubscribe:
-      action: Ja, strika hald
-      complete: Hald strikað
-      confirmation_html: Ert tú vís/ur í, at tú vil gevast at móttaka %{type} fyri Mastodon á %{domain} til tína teldupostadressu á %{email}? Tú kanst altíð gera haldið virkið aftur frá tínum <a href="%{settings_path}">teldupostfráboðanarstillingum</a>.
-      emails:
-        notification_emails:
-          favourite: yndisfráboðanarteldupostar
-          follow: fylg fráboðanarteldupostar
-          follow_request: fylg umbønir um teldupost
-          mention: nevn fráboðanarteldupostar
-          reblog: framhevja fráboðanarpostar
-      resubscribe_html: Um tú hevur strikað haldið av misgávum, so kanst tú tekna haldið av nýggjum í tínum <a href="%{settings_path}">teldupostfráboðarstillingum</a>.
-      success_html: Tú fer ikki longur at móttaka %{type} fyri Mastodon á %{domain} til tín teldupost á %{email}.
-      title: Strika hald
   media_attachments:
     validations:
       images_and_video: Kann ikki viðfesta sjónfílu til ein post, sum longu inniheldur myndir
@@ -1686,7 +1656,6 @@ fo:
     incoming_migrations_html: Fyri at flyta frá eini aðrari kontu til hesa, so er fyrst neyðugt at <a href="%{path}">stovna eitt tøkuheiti til kontuna</a>.
     moved_msg: Konta tín verður nú víðaribeind til %{acct} og fylgjarar tínir verða fluttir yvir.
     not_redirecting: Konta tín verður ikki víðaribeind til nakra aðra kontu í løtuni.
-    on_cooldown: Tú hevur nýliga flutt tína kontu. Hesin valmøguleikin verður tøkur aftur um %{count} dagar.
     past_migrations: Eldri flytingar
     proceed_with_move: Flyt fylgjarar
     redirected_msg: Konta tín verður nú víðaribeind til %{acct}.
@@ -1780,7 +1749,6 @@ fo:
     next: Næsta
     older: Eldri
     prev: Fyrra
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Tú hevur longu atkvøtt í hesi atkvøðugreiðsluni
@@ -1850,8 +1818,6 @@ fo:
       account: Almennir postar frá @%{acct}
       tag: 'Almennir postar við frámerkinum #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Tú er komin at markinum, sum er %{limit} skrálagdir postar, í dag
-    over_total_limit: Tú er komin at markinum, sum er %{limit} skrálagdir postar
     too_soon: dagfesting má vera í framtíðini
   self_destruct:
     lead_html: Tíverri, <strong>%{domain}</strong> er í ferð við at blíva lukkað niður med alla. Um tú hevði eina kontu har, so ber ikki til framhaldandi at brúka hana, men tú kann framvegis biðja um trygdaravrit av tínum dátum.

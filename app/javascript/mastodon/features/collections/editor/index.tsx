@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import { Helmet } from 'react-helmet';
 import {
   Switch,
   Route,
@@ -12,15 +11,29 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { Helmet } from '@unhead/react/helmet';
+
+import { Column } from '@/mastodon/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/mastodon/components/column/header';
+import { ColumnHeader } from '@/mastodon/components/column_header';
+import { isRedesignEnabled } from '@/mastodon/utils/environment';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
-import { Column } from 'mastodon/components/column';
-import { ColumnHeader } from 'mastodon/components/column_header';
+import { Callout } from 'mastodon/components/callout';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
-import { fetchCollection } from 'mastodon/reducers/slices/collections';
+import { NotSignedInIndicator } from 'mastodon/components/not_signed_in_indicator';
+import { useIdentity } from 'mastodon/identity_context';
+import { initialState } from 'mastodon/initial_state';
+import {
+  collectionEditorActions,
+  fetchCollection,
+} from 'mastodon/reducers/slices/collections';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
+
+import { useCollectionsCreatedBy } from '../overview/created_by_account';
 
 import { CollectionAccounts } from './accounts';
 import { CollectionDetails } from './details';
+import classes from './styles.module.scss';
 
 export const messages = defineMessages({
   create: {
@@ -41,7 +54,7 @@ export const messages = defineMessages({
   },
 });
 
-function usePageTitle(id: string | undefined) {
+function usePageTitle(id: string | null) {
   const { path } = useRouteMatch();
   const location = useLocation();
 
@@ -58,41 +71,74 @@ function usePageTitle(id: string | undefined) {
   }
 }
 
+export const userCollectionLimit = initialState?.role?.collection_limit ?? 0;
+
 export const CollectionEditorPage: React.FC<{
   multiColumn?: boolean;
 }> = ({ multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
-  const { id } = useParams<{ id?: string }>();
+  const { accountId, signedIn } = useIdentity();
+  const { id = null } = useParams<{ id?: string }>();
   const { path } = useRouteMatch();
   const collection = useAppSelector((state) =>
     id ? state.collections.collections[id] : undefined,
   );
+  const editorStateId = useAppSelector((state) => state.collections.editor.id);
   const isEditMode = !!id;
-  const isLoading = isEditMode && !collection;
+
+  // When creating a new collection, we load the current account's collections
+  // to determine if they're allowed to create more.
+  const { collections: collectionList, status: collectionListStatus } =
+    useCollectionsCreatedBy(isEditMode ? null : accountId);
+
+  const isLoading =
+    (isEditMode && !collection) ||
+    (!isEditMode && collectionListStatus === 'loading');
+
+  const canCreateMoreCollections =
+    signedIn && (isEditMode || collectionList.length < userCollectionLimit);
 
   useEffect(() => {
-    if (id) {
+    if (id && signedIn) {
       void dispatch(fetchCollection({ collectionId: id }));
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, signedIn]);
+
+  useEffect(() => {
+    if (id !== editorStateId) {
+      void dispatch(collectionEditorActions.reset());
+    }
+  }, [dispatch, editorStateId, id]);
+
+  useEffect(() => {
+    if (collection) {
+      void dispatch(collectionEditorActions.init(collection));
+    }
+  }, [dispatch, collection]);
 
   const pageTitle = intl.formatMessage(usePageTitle(id));
 
   return (
     <Column bindToDocument={!multiColumn} label={pageTitle}>
-      <ColumnHeader
-        title={pageTitle}
-        icon='list-ul'
-        iconComponent={ListAltIcon}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader title={pageTitle} withBackButton='auto' />
+      ) : (
+        <LegacyColumnHeader
+          title={pageTitle}
+          icon='list-ul'
+          iconComponent={ListAltIcon}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
 
       <div className='scrollable'>
         {isLoading ? (
           <LoadingIndicator />
-        ) : (
+        ) : !signedIn ? (
+          <NotSignedInIndicator />
+        ) : canCreateMoreCollections ? (
           <Switch>
             <Route
               exact
@@ -104,9 +150,11 @@ export const CollectionEditorPage: React.FC<{
               exact
               path={`${path}/details`}
               // eslint-disable-next-line react/jsx-no-bind
-              render={() => <CollectionDetails collection={collection} />}
+              render={() => <CollectionDetails />}
             />
           </Switch>
+        ) : (
+          <MaxCollectionsCallout className={classes.maxCollectionsError} />
         )}
       </div>
 
@@ -117,3 +165,23 @@ export const CollectionEditorPage: React.FC<{
     </Column>
   );
 };
+
+export const MaxCollectionsCallout: React.FC<{ className?: string }> = ({
+  className,
+}) => (
+  <Callout
+    className={className}
+    title={
+      <FormattedMessage
+        id='collections.maximum_collection_count_reached'
+        defaultMessage='You have created the maximum number of collections'
+      />
+    }
+  >
+    <FormattedMessage
+      id='collections.maximum_collection_count_description'
+      defaultMessage='Your server allows creation of up to {count} collections.'
+      values={{ count: userCollectionLimit }}
+    />
+  </Callout>
+);

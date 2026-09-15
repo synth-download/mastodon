@@ -12,13 +12,13 @@ export function isProduction() {
   else return import.meta.env.PROD;
 }
 
-export type ServerFeatures = 'fasp' | 'collections' | 'profile_redesign';
+export type ServerFeatures = 'fasp';
 
 export function isServerFeatureEnabled(feature: ServerFeatures) {
   return initialState?.features.includes(feature) ?? false;
 }
 
-type ClientFeatures = 'collections' | 'profile_editing';
+type ClientFeatures = 'redesign' | 'redesign-status';
 
 export function isClientFeatureEnabled(feature: ClientFeatures) {
   try {
@@ -29,4 +29,13 @@ export function isClientFeatureEnabled(feature: ClientFeatures) {
     console.warn('Could not access localStorage to get client features', err);
     return false;
   }
+}
+
+/* Checks if the 5.0 redesign features are enabled or not. */
+export function isRedesignEnabled() {
+  return isClientFeatureEnabled('redesign');
+}
+
+export function isRedesignStatusEnabled() {
+  return isRedesignEnabled() && isClientFeatureEnabled('redesign-status');
 }

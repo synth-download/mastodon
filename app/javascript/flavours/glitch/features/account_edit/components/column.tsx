@@ -4,10 +4,18 @@ import { FormattedMessage } from 'react-intl';
 
 import { Link } from 'react-router-dom';
 
+import { CheckIcon } from '@phosphor-icons/react';
+import { Helmet } from '@unhead/react/helmet';
+
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import {
+  ColumnHeader,
+  ColumnHeaderButton,
+} from '@/flavours/glitch/components/column_header';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 
 import { useColumnsContext } from '../../ui/util/columns_context';
 import classes from '../styles.module.scss';
@@ -22,7 +30,7 @@ export const AccountEditEmptyColumn: FC<{
   }
 
   return (
-    <Column bindToDocument={!multiColumn} className={classes.column}>
+    <Column bindToDocument={!multiColumn}>
       <LoadingIndicator />
     </Column>
   );
@@ -36,22 +44,48 @@ export const AccountEditColumn: FC<{
   const { multiColumn } = useColumnsContext();
 
   return (
-    <Column bindToDocument={!multiColumn} className={classes.column}>
-      <ColumnHeader
-        title={title}
-        className={classes.columnHeader}
-        showBackButton
-        extraButton={
-          <Link to={to} className='button'>
-            <FormattedMessage
-              id='account_edit.column_button'
-              defaultMessage='Done'
-            />
-          </Link>
-        }
-      />
+    <>
+      <Column bindToDocument={!multiColumn}>
+        {isRedesignEnabled() ? (
+          <ColumnHeader
+            withBackButton
+            title={title}
+            extraButtons={
+              <ColumnHeaderButton
+                showTextOnDesktop
+                variant='solid'
+                as='link'
+                to={to}
+                icon={CheckIcon}
+              >
+                <FormattedMessage
+                  id='account_edit.column_button'
+                  defaultMessage='Done'
+                />
+              </ColumnHeaderButton>
+            }
+          />
+        ) : (
+          <LegacyColumnHeader
+            title={title}
+            className={classes.columnHeader}
+            showBackButton
+            extraButton={
+              <Link to={to} className='button'>
+                <FormattedMessage
+                  id='account_edit.column_button'
+                  defaultMessage='Done'
+                />
+              </Link>
+            }
+          />
+        )}
 
-      {children}
-    </Column>
+        <div className='scrollable'>{children}</div>
+      </Column>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+    </>
   );
 };

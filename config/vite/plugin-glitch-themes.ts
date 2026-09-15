@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import glob from 'fast-glob';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import type { Plugin } from 'vite';
 
 interface Flavour {
@@ -19,7 +19,7 @@ export function GlitchThemes(): Plugin {
   return {
     name: 'glitch-themes',
     async config(userConfig) {
-      const existingInputs = userConfig.build?.rollupOptions?.input;
+      const existingInputs = userConfig.build?.rolldownOptions?.input;
 
       if (typeof existingInputs === 'string') {
         entrypoints[path.basename(existingInputs)] = existingInputs;
@@ -79,7 +79,7 @@ export function GlitchThemes(): Plugin {
 
       return {
         build: {
-          rollupOptions: {
+          rolldownOptions: {
             input: entrypoints,
           },
         },

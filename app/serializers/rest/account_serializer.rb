@@ -15,14 +15,17 @@ class REST::AccountSerializer < ActiveModel::Serializer
 
   has_many :emojis, serializer: REST::CustomEmojiSerializer
 
-  attribute :suspended, if: :suspended?
+  attribute :suspended, if: :unavailable?
   attribute :silenced, key: :limited, if: :silenced?
   attribute :remote_limit_reason, if: :remote_limit_reason?
   attribute :noindex, if: :local?
 
   attribute :memorial, if: :memorial?
 
-  attribute :feature_approval, if: -> { Mastodon::Feature.collections_enabled? }
+  attribute :feature_approval
+  attribute :email_subscriptions, if: -> { Rails.application.config.x.email_subscriptions && Setting.email_subscriptions }
+
+  attribute :invalid_handle, if: :invalid_handle?
 
   class AccountDecorator < SimpleDelegator
     def self.model_name
@@ -156,6 +159,15 @@ class REST::AccountSerializer < ActiveModel::Serializer
     object.memorial?
   end
 
+  def username
+    object.pretty_username
+  end
+
+  def invalid_handle
+    object.invalidated_username?
+  end
+  alias invalid_handle? invalid_handle
+
   def roles
     if object.unavailable? || object.user.nil?
       []
@@ -168,7 +180,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
     object.user_prefers_noindex?
   end
 
-  delegate :suspended?, :silenced?, :local?, :memorial?, to: :object
+  delegate :unavailable?, :silenced?, :local?, :memorial?, to: :object
 
   def moved_and_not_nested?
     object.moved?
@@ -200,5 +212,9 @@ class REST::AccountSerializer < ActiveModel::Serializer
       manual: object.feature_policy_as_keys(:manual),
       current_user: object.feature_policy_for_account(current_user&.account),
     }
+  end
+
+  def email_subscriptions
+    object.user_can?(:manage_email_subscriptions) && object.user_email_subscriptions_enabled?
   end
 end

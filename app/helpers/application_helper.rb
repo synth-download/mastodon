@@ -34,11 +34,11 @@ module ApplicationHelper
     Setting.registrations_mode == 'none'
   end
 
-  def available_sign_up_path
+  def available_sign_up_url
     if closed_registrations? || omniauth_only?
-      'https://joinmastodon.org/#getting-started'
+      'https://joinmastodon.org/'
     else
-      ENV.fetch('SSO_ACCOUNT_SIGN_UP', new_user_registration_path)
+      ENV.fetch('SSO_ACCOUNT_SIGN_UP', new_user_registration_url)
     end
   end
 
@@ -125,6 +125,10 @@ module ApplicationHelper
         whitespace ? ' ' : '',
       ]
     )
+  end
+
+  def emptyphaunt
+    inline_svg_tag 'elephant_ui.svg'
   end
 
   def check_icon
@@ -231,9 +235,8 @@ module ApplicationHelper
     state_params[:owner] = Account.local.without_suspended.without_internal.first if single_user_mode?
 
     json = ActiveModelSerializers::SerializableResource.new(InitialStatePresenter.new(state_params), serializer: InitialStateSerializer).to_json
-    # rubocop:disable Rails/OutputSafety
+    # rubocop:disable-next Rails/OutputSafety
     content_tag(:script, json_escape(json).html_safe, id: 'initial-state', type: 'application/json')
-    # rubocop:enable Rails/OutputSafety
   end
 
   def grouped_scopes(scopes)
