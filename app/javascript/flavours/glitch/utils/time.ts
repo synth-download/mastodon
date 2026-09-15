@@ -16,30 +16,38 @@ export function relativeTimeParts(
 ): { value: number; unit: TimeUnit; delta: number } {
   const delta = ts - now;
   const absDelta = Math.abs(delta);
+  const sign = Math.sign(delta);
 
   if (absDelta < MINUTE) {
-    return { value: Math.floor(delta / SECOND), unit: 'second', delta };
+    return {
+      value: sign * Math.floor(absDelta / SECOND),
+      unit: 'second',
+      delta,
+    };
   }
 
   if (absDelta < HOUR) {
-    return { value: Math.floor(delta / MINUTE), unit: 'minute', delta };
+    return {
+      value: sign * Math.floor(absDelta / MINUTE),
+      unit: 'minute',
+      delta,
+    };
   }
 
   if (absDelta < DAY) {
-    return { value: Math.floor(delta / HOUR), unit: 'hour', delta };
+    return { value: sign * Math.floor(absDelta / HOUR), unit: 'hour', delta };
   }
 
-  // Round instead of use floor as days are big enough that the value is usually off by a few hours.
-  return { value: Math.round(delta / DAY), unit: 'day', delta };
+  return { value: sign * Math.floor(absDelta / DAY), unit: 'day', delta };
 }
 
-export function isToday(ts: number, now = Date.now()): boolean {
+export function isSameUTCDay(ts: number, now = Date.now()): boolean {
   const date = new Date(ts);
   const nowDate = new Date(now);
   return (
-    date.getDate() === nowDate.getDate() &&
-    date.getMonth() === nowDate.getMonth() &&
-    date.getFullYear() === nowDate.getFullYear()
+    date.getUTCDate() === nowDate.getUTCDate() &&
+    date.getUTCMonth() === nowDate.getUTCMonth() &&
+    date.getUTCFullYear() === nowDate.getUTCFullYear()
   );
 }
 
@@ -130,7 +138,7 @@ export function formatTime({
   const { value, unit } = relativeTimeParts(timestamp, now);
 
   // If we're only showing days, show "today" for the current day.
-  if (noTime && isToday(timestamp, now)) {
+  if (noTime && isSameUTCDay(timestamp, now)) {
     return intl.formatMessage(timeMessages.today);
   }
 

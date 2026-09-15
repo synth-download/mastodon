@@ -84,7 +84,7 @@ const preview: Preview = {
       // Get the locale from the global toolbar
       // and merge it with any parameters or args state.
       const { locale } = globals as { locale: string };
-      const { state = {} } = parameters;
+      const { state = {}, stateFn } = parameters;
 
       const argsState: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(args)) {
@@ -106,13 +106,24 @@ const preview: Preview = {
         }
       }
 
+      let stateFnState: Record<string, unknown> = {};
+      if (typeof stateFn === 'function') {
+        stateFnState =
+          (
+            stateFn as (
+              args: Record<string, unknown>,
+            ) => Record<string, unknown> | undefined | null
+          )(args) ?? {};
+      }
+
       const reducer = reducerWithInitialState(
         {
           meta: {
             locale,
           },
         },
-        state as Record<string, unknown>,
+        state,
+        stateFnState,
         argsState,
       );
 
@@ -159,7 +170,7 @@ const preview: Preview = {
     (Story, { globals }) => {
       const theme = globals.theme;
       useEffect(() => {
-        document.body.setAttribute('data-color-scheme', theme);
+        document.documentElement.dataset.colorScheme = theme;
       }, [theme]);
       return <Story />;
     },
@@ -192,6 +203,14 @@ const preview: Preview = {
           <Story />
         </IdentityContext.Provider>
       );
+    },
+    (Story, { parameters }) => {
+      useEffect(() => {
+        document.documentElement.dataset.redesign = parameters.redesign
+          ? 'true'
+          : 'false';
+      }, [parameters.redesign]);
+      return <Story />;
     },
   ],
   loaders: [

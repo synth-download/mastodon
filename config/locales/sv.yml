@@ -64,12 +64,18 @@ sv:
       custom: Anpassade
       delete: Radera data
       deleted: Raderad
+      deletion_irreversible: Datan för detta konto har oåterkalleligen raderats.
+      deletion_reversible_hint_html: Detta konto väntar på radering och datan kommer att tas bort fullt ut %{date}.
       demote: Degradera
       destroyed_msg: "%{username}s data har nu lagts till kön för att raderas omedelbart"
       disable: Inaktivera
       disable_sign_in_token_auth: Inaktivera autentisering med pollett via e-post
       disable_two_factor_authentication: Inaktivera 2FA
       disabled: Inaktiverad
+      discoverable:
+        disabled: Författaren har inte valt att vara upptäckbar
+        enabled: Författaren har valt att vara upptäckbar
+        title: Upptäckbar
       display_name: Visningsnamn
       domain: Domän
       edit: Redigera
@@ -79,6 +85,12 @@ sv:
       enable_sign_in_token_auth: Aktivera autentisering med pollett via e-post
       enabled: Aktiverad
       enabled_msg: Uppfrysningen av %{username}s konto lyckades
+      follow_recommendations:
+        allowed: Tillåtet
+        suppress: Tysta alla följrekommendationer
+        suppressed: Tystad
+        title: Följrekommendationer
+        unsuppress: Återställ alla följrekommendationer
       followers: Följare
       follows: Följs
       header: Rubrik
@@ -163,6 +175,12 @@ sv:
       suspension_irreversible: All data som tillhör detta konto har permanent raderats. Du kan låsa upp kontot om du vill att det ska gå att använda, men ingen data kommer finnas kvar.
       suspension_reversible_hint_html: Kontot har stängts av och all data som tillhör det kommer att raderas permanent den %{date}. Tills dess kan kontot återställas utan dataförlust. Om du vill radera all kontodata redan nu, kan du göra detta nedan.
       title: Konton
+      trends:
+        allow: Tillåt
+        allowed: Tillåtet
+        disallow: Neka
+        disallowed: Nekat
+        title: Trendande inlägg
       unblock_email: Avblockera e-postadress
       unblocked_email_msg: "%{username}s e-postadress avblockerad"
       unconfirmed_email: Obekräftad e-postadress
@@ -289,7 +307,11 @@ sv:
         enable_relay_html: "%{name} aktiverat ombudet %{target}"
         enable_sign_in_token_auth_user_html: "%{name} aktiverade e-posttokenautentisering för %{target}"
         enable_user_html: "%{name} aktiverade inloggning för användaren %{target}"
+        listable_tag_html: kan föreslås
         memorialize_account_html: "%{name} gjorde %{target}s konto till en minnessida"
+        not_listable_tag_html: kommer ej föreslås
+        not_trendable_tag_html: kommer ej visas under trender
+        not_usable_tag_html: kan inte användas
         promote_user_html: "%{name} befordrade användaren %{target}"
         publish_terms_of_service_html: "%{name} publicerade uppdateringar till användarvillkoren"
         reject_appeal_html: "%{name} avvisade överklagande av modereringsbeslut från %{target}"
@@ -302,6 +324,7 @@ sv:
         sensitive_account_html: "%{name} markerade %{target}s media som känsligt"
         silence_account_html: "%{name} begränsade %{target}s konto"
         suspend_account_html: "%{name} stängde av %{target}s konto"
+        trendable_tag_html: kan visas under trender
         unassigned_report_html: "%{name} tog bort tilldelning av rapporten %{target}"
         unblock_email_account_html: "%{name} avblockerade %{target}s e-postadress"
         unsensitive_account_html: "%{name} avmarkerade %{target}s media som känsligt"
@@ -314,8 +337,10 @@ sv:
         update_ip_block_html: "%{name} ändrade regel för IP %{target}"
         update_report_html: "%{name} uppdaterade rapporten %{target}"
         update_status_html: "%{name} uppdaterade inlägget av %{target}"
+        update_tag_html: "%{name} ändrade %{target} inställningar till: "
         update_user_role_html: "%{name} ändrade rollen %{target}"
         update_username_block_html: "%{name} uppdaterade regel för användarnamn som innehåller %{target}"
+        usable_tag_html: kan användas;
       deleted_account: raderat konto
       empty: Inga loggar hittades.
       filter_by_action: Filtrera efter åtgärd
@@ -911,7 +936,7 @@ sv:
         view_devops: DevOps
         view_devops_description: Ger användare tillgång till instrumentpanelerna Sidekiq och pgHero
         view_feeds: Visa live- och ämnesflöden
-        view_feeds_description: Ger användare tillgång till live-och ämnesflöden oavsett serverinställningar
+        view_feeds_description: Ger användare tillgång till live- och ämnesflöden oavsett serverinställningar
       requires_2fa: Kräver tvåfaktorsautentisering
       title: Roller
     rules:
@@ -954,7 +979,7 @@ sv:
         title: Undantag användare från sökmotorindexering som standard
       discovery:
         follow_recommendations: Följrekommendationer
-        preamble: Att visa intressant innehåll är avgörande för nya användare som kanske inte känner någon på Mastodon. Styr hur olika upptäcktsfunktioner fungerar på din Server.
+        preamble: Att visa intressant innehåll är viktigt för att introducera nya användare som kanske inte känner någon på Mastodon. Styr hur olika upptäcktsfunktioner fungerar på din server.
         privacy: Integritet
         profile_directory: Profilkatalog
         public_timelines: Offentliga tidslinjer
@@ -1006,13 +1031,17 @@ sv:
       critical_update: Kritiskt — vänligen uppdatera omgående
       description: Det rekommenderas att hålla din Mastodon-installation uppdaterad för att ta nytta av de senaste fixarna och funktionerna. Dessutom är det ibland viktigt att uppdatera Mastodon i tid för att undvika säkerhetsproblem. Av dessa skäl kontrollerar Mastodon efter uppdateringar var 30:e minut och meddelar dig i enlighet med dina e-postaviseringsinställningar.
       documentation_link: Läs mer
+      nearing_eol: Stödet för den gren du kör för närvarande kommer att sluta den %{date}, vänligen överväg att uppdatera.
       release_notes: Ändringslogg
+      supported_until: Support slutar %{date}
       title: Tillgängliga uppdateringar
       type: Typ
       types:
         major: Större release
         minor: Mindre release
         patch: Patch release — buggfixar och enkla att tillämpa ändringar
+      unsupported_branch: Den gren du kör för närvarande stöds inte, vänligen uppdatera så snart som möjligt.
+      unsupported_since: Stöds inte sedan %{date}
       version: Version
     statuses:
       account: Författare
@@ -1177,7 +1206,9 @@ sv:
           one: Delad av en person under den senaste veckan
           other: Delad av %{count} personer under den senaste veckan
         title: Trendande länkar
-        usage_comparison: Delade %{today} gånger idag, jämfört med %{yesterday} igår
+        usage_comparison:
+          one: Delad %{count} gång idag, jämfört med %{yesterday} igår
+          other: Delad %{count} gånger idag, jämfört med %{yesterday} igår
       not_allowed_to_trend: Inte tillåtet att trenda
       only_allowed: Endast tillåtna
       pending_review: Väntar på granskning
@@ -1194,7 +1225,7 @@ sv:
         confirm_allow_account: Är du säker på att du vill tillåta valda konton?
         confirm_disallow: Är du säker på att du vill förbjuda valda statusar?
         confirm_disallow_account: Är du säker på att du vill förbjuda valda konton?
-        description_html: Detta är inlägg som din server vet om som för närvarande delas och favoriseras mycket just nu. Det kan hjälpa dina nya och återvändande användare att hitta fler människor att följa. Inga inlägg visas offentligt förrän du godkänner författaren, och författaren tillåter att deras konto föreslås till andra. Du kan också tillåta eller avvisa enskilda inlägg.
+        description_html: Detta är inlägg som din server vet om som för närvarande delas och favoritmarkeras mycket just nu. Det kan hjälpa dina nya och återvändande användare att hitta fler människor att följa. Inga inlägg visas offentligt förrän du godkänner författaren, och författaren tillåter att deras konto föreslås till andra. Du kan också tillåta eller avvisa enskilda inlägg.
         disallow: Tillåt inte inlägg
         disallow_account: Tillåt inte författare
         no_status_selected: Inga trendande inlägg ändrades eftersom inga valdes
@@ -1222,12 +1253,15 @@ sv:
         trendable: Kan visas under trender
         trending_rank: 'Trendande #%{rank}'
         usable: Kan användas
-        usage_comparison: Använd %{today} gånger idag, jämfört med %{yesterday} igår
+        usage_comparison:
+          one: Använd %{count} gång idag, jämfört med %{yesterday} igår
+          other: Använd %{count} gånger idag, jämfört med %{yesterday} igår
         used_by_over_week:
           one: Använd av en person under den senaste veckan
           other: Använd av %{count} personer under den senaste veckan
       title: Rekommendationer & Trender
       trending: Trendande
+    update_available: Uppdatering tillgänglig
     username_blocks:
       add_new: Lägg till ny
       block_registrations: Registrerade blockeringar
@@ -1277,6 +1311,15 @@ sv:
     auto_close_registrations:
       body: På grund av brist på moderatoraktivitet har registreringar på %{instance} automatiskt bytts till att kräva manuell granskning, för att förhindra att %{instance} används som plattform för potentiella dåliga aktörer. Du kan när som helst byta tillbaka den till öppna registreringar.
       subject: Registreringar för %{instance} har automatiskt bytts till att kräva godkännande
+    end_of_support_out_of_support_warning:
+      body: Mastodon-versionen som används på din server stöds inte längre. Vi rekommenderar att du uppdaterar så snart som möjligt!
+      subject: Mastodon %{branch} som används på %{instance} stöds inte längre!
+    end_of_support_three_months_warning:
+      body: Mastodon-versionen som för närvarande används på din server kommer att sluta att stödjas om 3 månader. Du kanske vill uppdatera till en nyare gren i förväg.
+      subject: Stödet för Mastodon %{branch} som används på %{instance} upphör om 3 månader.
+    end_of_support_two_weeks_warning:
+      body: Mastodon-versionen som används på din server kommer att sluta att stödjas om 2 veckor. Vi rekommenderar att du uppdaterar till en nyare gren i förväg.
+      subject: Stödet för Mastodon %{branch} som används på %{instance} upphör om 2 veckor.
     new_appeal:
       actions:
         delete_statuses: att radera deras inlägg
@@ -1322,7 +1365,7 @@ sv:
     advanced_settings: Avancerade inställningar
     animations_and_accessibility: Animationer och tillgänglighet
     boosting_preferences: Boostinställningar
-    boosting_preferences_info_html: "<strong>Tips:</strong> Oavsett inställningar kommer <kbd>Skifttangenten</kbd> + <kbd>Klick</kbd> på %{icon} boostikonen att boosta omedelbart."
+    boosting_preferences_info_html: "<strong>Tips:</strong> Oavsett inställningar kommer <kbd>Skift</kbd> + <kbd>Klick</kbd> på %{icon} Boosta-ikonen att boosta direkt."
     discovery: Upptäck
     localization:
       body: Mastodon översätts av volontärer.
@@ -1556,7 +1599,7 @@ sv:
     status: Status
     subscribers: Prenumeranter
   emoji_styles:
-    auto: Automatiskt
+    auto: Auto
     native: Ursprunglig
     twemoji: Twemoji
   errors:
@@ -1573,7 +1616,8 @@ sv:
       content: Vi är ledsna, men något gick fel från vårat håll.
       title: Den här sidan är inte korrekt
     '503': Sidan kunde inte visas på grund av ett tillfälligt serverfel.
-    noscript_html: För att använda Mastodon webbapplikationen, vänligen aktivera JavaScript. Alternativt kan du prova en av <a href="%{apps_path}">inhemska appar</a> för Mastodon för din plattform.
+    go_home: Gå hem
+    noscript_html: Aktivera JavaScript för att använda Mastodons webbapplikation. Alternativt kan du prova någon av Mastodons <a href="%{apps_path}">plattformsspecifika appar</a> för din plattform.
   existing_username_validator:
     not_found: kunde inte hitta en lokal användare med det användarnamnet
     not_found_multiple: kunde inte hitta %{usernames}
@@ -1669,7 +1713,10 @@ sv:
       incompatible_type: Inkompatibel med den valda importtypen
       invalid_csv_file: 'Ogiltig CSV-fil. Felmeddelande: %{error}'
       invalid_json_file: 'Ogiltig JSON-fil. Fel: %{error}'
-      over_rows_processing_limit: innehåller fler än %{count} rader
+      no_data: Den här filen innehåller ingen data som matchar den angivna importtypen
+      over_rows_processing_limit:
+        one: innehåller fler än %{count} rad
+        other: innehåller fler än %{count} rader
       status_not_found_warning: Några av dina filter döljer specifika inlägg som inte är kända av denna server. Dessa inlägg filtreras inte automatiskt om de upptäcks senare av servern.
       too_large: Filen är för stor
     failures: Misslyckanden
@@ -1801,7 +1848,7 @@ sv:
   media_attachments:
     validations:
       images_and_video: Det går inte att bifoga en video till ett inlägg som redan innehåller bilder
-      not_found: Media %{ids} hittades inte eller är redan anslutet till ett annat inlägg
+      not_found: Media %{ids} hittades inte eller har redan bifogats till ett annat inlägg
       not_ready: Kan inte bifoga filer som inte har behandlats färdigt. Försök igen om ett ögonblick!
       too_many: Det går inte att bifoga mer än 4 filer
   migrations:
@@ -1820,7 +1867,9 @@ sv:
     incoming_migrations_html: För att flytta från ett annat konto till det här så behöver du först <a href="%{path}">skapa ett konto-alias</a>.
     moved_msg: Ditt konto omdirigerar nu till %{acct} och dina följare flyttas över.
     not_redirecting: Ditt konto omdirigerar inte till något annat konto för tillfället.
-    on_cooldown: Du har nyss migrerat ditt konto. Den här funktionen kommer att vara tillgänglig igen om %{count} dagar.
+    on_cooldown:
+      one: Du har nyligen migrerat ditt konto. Denna funktion kommer att bli tillgänglig igen om %{count} dag.
+      other: Du har nyligen migrerat ditt konto. Denna funktion kommer att bli tillgänglig igen om %{count} dagar.
     past_migrations: Föregående migreringar
     proceed_with_move: Flytta följare
     redirected_msg: Ditt konto dirigeras om till %{acct}.
@@ -1912,6 +1961,7 @@ sv:
     administration_emails: E-postaviseringar från administratör
     email_events: Händelser vid e-postnotiser
     email_events_hint: 'Välj händelser som du vill ta emot aviseringar för:'
+    moderation_emails: E-postaviseringar från moderator
   number:
     human:
       decimal_units:
@@ -1927,7 +1977,7 @@ sv:
     description_html: Om du aktiverar <strong>tvåfaktorsautentisering</strong> med en autentiseringsapp kommer du behöva din mobiltelefon för att logga in, som kommer generera koder för dig att ange.
     enable: Aktivera
     instructions_html: "<strong>Skanna den här QR-koden i Google Authenticator eller en liknande TOTP-app i din telefon</strong>. Från och med nu så kommer den appen att generera symboler som du måste skriva in när du ska logga in."
-    manual_instructions: 'Om du inte kan skanna QR-koden och istället behöver skriva in nyckeln i oformatterad text, finns den här:'
+    manual_instructions: 'Om du inte kan skanna QR-koden och behöver ange den manuellt finns klartextnyckeln här:'
     setup: Konfigurera
     wrong_code: Den ifyllda koden är ogiltig! Är server-tiden och enhetens tid korrekt?
   pagination:
@@ -1935,7 +1985,7 @@ sv:
     next: Nästa
     older: Äldre
     prev: Tidigare
-    truncate: "&hellip;"
+    truncate_html: "&hellip;"
   polls:
     errors:
       already_voted: Du har redan röstat på den här undersökningen
@@ -2007,8 +2057,12 @@ sv:
       account: Offentliga inlägg från @%{acct}
       tag: 'Offentliga inlägg taggade med #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Du har överskridit dygnsgränsen på %{limit} schemalagda inlägg
-    over_total_limit: Du har överskridit gränsen på %{limit} schemalagda inlägg
+    over_daily_limit:
+      one: Du har överskridit gränsen för %{count} schemalagt inlägg för idag
+      other: Du har överskridit gränsen för %{count} schemalagda inlägg för idag
+    over_total_limit:
+      one: Du har överskridit gränsen för %{count} schemalagt inlägg
+      other: Du har överskridit gränsen för %{count} schemalagda inlägg
     too_soon: datumet måste vara i framtiden
   self_destruct:
     lead_html: Tyvärr stänger <strong>%{domain}</strong> för gott. Om du hade ett konto där kommer du inte längre kunna använda det, men du kan fortfarande begära en säkerhetskopia av din data.
@@ -2069,7 +2123,7 @@ sv:
     delete: Konto radering
     development: Utveckling
     edit_profile: Redigera profil
-    export: Export
+    export: Exportera
     featured_tags: Utvalda hashtaggar
     import: Importera
     import_and_export: Import och export
@@ -2151,7 +2205,7 @@ sv:
     ignore_favs: Bortse från favoriter
     ignore_reblogs: Ignorera boostar
     interaction_exceptions: Undantag baserat på interaktioner
-    interaction_exceptions_explanation: Inlägg som tillfälligt överskrider favorit- eller höjningströskeln kan behållas även om de senare minskas.
+    interaction_exceptions_explanation: Inlägg som tillfälligt överskrider favorit- eller boosttröskeln kan behållas även om de senare minskas.
     keep_direct: Behåll direktmeddelanden
     keep_direct_hint: Tar inte bort någon av dina direktmeddelanden
     keep_media: Behåll inlägg med mediebilagor
@@ -2230,11 +2284,11 @@ sv:
       user:
         confirmation_html: Du får inte längre %{type} från Mastodon på %{domain}.
     notification_emails:
-      favourite: aviseringsmejl för favoriserade inlägg
+      favourite: aviseringsmejl om favoriter
       follow: aviseringsmejl för följda inlägg
       follow_request: aviseringsmejl för följdförfrågningar
       mention: aviseringsmejl för inlägg där du nämns
-      reblog: aviseringsmejl för förhöjda inlägg
+      reblog: aviseringsmejl om boostar
     show:
       action: Avprenumerera
       email_subscription:
@@ -2366,7 +2420,7 @@ sv:
     seamless_external_login: Du är inloggad via en extern tjänst. Därför finns inställningar för lösenord och e-post inte tillgängliga.
     signed_in_as: 'Inloggad som:'
   verification:
-    extra_instructions_html: <strong>Tips:</strong> Länken på din webbplats kan vara osynlig. Den viktiga delen är <code>rel="me"</code> som förhindrar personifiering på webbplatser med användargenererat innehåll. Du kan även använda en <code>länk</code> tagg i huvudet på sidan istället för <code>en</code>, men HTML:en måste vara tillgänglig utan att exekvera JavaScript.
+    extra_instructions_html: <strong>Tips:</strong> Länken på din webbplats kan vara osynlig. Den viktiga delen är <code>rel="me"</code>, som förhindrar personifiering på webbplatser med användargenererat innehåll. Du kan även använda en <code>link</code>-tagg i sidhuvudet i stället för <code>a</code>, men HTML-koden måste vara tillgänglig utan att JavaScript körs.
     here_is_how: Så här gör du
     hint_html: "<strong>Verifiera din identitet på Mastodon är för alla.</strong> Baserat på öppna webbstandarder, nu och för evigt fria. Allt du behöver är en personlig webbplats som folk känner igen dig med. När du länkar till denna webbplats från din profil kommer vi att kontrollera att webbplatsen länkar tillbaka till din profil och visa en visuell indikator på den."
     instructions_html: Kopiera och klistra in koden nedan in i HTML-koden på din webbplats. Lägg sedan till adressen till din webbplats i ett av de extra fälten på din profil från fliken "Redigera profil" och spara ändringar.

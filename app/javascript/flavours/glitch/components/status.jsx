@@ -378,8 +378,8 @@ class Status extends ImmutablePureComponent {
   };
 
   _openStatus = (newTab = false) => {
-    if (this.props.onClick) {
-      this.props.onClick();
+    if (this.props.onOpen) {
+      this.props.onOpen();
       return;
     }
 
@@ -711,10 +711,10 @@ class Status extends ImmutablePureComponent {
     const {statusContentProps, hashtagBar} = getHashtagBarForStatus(status);
 
     const header = this.props.headerRenderFn
-      ? this.props.headerRenderFn({ status, account, avatarSize, messages, onHeaderClick: this.handleHeaderClick, featured })
+      ? this.props.headerRenderFn({ statusId: status.get('id'), account, avatarSize, messages, onHeaderClick: this.handleHeaderClick, featured })
       : (
         <StatusHeader
-          status={status}
+          statusId={status.get('id')}
           account={account}
           avatarSize={avatarSize}
           onHeaderClick={this.handleHeaderClick}
@@ -760,7 +760,7 @@ class Status extends ImmutablePureComponent {
 
             {(!muted) && header}
 
-            <ContentWarning status={status} expanded={expanded} onClick={this.handleExpandedToggle} icons={mediaIcons} />
+            <ContentWarning statusId={status.get('id')} expanded={expanded} onClick={this.handleExpandedToggle} icons={mediaIcons} />
 
             {expanded && (
               <>
@@ -784,10 +784,12 @@ class Status extends ImmutablePureComponent {
             {/* This is a glitch-soc addition to have a placeholder */}
             {!expanded && <MentionsPlaceholder status={status} />}
 
-            <StatusReactions
-              id={status.get('id')}
-              reactions={status.get('reactions').toArray()}
-            />
+            {(showActions && !isQuotedPost) &&
+              <StatusReactions
+                id={status.get('id')}
+                reactions={status.get('reactions').toArray()}
+              />
+            }
 
             {(showActions && !isQuotedPost) &&
               <StatusActionBar

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'singleton'
-
 class FeedManager
   include Singleton
   include Redisable
@@ -12,7 +10,7 @@ class FeedManager
   # Number of items in the feed since last reblog of status
   # before the new reblog will be inserted. Must be <= MAX_ITEMS
   # or the tracking sets will grow forever
-  REBLOG_FALLOFF = 40
+  REBLOG_FALLOFF = 80
 
   # Execute block for every active account
   # @yield [Account]

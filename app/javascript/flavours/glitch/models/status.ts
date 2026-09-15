@@ -1,5 +1,7 @@
 import type { RecordOf } from 'immutable';
 
+import type { Simplify } from 'type-fest';
+
 import type { ApiCollectionJSON } from '@/flavours/glitch/api_types/collections';
 import type { ApiCustomEmojiJSON } from '@/flavours/glitch/api_types/custom_emoji';
 import type {
@@ -37,7 +39,7 @@ export interface StatusShape {
   account: string;
   created_at: string;
   edited_at?: string;
-  application: {
+  application?: {
     name: string;
     website?: string;
   };
@@ -47,9 +49,10 @@ export interface StatusShape {
   pinned: boolean;
   filtered: FilterResult[];
   sensitive: boolean;
-  collapsed: boolean;
+  collapsed: boolean | null;
   uri: string;
   url: string | null;
+  isLoading?: boolean;
 
   // Content
   content: string;
@@ -66,9 +69,7 @@ export interface StatusShape {
   media_attachments: MediaAttachmentShape[];
   mentions: ApiMentionJSON[];
   poll?: string;
-  quote?: Omit<ApiQuoteJSON, 'quoted_status'> & {
-    quoted_status?: string;
-  };
+  quote?: QuotedStatus;
   reblog?: string;
   tagged_collections: ApiCollectionJSON[];
   tags: ApiTagJSON[];
@@ -85,10 +86,23 @@ export interface StatusShape {
   replies_count: number;
   visibility: StatusVisibility;
 }
-export type ExpandedStatusShape = Omit<StatusShape, 'account' | 'reblog'> & {
+export type AccountStatusShape = Omit<StatusShape, 'account'> & {
   account: AccountShapeFull;
+};
+export type ExpandedStatusShape = Omit<AccountStatusShape, 'reblog'> & {
   reblog?: Omit<ExpandedStatusShape, 'reblog'>;
 };
+
+export type AnyStatusShape =
+  | StatusShape
+  | AccountStatusShape
+  | ExpandedStatusShape;
+
+export type QuotedStatus = Simplify<
+  Omit<ApiQuoteJSON, 'quoted_status'> & {
+    quoted_status?: string;
+  }
+>;
 
 export type CardShape = Omit<ApiPreviewCardJSON, 'authors'> & {
   authors: (Omit<ApiPreviewCardAuthorJSON, 'author'> & {
@@ -142,4 +156,6 @@ export type FilterResult = Omit<ApiFilterResultJSON, 'filter'> & {
   filter: string;
 };
 
-export type StatusTranslation = Omit<ApiStatusTranslationJSON, 'poll'>;
+export type StatusTranslation = Omit<ApiStatusTranslationJSON, 'poll'> & {
+  isLoading: boolean;
+};

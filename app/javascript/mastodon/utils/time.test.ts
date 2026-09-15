@@ -1,4 +1,13 @@
-import { DAY, HOUR, MINUTE, relativeTimeParts, SECOND } from './time';
+import { createIntl } from 'react-intl';
+
+import {
+  DAY,
+  HOUR,
+  MINUTE,
+  SECOND,
+  relativeTimeParts,
+  formatTime,
+} from './time';
 
 describe('relativeTimeParts', () => {
   const now = Date.now();
@@ -9,13 +18,15 @@ describe('relativeTimeParts', () => {
 
     // Past
     [-30 * SECOND, { value: -30, unit: 'second' }],
-    [-90 * SECOND, { value: -2, unit: 'minute' }],
+    [-60 * SECOND, { value: -1, unit: 'minute' }],
+    [-90 * SECOND, { value: -1, unit: 'minute' }],
     [-30 * MINUTE, { value: -30, unit: 'minute' }],
-    [-90 * MINUTE, { value: -2, unit: 'hour' }],
+    [-60 * MINUTE, { value: -1, unit: 'hour' }],
+    [-90 * MINUTE, { value: -1, unit: 'hour' }],
     [-5 * HOUR, { value: -5, unit: 'hour' }],
     [-24 * HOUR, { value: -1, unit: 'day' }],
     [-36 * HOUR, { value: -1, unit: 'day' }],
-    [-47 * HOUR, { value: -2, unit: 'day' }],
+    [-47 * HOUR, { value: -1, unit: 'day' }],
     [-3 * DAY, { value: -3, unit: 'day' }],
 
     // Future
@@ -32,5 +43,21 @@ describe('relativeTimeParts', () => {
     [2 * DAY, { value: 2, unit: 'day' }],
   ])('should return correct value and unit for %d ms', (input, expected) => {
     expect(relativeTimeParts(now + input, now)).toMatchObject(expected);
+  });
+});
+
+describe('formatTime with day-only timestamps', () => {
+  const intl = createIntl({ locale: 'en' });
+
+  const now = Date.parse('2026-08-20T22:56:00Z');
+
+  test.concurrent.each([
+    ['2026-08-20', 'today'],
+    ['2026-08-19', '1 day ago'],
+    ['2026-08-17', '3 days ago'],
+  ])('should format the day-only value %s as "%s"', (date, expected) => {
+    expect(
+      formatTime({ timestamp: Date.parse(date), intl, now, noTime: true }),
+    ).toBe(expected);
   });
 });

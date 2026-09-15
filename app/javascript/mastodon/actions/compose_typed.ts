@@ -3,23 +3,26 @@ import { defineMessages } from 'react-intl';
 import { createAction } from '@reduxjs/toolkit';
 import type { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
-import { apiUpdateMedia } from 'mastodon/api/compose';
-import { apiGetSearch } from 'mastodon/api/search';
-import type { ApiMediaAttachmentJSON } from 'mastodon/api_types/media_attachments';
-import type { MediaAttachment } from 'mastodon/models/media_attachment';
+import { apiUpdateMedia } from '@/mastodon/api/compose';
+import { apiGetSearch } from '@/mastodon/api/search';
+import type { ApiMediaAttachmentJSON } from '@/mastodon/api_types/media_attachments';
+import type { ApiQuotePolicy } from '@/mastodon/api_types/quotes';
+import type { MediaAttachment } from '@/mastodon/models/media_attachment';
+import type { Status, StatusVisibility } from '@/mastodon/models/status';
+import type { RootState } from '@/mastodon/store';
 import {
   createDataLoadingThunk,
   createAppThunk,
-} from 'mastodon/store/typed_functions';
+} from '@/mastodon/store/typed_functions';
 
-import type { ApiQuotePolicy } from '../api_types/quotes';
-import type { Status, StatusVisibility } from '../models/status';
-import type { RootState } from '../store';
+import { isRedesignEnabled } from '../utils/environment';
 
 import { showAlert } from './alerts';
-import { changeCompose, focusCompose } from './compose';
+import { changeCompose, focusCompose, uploadCompose } from './compose';
 import { importFetchedStatuses } from './importer';
 import { openModal } from './modal';
+
+export const PRIVATE_QUOTE_MODAL_ID = 'quote/private_notify';
 
 const messages = defineMessages({
   quoteErrorEdit: {
@@ -146,6 +149,10 @@ export const changeUploadCompose = createDataLoadingThunk(
   },
 );
 
+export const rearrangeComposeAttachments = createAction<string[]>(
+  'compose/rearrangeAttachments',
+);
+
 export const quoteCompose = createAppThunk(
   'compose/quoteComposeStatus',
   (status: Status, { dispatch }) => {
@@ -159,13 +166,13 @@ export const quoteComposeByStatus = createAppThunk(
     const state = getState();
     const composeState = state.compose;
     const mediaAttachments = composeState.get('media_attachments');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const wasQuietPostHintModalDismissed: boolean =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      state.settings.getIn(
-        ['dismissed_banners', 'quote/quiet_post_hint'],
-        false,
-      );
+
+    const wasQuietPostHintModalDismissed = !!state.settings.getIn(
+      ['dismissed_banners', 'quote/quiet_post_hint'],
+      false,
+    );
+
+    const statusId = status.get('id') as string;
 
     if (composeState.get('id')) {
       dispatch(showAlert({ message: messages.quoteErrorEdit }));
@@ -197,6 +204,17 @@ export const quoteComposeByStatus = createAppThunk(
         openModal({
           modalType: 'CONFIRM_QUIET_QUOTE',
           modalProps: { status },
+        }),
+      );
+    } else if (
+      composeState.get('in_reply_to') &&
+      statusId &&
+      isRedesignEnabled()
+    ) {
+      dispatch(
+        openModal({
+          modalType: 'COMPOSER_ADD_QUOTE',
+          modalProps: { statusId },
         }),
       );
     } else {
@@ -277,4 +295,51 @@ export const setComposeQuotePolicy = createAction<ApiQuotePolicy>(
 
 export const setDragUploadEnabled = createAction<boolean>(
   'compose/setDragUploadEnabled',
+);
+
+export const addPollOption = createAppThunk(
+  'compose/addPollOption',
+  (_arg, { getState }) => ({
+    maxOptions:
+      getState().server.server.item?.configuration.polls.max_options ?? 4,
+  }),
+);
+
+export const updatePollOption = createAppThunk(
+  'compose/updatePollOption',
+  (
+    arg: {
+      index: number;
+      text: string;
+    },
+    { getState },
+  ) => {
+    return {
+      ...arg,
+      maxOptions:
+        getState().server.server.item?.configuration.polls.max_options ?? 4,
+    };
+  },
+);
+
+export const deletePollOption = createAction<{ index: number }>(
+  'compose/deletePollOption',
+);
+
+const urlLikeRegex = /^https?:\/\/[^\s]+\/[^\s]+$/i;
+
+export const processPasteOrDrop = createAppThunk(
+  (transfer: DataTransfer, { dispatch }) => {
+    if (transfer.files.length === 1) {
+      dispatch(uploadCompose(transfer.files));
+    } else if (transfer.files.length === 0) {
+      const data = transfer.getData('text/plain');
+      if (!urlLikeRegex.exec(data)) return;
+
+      try {
+        const url = new URL(data).toString();
+        void dispatch(pasteLinkCompose({ url }));
+      } catch {}
+    }
+  },
 );

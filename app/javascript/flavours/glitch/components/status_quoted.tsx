@@ -1,13 +1,21 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { ComponentType, ReactNode } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { defineMessage, FormattedMessage, useIntl } from 'react-intl';
 
 import type { Map as ImmutableMap } from 'immutable';
 
+import type { Merge } from 'type-fest';
+
 import CancelFillIcon from '@/material-icons/400-24px/cancel-fill.svg?react';
 import { LearnMoreLink } from 'flavours/glitch/components/learn_more_link';
-import StatusContainer from 'flavours/glitch/containers/status_container';
 import { domain } from 'flavours/glitch/initial_state';
 import type { Account } from 'flavours/glitch/models/account';
 import type { Status } from 'flavours/glitch/models/status';
@@ -19,11 +27,15 @@ import { revealAccount } from '../actions/accounts_typed';
 import { fetchStatus } from '../actions/statuses';
 import { makeGetStatusWithExtraInfo } from '../selectors';
 import { getAccountHidden } from '../selectors/accounts';
+import { isRedesignStatusEnabled } from '../utils/environment';
 
 import { Button } from './button';
 import { IconButton } from './icon_button';
+import { LoadingIndicator } from './loading_indicator';
 import type { StatusHeaderRenderFn } from './status/header';
 import { StatusHeader } from './status/header';
+import { TypedStatusContainer } from './status/types';
+import type { StatusContainerProps, StatusContextType } from './status/types';
 
 const MAX_QUOTE_POSTS_NESTING_LEVEL = 1;
 
@@ -144,24 +156,9 @@ const FilteredQuote: React.FC<{
   );
 };
 
-// Adds a wrapper around StatusContainer as the types aren't inheriting correctly with Redux + React 19.
-// TODO: Remove this after the Status component is in TS.
-interface StatusContainerForQuotesProps {
-  id?: string | null;
-  contextType?: string;
-  isQuotedPost?: boolean;
-  avatarSize?: number;
-  headerRenderFn?: StatusHeaderRenderFn;
-  children?: ReactNode;
-  [key: string]: unknown;
-}
-
-const StatusContainerWithChildren =
-  StatusContainer as unknown as ComponentType<StatusContainerForQuotesProps>;
-
 interface QuotedStatusProps {
   quote: QuoteMap;
-  contextType?: string;
+  contextType?: StatusContextType;
   parentQuotePostId?: string | null;
   variant?: 'full' | 'link';
   nestingLevel?: number;
@@ -355,7 +352,7 @@ export const QuotedStatus: React.FC<QuotedStatusProps> = ({
 
   return (
     <div className='status__quote'>
-      <StatusContainerWithChildren
+      <TypedStatusContainer
         isQuotedPost
         id={quotedStatusId}
         contextType={contextType}
@@ -373,16 +370,17 @@ export const QuotedStatus: React.FC<QuotedStatusProps> = ({
             nestingLevel={nestingLevel + 1}
           />
         )}
-      </StatusContainerWithChildren>
+      </TypedStatusContainer>
     </div>
   );
 };
 
-interface StatusQuoteManagerProps {
-  id: string;
-  contextType?: string;
-  [key: string]: unknown;
-}
+export type StatusQuoteManagerProps = Merge<
+  StatusContainerProps,
+  {
+    id: string;
+  }
+>;
 
 /**
  * This wrapper component takes a status ID and, if the associated status
@@ -398,17 +396,31 @@ export const StatusQuoteManager = (props: StatusQuoteManagerProps) => {
   });
   const quote = status?.get('quote') as QuoteMap | undefined;
 
+  if (isRedesignStatusEnabled()) {
+    return (
+      <Suspense fallback={<LoadingIndicator />}>
+        <LazyStatusRedesign {...props} />
+      </Suspense>
+    );
+  }
+
   if (quote) {
     return (
-      <StatusContainerWithChildren {...props}>
+      <TypedStatusContainer {...props}>
         <QuotedStatus
           quote={quote}
           parentQuotePostId={status?.get('id') as string}
           contextType={props.contextType}
         />
-      </StatusContainerWithChildren>
+      </TypedStatusContainer>
     );
   }
 
-  return <StatusContainerWithChildren {...props} />;
+  return <TypedStatusContainer {...props} />;
 };
+
+const LazyStatusRedesign = lazy(() =>
+  import('./status/status').then(({ StatusRedesign }) => ({
+    default: StatusRedesign,
+  })),
+);

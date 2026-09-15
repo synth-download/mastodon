@@ -1,52 +1,33 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
 
 import { Map as ImmutableMap } from 'immutable';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { ApiMediaAttachmentJSON } from '@/mastodon/api_types/media_attachments';
 import type { StatusVisibility } from '@/mastodon/api_types/statuses';
 import {
-  accountFactoryState,
-  mediaAttachmentFactory,
-  pollFactory,
-  statusFactory,
-  statusFactoryState,
+  accountFactoryImmutable,
+  pollFactoryImmutable,
+  statusFactoryAPI,
+  statusFactoryImmutable,
 } from '@/testing/factories';
 
-import { TypedStatus } from './types';
+import type { StatusVariant } from './status';
+import { StatusRedesign } from './status';
+import type { AttachmentArgs } from './testing';
+import { attachmentArgTypes, attachmentFactory } from './testing';
+import type { StatusContextType } from './types';
 
-type ContextTypes =
-  | 'account'
-  | 'bookmarks'
-  | 'detailed'
-  | 'favourites'
-  | 'home'
-  | 'notifications'
-  | 'public'
-  | 'search'
-  | 'thread';
-
-type AttachmentTypes =
-  | 'image-1'
-  | 'image-2'
-  | 'image-3'
-  | 'video'
-  | 'audio'
-  | 'gifv'
-  | 'unknown';
-
-interface StatusStoryProps {
+interface StatusStoryProps extends AttachmentArgs {
   // Contents
   text: string;
+  tags: string;
   visibility: StatusVisibility;
   isReblog?: boolean;
   isReply?: boolean;
   isPoll?: boolean;
   isQuote?: boolean;
-  attachments?: AttachmentTypes;
   contentWarning?: string;
 
   // Interactions
@@ -61,7 +42,8 @@ interface StatusStoryProps {
 
   // Display
   showThread?: boolean;
-  contextType?: ContextTypes;
+  contextType?: StatusContextType;
+  variant?: StatusVariant;
   showCounters?: boolean;
   favouriteCount?: number;
   reblogCount?: number;
@@ -71,222 +53,49 @@ interface StatusStoryProps {
   showPrepend?: boolean;
 }
 
-const otherAccount = accountFactoryState({
+const otherAccount = accountFactoryImmutable({
   id: '2',
   display_name: 'Another user',
 });
 
 const StatusStoryComponent: FC<StatusStoryProps> = (props) => {
   const {
-    text,
-    visibility,
     isReblog,
     isReply,
-    isPoll,
     isQuote,
-    attachments,
     contentWarning,
 
-    hasFavourited,
-    hasReblogged,
-    hasBookmarked,
     hasFilter,
-    hasVoted,
-    showTranslate,
     disableActions = false,
 
     contextType,
+    variant,
     showThread,
     showCounters,
-    favouriteCount = 0,
-    replyCount = 0,
-    reblogCount = 0,
     hidden,
     muted,
     showPrepend = true,
   } = props;
-  const { account, status } = useMemo(() => {
-    const account = accountFactoryState();
-
-    const media_attachments: ApiMediaAttachmentJSON[] = [];
-    switch (attachments) {
-      // Use fall through add attachments depending on count.
-      case 'image-3':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            id: '2',
-            url: 'https://cataas.com/cat/EbVq9zMc4Xxv7s73',
-            meta: {
-              original: {
-                width: 960,
-                height: 1280,
-                size: '960x1280',
-                aspect: 0.75,
-              },
-            },
-          }),
-        );
-      // eslint-disable-next-line no-fallthrough
-      case 'image-2':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            id: '3',
-            url: 'https://cataas.com/cat/YFaQ4xWYoWURSz37',
-            meta: {
-              original: {
-                width: 964,
-                height: 1280,
-                size: '964x1280',
-                aspect: 0.753125,
-              },
-            },
-          }),
-        );
-      // eslint-disable-next-line no-fallthrough
-      case 'image-1':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            id: '4',
-            url: 'https://cataas.com/cat/bYBTjiFUqjUPIBUD',
-            meta: {
-              original: {
-                width: 1280,
-                height: 964,
-                size: '1280x964',
-                aspect: 1.32780083,
-              },
-            },
-          }),
-        );
-        break;
-      case 'video':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            type: 'video',
-            url: 'https://www.pexels.com/download/video/11760787/',
-            meta: {
-              original: {
-                width: 2160,
-                height: 4096,
-              },
-            },
-          }),
-        );
-        break;
-      case 'audio':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            type: 'audio',
-            url: 'https://upload.wikimedia.org/wikipedia/commons/4/40/Elephant_voice_-_trumpeting.ogg',
-          }),
-        );
-        break;
-      case 'gifv':
-        media_attachments.push(
-          mediaAttachmentFactory({
-            type: 'gifv',
-            url: 'https://www.pexels.com/download/video/11760787/',
-            meta: {
-              original: {
-                width: 2160,
-                height: 4096,
-              },
-            },
-          }),
-        );
-        break;
-      case 'unknown':
-        media_attachments.push(mediaAttachmentFactory({ type: attachments }));
-        break;
-    }
-
-    return {
-      account,
-      status: statusFactoryState({
-        text,
-        spoiler_text: contentWarning,
-        visibility,
-        media_attachments,
-        reblogged: hasReblogged,
-        favourited: hasFavourited,
-        bookmarked: hasBookmarked,
-        in_reply_to_account_id: isReply ? '2' : undefined,
-        in_reply_to_id: isReply ? '2' : undefined,
-        quote: isQuote
-          ? {
-              state: 'accepted',
-              quoted_status: { ...statusFactory(), quote: undefined },
-            }
-          : undefined,
-        favourites_count: favouriteCount,
-        reblogs_count: reblogCount,
-        replies_count: replyCount,
-        language: showTranslate ? 'xx' : undefined,
-      }).withMutations((status) => {
-        status.set('account', account);
-        status.set('matched_filters', hasFilter ? ['test'] : false);
-        status.set('matched_media_filters', hasFilter ? ['test'] : false);
-        status.set('hidden', hidden);
-
-        // StatusActionBar checks specifically for null so undefined doesn't work.
-        if (!status.get('in_reply_to_id')) {
-          status.set('in_reply_to_id', null);
-        }
-
-        if (isReblog) {
-          status.set(
-            'reblog',
-            statusFactoryState({ id: '2' }).set('account', otherAccount),
-          );
-        }
-        if (isPoll) {
-          status.set('poll', hasVoted ? '2' : '1');
-        }
-      }),
-    };
-  }, [
-    attachments,
-    text,
-    contentWarning,
-    visibility,
-    hasReblogged,
-    hasFavourited,
-    hasBookmarked,
-    isReply,
-    isQuote,
-    favouriteCount,
-    reblogCount,
-    replyCount,
-    showTranslate,
-    hasFilter,
-    hidden,
-    isReblog,
-    isPoll,
-    hasVoted,
-  ]);
-
   return (
-    <div style={{ width: 'min(600px, 80vw)' }}>
-      <TypedStatus
-        {...staticProps}
-        key={JSON.stringify(props)} // Update on any props change. Required because Status has updateOnProps set.
-        status={status}
-        account={isReblog ? account : undefined}
-        isQuotedPost={isQuote}
-        showActions={!disableActions}
-        contextType={contextType}
-        withCounters={showCounters}
-        // Either we are showing a thread (in a timeline) or it's a full reply chain view.
-        showThread={isReply && showThread}
-        previousId={isReply && !showThread ? '2' : undefined}
-        rootId={isReply && !showThread ? '2' : undefined}
-        nextInReplyToId={isReply && !showThread ? '1' : undefined}
-        muted={muted}
-        hidden={hidden && !contentWarning && !hasFilter}
-        skipPrepend={!showPrepend}
-        withDismiss={contextType === 'notifications'}
-      />
-    </div>
+    <StatusRedesign
+      {...staticProps}
+      id='1'
+      accountId={isReblog ? '1' : undefined}
+      isQuotedPost={isQuote}
+      showActions={!disableActions}
+      contextType={contextType}
+      variant={variant}
+      withCounters={showCounters}
+      // Either we are showing a thread (in a timeline) or it's a full reply chain view.
+      showThread={isReply && showThread}
+      previousId={isReply && !showThread ? '2' : undefined}
+      rootId={isReply && !showThread ? '2' : undefined}
+      nextInReplyToId={isReply && !showThread ? '1' : undefined}
+      muted={muted}
+      hidden={hidden && !contentWarning && !hasFilter}
+      skipPrepend={!showPrepend}
+      withDismiss={contextType === 'notifications'}
+    />
   );
 };
 
@@ -346,7 +155,7 @@ const categoryDisplay = {
 } as const;
 
 const meta = {
-  title: 'Components/Status/Status',
+  title: 'Redesign/Status',
   component: StatusStoryComponent,
   argTypes: {
     // Contents
@@ -365,27 +174,18 @@ const meta = {
     isPoll: categoryContents,
     isQuote: categoryContents,
     text: categoryContents,
-    attachments: {
+    tags: categoryContents,
+    attachment1: {
       ...categoryContents,
-      control: 'select',
-      options: [
-        'One image',
-        'Two images',
-        'Three images',
-        'Video',
-        'Audio',
-        'GIF',
-        'Other',
-      ],
-      mapping: {
-        'One image': 'image-1',
-        'Two images': 'image-2',
-        'Three images': 'image-3',
-        Video: 'video',
-        Audio: 'audio',
-        GIF: 'gifv',
-        Other: 'unknown',
-      } satisfies Record<string, AttachmentTypes>,
+      ...attachmentArgTypes.attachment1,
+    },
+    attachment2: {
+      ...categoryContents,
+      ...attachmentArgTypes.attachment2,
+    },
+    attachment3: {
+      ...categoryContents,
+      ...attachmentArgTypes.attachment3,
     },
     contentWarning: categoryContents,
 
@@ -405,6 +205,11 @@ const meta = {
     showTranslate: categoryInteraction,
 
     // Display
+    variant: {
+      ...categoryDisplay,
+      control: 'inline-radio',
+      options: ['feed', 'thread', 'page'] satisfies StatusVariant[],
+    },
     showCounters: categoryDisplay,
     favouriteCount: categoryDisplay,
     reblogCount: categoryDisplay,
@@ -423,6 +228,7 @@ const meta = {
       options: [
         'account',
         'bookmarks',
+        'composer',
         'detailed',
         'favourites',
         'home',
@@ -430,20 +236,23 @@ const meta = {
         'public',
         'search',
         'thread',
-      ] satisfies ContextTypes[],
+      ] satisfies StatusContextType[],
     },
     hidden: categoryDisplay,
     muted: categoryDisplay,
   },
   args: {
     text: 'This is a status',
+    tags: '',
     visibility: 'public',
     isReblog: false,
     isReply: false,
     isPoll: false,
     isQuote: false,
     contentWarning: '',
-    attachments: undefined,
+    attachment1: undefined,
+    attachment2: undefined,
+    attachment3: undefined,
 
     hasFavourited: false,
     hasReblogged: false,
@@ -453,6 +262,7 @@ const meta = {
     disableActions: false,
     showTranslate: false,
 
+    variant: 'feed',
     favouriteCount: 0,
     reblogCount: 0,
     replyCount: 0,
@@ -469,8 +279,8 @@ const meta = {
         '2': otherAccount,
       },
       polls: {
-        '1': pollFactory(),
-        '2': pollFactory({
+        '1': pollFactoryImmutable(),
+        '2': pollFactoryImmutable({
           voted: true,
           voters_count: 1,
           votes_count: 1,
@@ -485,10 +295,96 @@ const meta = {
         },
       },
     },
+    stateFn({
+      text: textBase,
+      tags: tagsStr,
+      contentWarning,
+      visibility,
+      attachment1,
+      attachment2,
+      attachment3,
+      hasBookmarked,
+      hasFavourited,
+      hasReblogged,
+      isQuote,
+      isReply,
+      favouriteCount,
+      reblogCount,
+      replyCount,
+      showTranslate,
+    }: StatusStoryProps) {
+      const account = accountFactoryImmutable();
+
+      const tags = tagsStr
+        .split(',')
+        .map((tagStr) => {
+          const tag = tagStr.trim().replace(/^#/, '');
+          if (!tag) {
+            return null;
+          }
+          return {
+            name: tag,
+            url: `https://example.com/tags/${tag}`,
+          };
+        })
+        .filter((tag) => !!tag);
+
+      let text = textBase.trim();
+      if (tags.length > 0) {
+        const tagText = tags
+          .map((tag) => `<a href="${tag.url}" rel="tag">#${tag.name}</a>`)
+          .join(' ');
+        text += `\n${tagText}`;
+      }
+
+      const status = statusFactoryImmutable({
+        text,
+        spoiler_text: contentWarning,
+        visibility,
+        media_attachments: attachmentFactory(
+          attachment1,
+          attachment2,
+          attachment3,
+        ),
+        tags,
+        reblogged: hasReblogged,
+        favourited: hasFavourited,
+        bookmarked: hasBookmarked,
+        in_reply_to_account_id: isReply ? '2' : undefined,
+        in_reply_to_id: isReply ? '2' : undefined,
+        quote: isQuote
+          ? {
+              state: 'accepted',
+              quoted_status: { ...statusFactoryAPI(), quote: undefined },
+            }
+          : undefined,
+        favourites_count: favouriteCount,
+        reblogs_count: reblogCount,
+        replies_count: replyCount,
+        language: showTranslate ? 'xx' : undefined,
+      });
+
+      return {
+        statuses: {
+          '1': status,
+        },
+        accounts: {
+          '1': account,
+        },
+      };
+    },
     controls: {
       disableSaveFromUI: true,
     },
+    redesign: true,
   },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 'min(600px, 80vw)' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof StatusStoryComponent>;
 
 export default meta;
@@ -510,25 +406,42 @@ export const LongText: Story = {
       'It is here to test what a longer status looks like.',
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      'Curabitur pretium tincidunt lacus, nulla gravida orci a odio.',
+      'Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.',
+      'Integer in mauris eu nibh euismod gravida, duis ac tellus et risus vulputate vehicula.',
+      'Donec lobortis risus a elit, etiam tempor.',
+      'Vestibulum commodo volutpat a, convallis ac, laoreet enim.',
+      'Phasellus fermentum in, dolor pellentesque facilisis.',
+      'Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim.',
+      'Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est.',
+      'Sed lectus, suspendisse varius enim in eros elementum tristique.',
+      'Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.',
+      'Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet.',
+      'Nunc ut sem vitae risus tristique posuere.',
     ].join('\n'),
   },
 };
 
 export const Images: Story = {
   args: {
-    attachments: 'image-3',
+    attachment1: 'image',
+    attachment2: 'image',
+    attachment3: 'image',
   },
 };
 
 export const Video: Story = {
   args: {
-    attachments: 'video',
+    attachment1: 'video',
   },
 };
 
 export const Audio: Story = {
   args: {
-    attachments: 'audio',
+    attachment1: 'audio',
   },
 };
 

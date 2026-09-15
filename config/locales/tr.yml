@@ -64,12 +64,18 @@ tr:
       custom: Özel
       delete: Veriyi sil
       deleted: Silindi
+      deletion_irreversible: Bu hesaba ait veriler geri dönüşümsüz bir şekilde silindi.
+      deletion_reversible_hint_html: Bu hesap silinme sürecindedir ve veriler %{date} tarihinde tamamen silinecektir.
       demote: Düşür
       destroyed_msg: "%{username} adlı kullanıcının verilerinin silinmesi sıraya alındı"
       disable: Dondur
       disable_sign_in_token_auth: E-posta token doğrulamayı devre dışı bırak
       disable_two_factor_authentication: 2 aşamalı doğrulamayı kapat
       disabled: Kapalı
+      discoverable:
+        disabled: Yazar keşfedilebilir olmamayı seçiyor
+        enabled: Yazar keşfedilebilir olmayı seçiyor
+        title: Keşfedilebilir
       display_name: Görünen isim
       domain: Alan adı
       edit: Düzenle
@@ -79,6 +85,12 @@ tr:
       enable_sign_in_token_auth: E-posta token doğrulamayı etkinleştir
       enabled: Etkin
       enabled_msg: "%{username} hesabı başarıyla çözüldü"
+      follow_recommendations:
+        allowed: İzin verildi
+        suppress: Herhangi bir takip önerisini baskıla
+        suppressed: Baskılandı
+        title: Takip önerileri
+        unsuppress: Herhangi bir takip önerisini geri getir
       followers: Takipçi
       follows: Takip edilen
       header: Üstbilgi
@@ -163,6 +175,12 @@ tr:
       suspension_irreversible: Bu hesabın verileri geri dönüşümsüz olarak silindi. Hesabı kullanılabilir hale getirmek için hesabın askıya alınmasını kaldırabilirsiniz, ancak daha önce sahip olduğu herhangi bir veri kurtarılamaz.
       suspension_reversible_hint_html: Hesap askıya alındı ve veriler %{date} tarihinde tamamen kaldırılacak. O zamana kadar, hesap herhangi bir olumsuz etki olmaksızın geri yüklenebilir. Hesabın tüm verilerini hemen kaldırmak isterseniz, bunu aşağıdan yapabilirsiniz.
       title: Hesaplar
+      trends:
+        allow: İzin ver
+        allowed: İzin verildi
+        disallow: İzin verilmesin
+        disallowed: İzin verilmedi
+        title: Öne çıkan gönderiler
       unblock_email: E-posta adresinin engelini kaldır
       unblocked_email_msg: "%{username} kişisinin e-posta adresinin engeli başarıyla kaldırıldı"
       unconfirmed_email: Onaylanmamış e-posta
@@ -289,7 +307,11 @@ tr:
         enable_relay_html: "%{name}, %{target} aktarıcısını etkinleştirdi"
         enable_sign_in_token_auth_user_html: "%{name}, %{target} için e-posta token doğrulamayı etkinleştirdi"
         enable_user_html: "%{name}, %{target} kullanıcısı için oturum açmayı etkinleştirdi"
+        listable_tag_html: önerilebilir
         memorialize_account_html: "%{name}, %{target} kullanıcısının hesabını bir anıt sayfaya dönüştürdü"
+        not_listable_tag_html: önerilmeyecek
+        not_trendable_tag_html: öne çıkanlar altında görünmeyecek
+        not_usable_tag_html: kullanılamaz
         promote_user_html: "%{name}, %{target} kullanıcısını yükseltti"
         publish_terms_of_service_html: "%{name} hizmet şartları güncellemelerini yayınladı"
         reject_appeal_html: "%{name}, %{target} kullanıcısının yönetim kararına itirazını reddetti"
@@ -302,6 +324,7 @@ tr:
         sensitive_account_html: "%{name}, %{target} kullanıcısının medyasını hassas olarak işaretledi"
         silence_account_html: "%{name}, %{target} kullanıcısının hesabını sessize aldı"
         suspend_account_html: "%{name}, %{target} kullanıcısının hesabını askıya aldı"
+        trendable_tag_html: öne çıkanlar altında görünebilir
         unassigned_report_html: "%{name}, %{target} şikayetinin atamasını kaldırdı"
         unblock_email_account_html: "%{name}, %{target} kişisinin e-posta adresinin engelini kaldırdı"
         unsensitive_account_html: "%{name}, %{target} kullanıcısının medyasının hassas işaretini kaldırdı"
@@ -314,8 +337,10 @@ tr:
         update_ip_block_html: "%{name}, %{target} IP adresi için kuralı güncelledi"
         update_report_html: "%{name}, %{target} raporunu güncelledi"
         update_status_html: "%{name}, %{target} kullanıcısının gönderisini güncelledi"
+        update_tag_html: "%{name}, %{target} ayarlarını değiştirdi: "
         update_user_role_html: "%{name}, %{target} rolünü değiştirdi"
         update_username_block_html: "%{name}, %{target} içeren kullanıcı adları için kural güncellendi"
+        usable_tag_html: kullanılabilir;
       deleted_account: hesap silindi
       empty: Kayıt bulunamadı.
       filter_by_action: Eyleme göre filtre
@@ -1006,13 +1031,17 @@ tr:
       critical_update: Kritik — lütfen hemen güncelleyin
       description: Son düzeltme ve özelliklerden yararlanmak için Mastodon kurulumunu güncel tutmanızı öneriyoruz. Üstelik güvenlik sorunlarından kaçınmak için Mastodon'u zamanında güncellemek kritiktir. Bu nedenlerle Mastodon her 30 dakikada bir güncellemeleri denetler ve e-posta bildirim seçeneğinize göre size haber verir.
       documentation_link: Daha fazlası
+      nearing_eol: Şu anda kullandığınız sürümün desteği %{date} tarihinde sona erecektir; lütfen güncellemeyi düşünün.
       release_notes: Sürüm notları
+      supported_until: Destek %{date} tarihinde bitiyor
       title: Mevcut güncellemeler
       type: Tür
       types:
         major: Ana sürüm
         minor: Alt sürüm
         patch: Yama sürümü — hata düzeltmeleri ve uygulaması kolay değişiklikler
+      unsupported_branch: Şu anda çalıştırdığınız dal desteklenmiyor; lütfen en kısa sürede güncelleme yapın.
+      unsupported_since: "%{date} tarihinden beri desteklenmiyor"
       version: Sürüm
     statuses:
       account: Yazar
@@ -1177,7 +1206,9 @@ tr:
           one: Geçen hafta bir kişi paylaştı
           other: Geçen hafta %{count} kişi paylaştı
         title: Öne çıkan bağlantılar
-        usage_comparison: Bugün %{today} kere paylaşıldı, dün %{yesterday} kere paylaşılmıştı
+        usage_comparison:
+          one: Bugün %{count} kere paylaşıldı, dün %{yesterday} kere paylaşılmıştı
+          other: Bugün %{count} kere paylaşıldı, dün %{yesterday} kere paylaşılmıştı
       not_allowed_to_trend: Öne çıkma izni yok
       only_allowed: Sadece izin verilenler
       pending_review: İnceleme bekliyor
@@ -1222,12 +1253,15 @@ tr:
         trendable: Öne çıkanlar altında görünebilir
         trending_rank: 'Öne çıkanlar #%{rank}'
         usable: Kullanılabilir
-        usage_comparison: Bugün %{today} kere kullanıldı, dün %{yesterday} kere kullanılmıştı
+        usage_comparison:
+          one: Bugün %{count} kere kullanıldı, dün %{yesterday} kere kullanılmıştı
+          other: Bugün %{count} kere kullanıldı, dün %{yesterday} kere kullanılmıştı
         used_by_over_week:
           one: Geçen hafta bir kişi tarafından kullanıldı
           other: Geçen hafta %{count} kişi tarafından kullanıldı
       title: Öneriler ve Öne Çıkanlar
       trending: Öne çıkanlar
+    update_available: Güncelleme var
     username_blocks:
       add_new: Yeni ekle
       block_registrations: Kayıtları engelle
@@ -1277,6 +1311,15 @@ tr:
     auto_close_registrations:
       body: Son zamanlardaki moderatör faaliyeti eksikliğinden dolayı, %{instance} üzerindeki kayıtlar, %{instance} sunucusunun olası kötü aktörler tarafından bir platform olarak kullanımını engellemek için otomatik olarak elle onay gerektirecek şekilde değiştirilmiştir. İstediğiniz zaman açık kayıtlara çevirebilirsiniz.
       subject: "%{instance} üzerindeki kayıtlar otomatik olarak onay gerektirecek şekilde değiştirilmiştir"
+    end_of_support_out_of_support_warning:
+      body: Sunucunuzda şu anda kullanılan Mastodon sürümü artık desteklenmiyor. En kısa zamanda güncelleme yapmanızı öneririz!
+      subject: "%{instance} üzerinde kullanılan Mastodon %{branch} artık desteklenmiyor!"
+    end_of_support_three_months_warning:
+      body: Sunucunuzda şu anda kullanılmakta olan Mastodon sürümü, 3 ay sonra desteklenmeyecek. İsterseniz, önceden daha yeni bir dala güncelleme yapabilirsiniz.
+      subject: "%{instance} üzerinde kullanılan Mastodon %{branch} desteği 3 ay sonra sona erecek."
+    end_of_support_two_weeks_warning:
+      body: Sunucunuzda şu anda kullanılmakta olan Mastodon sürümü, 2 hafta sonra desteklenmeyecek. Zamanında daha yeni bir dala geçmenizi öneririz.
+      subject: "%{instance} üzerinde kullanılan Mastodon %{branch} desteği 2 hafta sonra sona erecek."
     new_appeal:
       actions:
         delete_statuses: gönderilerini silme
@@ -1573,6 +1616,7 @@ tr:
       content: Üzgünüz, ancak bir şey ters gitti.
       title: Bu sayfa doğru değil
     '503': Geçici sunucu hatası nedeniyle sayfa görüntülenemedi.
+    go_home: Ana sayfaya git
     noscript_html: Mastodon web uygulamasını kullanmak için lütfen JavaScript'i etkinleştirin. Alternatif olarak, platformunuz için Mastodon <a href="%{apps_path}">yerel uygulamalardan</a> birini deneyin.
   existing_username_validator:
     not_found: bu kullanıcı adına sahip yerel bir kullanıcı bulunamadı
@@ -1669,7 +1713,10 @@ tr:
       incompatible_type: Seçilen içe aktarma türüyle uyumsuz
       invalid_csv_file: 'Geçersiz CSV dosyası. Hata: %{error}'
       invalid_json_file: 'Geçersiz JSON dosyası. Hata: %{error}'
-      over_rows_processing_limit: "%{count} satırdan fazlasını içeriyor"
+      no_data: Bu dosya, belirtilen içe aktarma türüne uyan herhangi bir veri içermemektedir
+      over_rows_processing_limit:
+        one: "%{count} satırdan fazlasını içeriyor"
+        other: "%{count} satırdan fazlasını içeriyor"
       status_not_found_warning: Filtrelerinizden bazıları, bu sunucu tarafından tanınmayan belirli gönderileri gizler. Bu gönderiler, daha sonra sunucu tarafından tespit edildiklerinde otomatik olarak filtrelenmeyecektir.
       too_large: Dosya çok büyük
     failures: Başarısızlıklar
@@ -1820,7 +1867,9 @@ tr:
     incoming_migrations_html: Başka bir hesaptan bu hesaba taşınmak için önce bir <a href="%{path}">hesap takma adı oluşturmanız</a> gerekmektedir.
     moved_msg: Hesabınız şimdi %{acct} adresine yönlendiriliyor ve takipçileriniz taşınıyor.
     not_redirecting: Hesabınız şu anda başka bir hesaba yönlendirilmemektedir.
-    on_cooldown: Son zamanlarda hesabınızı taşıdınız. Bu işlev %{count} gün içinde tekrar kullanılabilir olacaktır.
+    on_cooldown:
+      one: Son zamanlarda hesabınızı taşıdınız. Bu işlev %{count} gün içinde tekrar kullanılabilir olacaktır.
+      other: Son zamanlarda hesabınızı taşıdınız. Bu işlev %{count} gün içinde tekrar kullanılabilir olacaktır.
     past_migrations: Geçmiş taşınmalar
     proceed_with_move: Takipçileri taşı
     redirected_msg: Hesabınız artık %{acct} adresine yönlendiriliyor.
@@ -1912,6 +1961,7 @@ tr:
     administration_emails: Yönetici e-posta bildirimleri
     email_events: E-posta bildirimi etkinlikleri
     email_events_hint: 'Bildirim almak istediğiniz olayları seçin:'
+    moderation_emails: Moderasyon e-posta bildirimleri
   number:
     human:
       decimal_units:
@@ -1935,7 +1985,7 @@ tr:
     next: Sonraki
     older: Daha eski
     prev: Önceki
-    truncate: "&hellip;"
+    truncate_html: "&hellip;"
   polls:
     errors:
       already_voted: Bu ankete daha önce oy verdiniz
@@ -2007,8 +2057,12 @@ tr:
       account: "@%{acct} hesabından herkese açık gönderiler"
       tag: "#%{hashtag} etiketli herkese açık gönderiler"
   scheduled_statuses:
-    over_daily_limit: Bugün için %{limit} zamanlanmış gönderi sınırını aştınız
-    over_total_limit: "%{limit} zamanlanmış gönderi sınırını aştınız"
+    over_daily_limit:
+      one: Bugün için %{count} zamanlanmış gönderi sınırını aştınız
+      other: Bugün için %{count} zamanlanmış gönderi sınırını aştınız
+    over_total_limit:
+      one: "%{count} zamanlanmış gönderi sınırını aştınız"
+      other: "%{count} zamanlanmış gönderi sınırını aştınız"
     too_soon: tarih ileri bir tarih olmalıdır
   self_destruct:
     lead_html: Maalesef <strong>%{domain}</strong> kalıcı olarak kapanıyor. Eğer orada hesabınız varsa, onu kullanmaya devam edemeyeceksiniz, ancak yine de verinizin bir yedeğini isteyebilirsiniz.

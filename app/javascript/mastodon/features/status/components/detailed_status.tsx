@@ -441,8 +441,12 @@ export const DetailedStatus: React.FC<{
           </div>
         )}
         <Link
-          to={`/@${status.getIn(['account', 'acct'])}`}
+          to={{
+            pathname: `/@${status.getIn(['account', 'acct'])}`,
+            state: { reference: 'status' },
+          }}
           data-hover-card-account={status.getIn(['account', 'id'])}
+          data-hover-card-reference='status'
           className='detailed-status__display-name'
         >
           <div className='detailed-status__display-avatar'>
@@ -471,7 +475,7 @@ export const DetailedStatus: React.FC<{
 
         {(!matchedFilters || showDespiteFilter) && (
           <ContentWarning
-            status={status}
+            statusId={status.get('id')}
             expanded={expanded}
             onClick={handleExpandedToggle}
           />

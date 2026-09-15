@@ -2,7 +2,10 @@ import type { ComponentPropsWithoutRef, FC } from 'react';
 
 import type { LinkProps } from 'react-router-dom';
 
-import type { Account } from '@/flavours/glitch/models/account';
+import type {
+  Account,
+  AccountShapeFull,
+} from '@/flavours/glitch/models/account';
 import { Permalink } from 'flavours/glitch/components/permalink';
 
 import { DisplayNameDefault } from './default';
@@ -10,7 +13,7 @@ import { DisplayNameWithoutDomain } from './no-domain';
 import { DisplayNameSimple } from './simple';
 
 export interface DisplayNameProps {
-  account?: Account;
+  account?: Account | AccountShapeFull | null;
   localDomain?: string;
   variant?: 'default' | 'simple' | 'noDomain';
 }
@@ -29,8 +32,9 @@ export const DisplayName: FC<
 export const LinkedDisplayName: FC<
   Omit<LinkProps, 'to'> & {
     displayProps: DisplayNameProps & ComponentPropsWithoutRef<'span'>;
+    reference?: string;
   }
-> = ({ displayProps, children, ...linkProps }) => {
+> = ({ displayProps, reference, children, ...linkProps }) => {
   const { account } = displayProps;
   if (!account) {
     return <DisplayName {...displayProps} />;
@@ -39,10 +43,11 @@ export const LinkedDisplayName: FC<
   return (
     <Permalink
       href={account.url}
-      to={`/@${account.acct}`}
+      to={{ pathname: `/@${account.acct}`, state: { reference } }}
       title={`@${account.acct}`}
       data-id={account.id}
       data-hover-card-account={account.id}
+      data-hover-card-reference={reference}
       {...linkProps}
     >
       {children}

@@ -64,12 +64,18 @@ fi:
       custom: Mukautettu
       delete: Poista tiedot
       deleted: Poistettu
+      deletion_irreversible: Tämä tilin tiedot on poistettu peruuttamattomasti.
+      deletion_reversible_hint_html: Tämä tili odottaa poistoa, ja tiedot poistetaan kokonaan %{date}.
       demote: Alenna
       destroyed_msg: Käyttäjän %{username} tiedot ovat nyt jonossa poistettavaksi välittömästi
       disable: Jäädytä
       disable_sign_in_token_auth: Poista sähköpostitunnuksella todennus käytöstä
       disable_two_factor_authentication: Poista kaksivaiheinen todennus käytöstä
       disabled: Jäädytetty
+      discoverable:
+        disabled: Tekijä ei ole valinnut olevansa löydettävissä
+        enabled: Tekijä on valinnut olevansa löydettävissä
+        title: Löydettävissä
       display_name: Näyttönimi
       domain: Verkkotunnus
       edit: Muokkaa
@@ -79,6 +85,12 @@ fi:
       enable_sign_in_token_auth: Ota sähköpostitunnuksella todennus käyttöön
       enabled: Käytössä
       enabled_msg: Käyttäjän %{username} tilin jäädytys kumottiin onnistuneesti
+      follow_recommendations:
+        allowed: Sallittu
+        suppress: Hylkää seurantasuositus
+        suppressed: Hylätty
+        title: Seurantasuositukset
+        unsuppress: Palauta seurantasuositus
       followers: Seuraajat
       follows: Seurattavat
       header: Otsakekuva
@@ -163,6 +175,12 @@ fi:
       suspension_irreversible: Tämän tilin tiedot on poistettu peruuttamattomasti. Voit kumota tilin jäädytyksen, jolloin siitä tulee käyttökelpoinen, mutta toiminto ei palauta sillä aiemmin olleita tietoja.
       suspension_reversible_hint_html: Tili on jäädytetty, ja tiedot poistetaan kokonaan %{date}. Siihen asti tili voidaan palauttaa ongelmitta. Jos haluat poistaa kaikki tilin tiedot heti, onnistuu se alta.
       title: Tilit
+      trends:
+        allow: Salli
+        allowed: Sallittu
+        disallow: Kiellä
+        disallowed: Kielletty
+        title: Suositut julkaisut
       unblock_email: Kumoa sähköpostiosoitteen esto
       unblocked_email_msg: Käyttäjän %{username} sähköpostiosoitteen esto kumottiin
       unconfirmed_email: Vahvistamaton sähköpostiosoite
@@ -289,7 +307,11 @@ fi:
         enable_relay_html: "%{name} otti välittäjän %{target} käyttöön"
         enable_sign_in_token_auth_user_html: "%{name} otti sähköpostitunnuksella todennuksen käyttöön käyttäjälle %{target}"
         enable_user_html: "%{name} otti kirjautumisen käyttöön käyttäjälle %{target}"
+        listable_tag_html: voidaan ehdottaa
         memorialize_account_html: "%{name} muutti käyttäjän %{target} tilin muistosivuksi"
+        not_listable_tag_html: ei ehdoteta
+        not_trendable_tag_html: ei näy trendeissä
+        not_usable_tag_html: ei voida käyttää
         promote_user_html: "%{name} ylensi käyttäjän %{target}"
         publish_terms_of_service_html: "%{name} julkaisi päivityksiä käyttöehtoihin"
         reject_appeal_html: "%{name} hylkäsi käyttäjän %{target} valituksen moderointipäätöksestä"
@@ -302,6 +324,7 @@ fi:
         sensitive_account_html: "%{name} merkitsi käyttäjän %{target} median arkaluonteiseksi"
         silence_account_html: "%{name} rajoitti käyttäjän %{target} tiliä"
         suspend_account_html: "%{name} jäädytti käyttäjän %{target} tilin"
+        trendable_tag_html: voi näkyä trendeissä
         unassigned_report_html: "%{name} poisti raportin %{target} käsittelystä"
         unblock_email_account_html: "%{name} kumosi käyttäjän %{target} sähköpostiosoitteen eston"
         unsensitive_account_html: "%{name} kumosi käyttäjän %{target} median arkaluonteisuusmerkinnän"
@@ -314,8 +337,10 @@ fi:
         update_ip_block_html: "%{name} muutti IP-⁠osoitteen %{target} sääntöä"
         update_report_html: "%{name} päivitti raportin %{target}"
         update_status_html: "%{name} päivitti käyttäjän %{target} julkaisun"
+        update_tag_html: "%{name} muutti tunnisteen %{target} asetuksia: "
         update_user_role_html: "%{name} muutti roolia %{target}"
         update_username_block_html: "%{name} päivitti säännön käyttäjänimille, joihin sisältyy %{target}"
+        usable_tag_html: voidaan käyttää;
       deleted_account: poisti tilin
       empty: Lokeja ei löytynyt.
       filter_by_action: Suodata toimen mukaan
@@ -724,6 +749,8 @@ fi:
       new:
         title: Luo uusi IP-⁠sääntö
       no_ip_block_selected: IP-sääntöjä ei muutettu, koska yhtään ei ollut valittuna
+      reset: Palauta
+      search: Hae
       title: IP-säännöt
     relationships:
       title: Tilin %{acct} seurantasuhteet
@@ -999,12 +1026,14 @@ fi:
       description: On suositeltavaa pitää Mastodon-asennus ajantasaisena ja siten hyödyntää uusimpia korjauksia sekä ominaisuuksia. Lisäksi joskus on ratkaisevan tärkeää päivittää Mastodon ajoissa tietoturvaongelmien välttämiseksi. Näistä syistä Mastodon tarkistaa päivitykset 30 minuutin välein, ja ilmoittaa sinulle sähköposti-ilmoitusasetustesi mukaisesti.
       documentation_link: Lue lisää
       release_notes: Julkaisutiedot
+      supported_until: Tuki päättyy %{date}
       title: Saatavilla olevat päivitykset
       type: Tyyppi
       types:
         major: Pääversiojulkaisu
         minor: Väliversiojulkaisu
         patch: Korjausjulkaisu — korjauksia virheisiin sekä yksinkertaisia muutoksia
+      unsupported_since: Tuki päättynyt %{date}
       version: Versio
     statuses:
       account: Tekijä
@@ -1169,7 +1198,9 @@ fi:
           one: Jakanut yksi käyttäjä viimeisen viikon aikana
           other: Jakanut %{count} käyttäjää viimeisen viikon aikana
         title: Suositut linkit
-        usage_comparison: Jaettu tänään %{today} kertaa verrattuna eilisen %{yesterday} kertaan
+        usage_comparison:
+          one: Jaettu tänään %{count} kerran verrattuna eilisen %{yesterday} kertaan
+          other: Jaettu tänään %{count} kertaa verrattuna eilisen %{yesterday} kertaan
       not_allowed_to_trend: Ei saa trendata
       only_allowed: Vain sallittu
       pending_review: Odottaa tarkastusta
@@ -1214,12 +1245,15 @@ fi:
         trendable: Voi näkyä trendeissä
         trending_rank: Suosittu, sijalla %{rank}
         usable: Voi käyttää
-        usage_comparison: Käytetty tänään %{today} kertaa, verrattuna elisen %{yesterday} kertaan
+        usage_comparison:
+          one: Käytetty tänään %{count} kerran verrattuna eilisen %{yesterday} kertaan
+          other: Käytetty tänään %{count} kertaa verrattuna eilisen %{yesterday} kertaan
         used_by_over_week:
           one: Käyttänyt yksi käyttäjä viimeisen viikon aikana
           other: Käyttänyt %{count} käyttäjää viimeisen viikon aikana
       title: Suositukset ja trendit
       trending: Trendaus
+    update_available: Päivitys saatavilla
     username_blocks:
       add_new: Lisää uusi
       block_registrations: Estä rekisteröitymiset
@@ -1565,6 +1599,7 @@ fi:
       content: Valitettavasti jotain meni pieleen meidän päässämme.
       title: Sivu ei ole oikein
     '503': Sivua ei voitu näyttää palvelimen väliaikaisen vian vuoksi.
+    go_home: Siirry kotiin
     noscript_html: Käyttääksesi Mastodonin verkkosovellusta, ota JavaScript käyttöön. Vaihtoehtoisesti voit kokeilla käyttämällesi alustalle kehitettyjä Mastodonin <a href="%{apps_path}">natiivisovelluksia</a>.
   existing_username_validator:
     not_found: paikallista käyttäjää ei löydy kyseisellä käyttäjänimellä
@@ -1661,7 +1696,10 @@ fi:
       incompatible_type: Yhteensopimaton valitun tuontityypin kanssa
       invalid_csv_file: 'Epäkelpo CSV-tiedosto. Virhe: %{error}'
       invalid_json_file: 'Epäkelpo JSON-tiedosto. Virhe: %{error}'
-      over_rows_processing_limit: sisältää yli %{count} riviä
+      no_data: Tämä tiedosto ei sisällä dataa, joka vastaa annettua tuontityyppiä
+      over_rows_processing_limit:
+        one: sisältää yli %{count} rivin
+        other: sisältää yli %{count} riviä
       too_large: Tiedosto on liian suuri
     failures: Virheet
     imported: Tuodut
@@ -1697,6 +1735,9 @@ fi:
       bookmarks_html:
         one: Olet aikeissa lisätä kaikkiaan <strong>%{count} julkaisun</strong> tiedostosta <strong>%{filename}</strong><strong>kirjanmerkkeihisi</strong>.
         other: Olet aikeissa lisätä kaikkiaan <strong>%{count} julkaisua</strong> tiedostosta <strong>%{filename}</strong><strong>kirjanmerkkeihisi</strong>.
+      custom_filters_html:
+        one: Olet aikeissa lisätä kaikkiaan <strong>%{count} suodattimen</strong> tiedostosta <strong>%{filename}</strong> <strong>suodattimiisi</strong>.
+        other: Olet aikeissa lisätä kaikkiaan <strong>%{count} suodatinta</strong> tiedostosta <strong>%{filename}</strong> <strong>suodattimiisi</strong>.
       domain_blocking_html:
         one: Olet aikeissa <strong>estää</strong> kaikkiaan <strong>%{count} verkkotunnuksen</strong> tiedostosta <strong>%{filename}</strong>.
         other: Olet aikeissa <strong>estää</strong> kaikkiaan <strong>%{count} verkkotunnusta</strong> tiedostosta <strong>%{filename}</strong>.
@@ -1805,7 +1846,9 @@ fi:
     incoming_migrations_html: Muuttaaksesi toisesta tilistä tähän, sinun täytyy ensin <a href="%{path}">luoda tilin alias</a>.
     moved_msg: Tilisi ohjaa nyt kohteeseen %{acct} ja seuraajiasi siirretään.
     not_redirecting: Tilisi ei ohjaa tällä hetkellä mihinkään muuhun tiliin.
-    on_cooldown: Olet siirtänyt tilisi äskettäin. Tämä toiminto tulee saataville uudelleen %{count} päivän kuluttua.
+    on_cooldown:
+      one: Olet siirtänyt tilisi äskettäin. Tämä toiminto tulee saataville uudelleen %{count} päivän kuluttua.
+      other: Olet siirtänyt tilisi äskettäin. Tämä toiminto tulee saataville uudelleen %{count} päivän kuluttua.
     past_migrations: Edelliset migraatiot
     proceed_with_move: Siirrä seuraajat
     redirected_msg: 'Tilisi uudelleenohjaa nyt kohteeseen: %{acct}.'
@@ -1919,7 +1962,7 @@ fi:
     next: Seuraava
     older: Vanhemmat
     prev: Edellinen
-    truncate: "&hellip;"
+    truncate_html: "&hellip;"
   polls:
     errors:
       already_voted: Olet jo osallistunut tähän äänestykseen
@@ -1991,8 +2034,12 @@ fi:
       account: Julkiset julkaisut tililtä @%{acct}
       tag: 'Julkiset julkaisut aihetunnisteella #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Olet ylittänyt %{limit} ajastetun julkaisun rajan tälle päivälle
-    over_total_limit: Olet ylittänyt %{limit} ajastetun julkaisun rajan
+    over_daily_limit:
+      one: Olet ylittänyt päivittäisen %{count} ajastetun julkaisun rajan
+      other: Olet ylittänyt päivittäisen %{count} ajastetun julkaisun rajan
+    over_total_limit:
+      one: Olet ylittänyt %{count} ajastetun julkaisun rajan
+      other: Olet ylittänyt %{count} ajastetun julkaisun rajan
     too_soon: päivämäärän on oltava tulevaisuudessa
   self_destruct:
     lead_html: Valitettavasti <strong>%{domain}</strong> sulkeutuu pysyvästi. Jos sinulla on siellä tili, et voi jatkaa sen käyttöä mutta voit yhä pyytää varmuuskopiota tiedoistasi.
@@ -2267,7 +2314,7 @@ fi:
       description: 'Sait tämän sähköpostiviestin, koska muutamme palvelun %{domain} käyttöehtoja. Muutokset tulevat voimaan %{date}. Kehotamme tutustumaan päivitettyihin ehtoihin kokonaisuudessaan täällä:'
       description_html: Sait tämän sähköpostiviestin, koska muutamme palvelun %{domain} käyttöehtoja. Muutokset tulevat voimaan <strong>%{date}</strong>. Kehotamme tutustumaan <a href="%{path}" target="_blank">päivitettyihin ehtoihin kokonaisuudessaan täällä</a>.
       sign_off: Palvelimen %{domain} tiimi
-      subject: Käyttöehtojemme päivitykset
+      subject: Päivityksiä käyttöehtoihimme
       subtitle: Palvelimen %{domain} käyttöehdot muuttuvat
       title: Tärkeä päivitys
     warning:

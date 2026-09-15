@@ -15,8 +15,6 @@
 #
 
 class CustomFilter < ApplicationRecord
-  self.ignored_columns += %w(whole_word irreversible)
-
   alias_attribute :title, :phrase
   alias_attribute :filter_action, :action
 
@@ -68,6 +66,8 @@ class CustomFilter < ApplicationRecord
   end
 
   def self.cached_filters_for(account_id)
+    raise ArgumentError unless account_id.is_a?(String) || account_id.is_a?(Integer)
+
     active_filters = Rails.cache.fetch("filters:v3:#{account_id}") do
       filters_hash = {}
 

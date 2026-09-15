@@ -64,6 +64,8 @@ sq:
       custom: Vetjake
       delete: Fshiji të dhënat
       deleted: U fshi
+      deletion_irreversible: Të dhënat e kësaj llogarie janë fshirë në mënyrë të pakthyeshme.
+      deletion_reversible_hint_html: Kjo llogari është në pritje të fshirjes dhe të dhënat do të hiqen plotësisht më %{date}.
       demote: Zhgradoje
       destroyed_msg: Të dhënat e %{username} tani janë vënë në radhë për fshirje të menjëhershme
       disable: Çaktivizoje
@@ -289,7 +291,11 @@ sq:
         enable_relay_html: "%{name} aktivizoi relenë %{target}"
         enable_sign_in_token_auth_user_html: "%{name} aktivizoi mirëfilltësim me token email për %{target}"
         enable_user_html: "%{name} aktivizoi hyrje për përdoruesin %{target}"
+        listable_tag_html: mund të sugjerohet
         memorialize_account_html: "%{name} e shndërroi llogarinë e %{target} në një faqe përkujtimore"
+        not_listable_tag_html: s’do të sugjerohet
+        not_trendable_tag_html: s’do të shfaqet nën gjëra në modë
+        not_usable_tag_html: s’mund të përdoret
         promote_user_html: "%{name} gradoi përdoruesin %{target}"
         publish_terms_of_service_html: "%{name} botoi përditësime të kushteve të shërbimit"
         reject_appeal_html: "%{name} hodhi poshtë apelim vendimi moderimi nga %{target}"
@@ -302,6 +308,7 @@ sq:
         sensitive_account_html: "%{name} i vuri shenjë si rezervat medias në %{target}"
         silence_account_html: "%{name} heshtoi llogarinë e %{target}"
         suspend_account_html: "%{name} pezulloi llogarinë e %{target}"
+        trendable_tag_html: mund të shfaqet nën gjëra nën modë
         unassigned_report_html: "%{name} rihapi raportimin %{target}"
         unblock_email_account_html: "%{name} zhbllokoi adresën email të %{target}"
         unsensitive_account_html: "%{name} ia hoqi shenjën si rezervat medias në %{target}"
@@ -314,8 +321,10 @@ sq:
         update_ip_block_html: "%{name} ndryshoi rregull për IP-në %{target}"
         update_report_html: "%{name} përditësoi raportimin %{target}"
         update_status_html: "%{name} përditësoi gjendjen me %{target}"
+        update_tag_html: "%{name} ndryshoi rregullime %{target} në: "
         update_user_role_html: "%{name} ndryshoi rolin për %{target}"
         update_username_block_html: "%{name} përditësoi rregull për emra përdoruesish që përmbajnë %{target}"
+        usable_tag_html: mund të përdoret;
       deleted_account: fshiu llogarinë
       empty: S’u gjetën regjistra.
       filter_by_action: Filtroji sipas veprimit
@@ -726,6 +735,8 @@ sq:
       new:
         title: Krijoni rregull IP të ri
       no_ip_block_selected: S’u ndryshua ndonjë rregull IP, ngaqë s’u përzgjodh ndonjë i tillë
+      reset: Riktheje te parazgjedhjet
+      search: Kërko
       title: Rregulla IP
     relationships:
       title: Marrëdhënie të %{acct}
@@ -996,13 +1007,17 @@ sq:
       critical_update: Kritik — ju lutemi, përditësojeni pa humbur kohë
       description: Rekomandohet ta mbani të përditësuar instalimin tuaj të Mastodon-it, që të përfitoni nga ndreqjet dhe veçoritë më të reja. Për më tej, ndonjëherë është kritike të përditësohet Mastodon-i në kohën e duhur, për të shmangur probleme sigurie. Për këto arsye, Mastodon-i kontrollon për përditësime çdo 30 minuta dhe do t’ju njoftojë, sipas parapëlqimeve tuaja për njoftime me email.
       documentation_link: Mësoni më tepër
+      nearing_eol: Mbulii i degës që xhironi aktualisht do të reshtë së funksionuari më %{date}, ju lutemi, shihni mundësinë e përditësimit.
       release_notes: Shënime hedhjeje në qarkullim
+      supported_until: Asistenca përfundon më %{date}
       title: Përditësime të gatshme
       type: Lloj
       types:
         major: Hedhje e rëndësishme në qarkullim
         minor: Hedhje e vockël në qarkullim
         patch: Hedhje në qarkullim arnimesh — ndreqje të metash dhe ndryshime të lehta për t’u aplikuar
+      unsupported_branch: Dega që xhironi aktualisht nuk mbulohet, ju lutemi, përditësojeni sa më shpejt që të jetë e mundur.
+      unsupported_since: I pambuluar që prej %{date}
       version: Version
     statuses:
       account: Autor
@@ -1165,7 +1180,6 @@ sq:
           one: Ndarë me të tjerë nga një person gjatë javës së kaluar
           other: Ndarë me të tjerë nga %{count} vetë gjatë javës së kaluar
         title: Lidhje në modë
-        usage_comparison: Ndarë %{today} herë sot, kundrejt %{yesterday} dje
       only_allowed: Lejuar vetëm
       pending_review: Në pritje të shqyrtimit
       preview_card_providers:
@@ -1209,12 +1223,12 @@ sq:
         trendable: Mund të shfaqet nën të modës
         trending_rank: 'Trending #%{rank}'
         usable: Mund të përdoret
-        usage_comparison: Përdorur %{today} herë sot, krahasuar me %{yesterday} dje
         used_by_over_week:
           one: Përdorur nga një person gjatë javës së kaluar
           other: Përdorur nga %{count} vetë gjatë javës së kaluar
       title: Rekomandime & Prirje
       trending: Në modë
+    update_available: Ka përditësim gati
     username_blocks:
       add_new: Shtoni të ri
       block_registrations: Blloko regjistrimet
@@ -1264,6 +1278,15 @@ sq:
     auto_close_registrations:
       body: Për shkak mungese veprimtarie moderatori së fundi, regjistrimet te %{instance} janë kaluar automatikisht të kërkojnë shqyrtim dorazi, për të penguar përdorimin e %{instance} si një platformë për aktorë të këqij. Mund të kaloni kurdo te regjistrime të hapura.
       subject: Regjistrimet te %{instance} janë kaluar automatikisht të kërkojnë miratim
+    end_of_support_out_of_support_warning:
+      body: Versioni i Mastodon-it aktualisht në përdorim në shërbyesin tuaj nuk mbulohet më. Rekomandojmë ta përditësoni sa më shpejt që të jetë e mundur!
+      subject: Mastodon-i %{branch} i përdorur te %{instance} tanimë nuk mbulohet më tej!
+    end_of_support_three_months_warning:
+      body: Versioni i Mastodon-it aktualisht në përdorim në shërbyesin tuaj do të reshtë të jetë i mbuluar pas 3 muajsh. Mund të donii ta përditësoni në kohë me një degë më të re.
+      subject: Mbulimi i Mastodon -it%{branch} përdorur te %{instance} do të përfundojë pas 3 muajsh.
+    end_of_support_two_weeks_warning:
+      body: Versioni i Mastodon-it aktualisht në përdorim në shërbyesin tuaj do të reshtë të jetë i mbuluar pas 2 javësh. Rekomandohmë ta përditësoni në kohë me një degë më të re.
+      subject: Mbulimi i Mastodon-it %{branch} përdorur te %{instance} do të përfundojë pas 2 javësh.
     new_appeal:
       actions:
         delete_statuses: fshirje e postimeve të tij
@@ -1652,7 +1675,6 @@ sq:
       incompatible_type: E papërputhshme me llojin e përzgjedhur për importim
       invalid_csv_file: 'Kartelë CSV e pavlefshme. Gabim: %{error}'
       invalid_json_file: 'Kartelë JSON e pavlefshme. Gabim: %{error}'
-      over_rows_processing_limit: përmban më shumë se %{count} rreshta
       status_not_found_warning: Disa nga filtrat tuaj fshehin postime specifike që s’njihen nga ky shërbyes. Këto postime s’do të filtrohen automatikisht, nëse zbulohen më vonë nga shërbyesi.
       too_large: Kartela është shumë e madhe
     failures: Dështime
@@ -1803,7 +1825,6 @@ sq:
     incoming_migrations_html: Për të kaluar prej një llogarie tjetër te kjo këtu, së pari lypset të <a href="%{path}">krijoni një alias llogarie</a>.
     moved_msg: Llogaria juaj tani ridrejton te %{acct} dhe ndjekësit tuaj po sillen në të.
     not_redirecting: Llogaria juaj nuk ridrejton aktualisht te ndonjë llogari tjetër.
-    on_cooldown: E keni migruar llogarinë tuaj tani afër. Ky funksion do të jetë sërish i përdorshëm pas %{count} ditësh.
     past_migrations: Migrime të kaluar
     proceed_with_move: Lëvizi ndjekësit
     redirected_msg: Llogaria juaj tani ridrejton te %{acct}.
@@ -1895,6 +1916,7 @@ sq:
     administration_emails: Njoftime email përgjegjësi
     email_events: Akte për njoftime email
     email_events_hint: 'Përzgjidhni akte për të cilët doni të merrni njoftime:'
+    moderation_emails: Njoftime moderimi me email
   number:
     human:
       decimal_units:
@@ -1918,7 +1940,7 @@ sq:
     next: Pasuesi
     older: Më të vjetër
     prev: I mëparshmi
-    truncate: "&hellip;"
+    truncate_html: "&hellip;"
   polls:
     errors:
       already_voted: Keni votuar tashmë në këtë pyetësor
@@ -1990,8 +2012,6 @@ sq:
       account: Postime publike prej @%{acct}
       tag: 'Postime publike etiketuar me #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Keni tejkaluar kufirin e %{limit} mesazheve të planifikuara për atë ditë
-    over_total_limit: Keni tejkaluar kufirin prej %{limit} mesazhesh të planifikuara
     too_soon: data duhet të jetë në të ardhmen
   self_destruct:
     lead_html: Mjerisht, <strong>%{domain}</strong> po mbyllet përgjithmonë. Nëse patët një llogari këtu, s’do të jeni në gjendje të vazhdoni ta përdorni, por mundeni ende të kërkoni një kopjeruajtje të të dhënave tuaja.

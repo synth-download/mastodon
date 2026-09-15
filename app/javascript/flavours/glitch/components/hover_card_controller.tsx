@@ -2,23 +2,18 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 
 import { useLocation } from 'react-router-dom';
 
-import type {
-  OffsetValue,
-  UsePopperOptions,
-} from 'react-overlays/esm/usePopper';
-import Overlay from 'react-overlays/Overlay';
-
 import { HoverCardAccount } from 'flavours/glitch/components/hover_card_account';
+import type { PopoverProps } from 'flavours/glitch/components/popover';
+import { Popover } from 'flavours/glitch/components/popover';
 import { useTimeout } from 'flavours/glitch/hooks/useTimeout';
 
-const offset = [-12, 4] as OffsetValue;
+const offset: PopoverProps['offset'] = { crossAxis: -12, mainAxis: 4 } as const;
 const enterDelay = 750;
 const leaveDelay = 150;
 // Only open the card if the mouse was moved within this time,
 // to avoid triggering the card without intentional mouse movement
 // (e.g. when content changed underneath the mouse cursor)
 const activeMovementThreshold = 150;
-const popperConfig = { strategy: 'fixed' } as UsePopperOptions;
 
 const isHoverCardAnchor = (element: HTMLElement) =>
   element.matches('[data-hover-card-account]');
@@ -26,6 +21,7 @@ const isHoverCardAnchor = (element: HTMLElement) =>
 export const HoverCardController: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [accountId, setAccountId] = useState<string | undefined>();
+  const [reference, setReference] = useState<string | undefined>();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [setLeaveTimeout, cancelLeaveTimeout] = useTimeout();
@@ -58,6 +54,9 @@ export const HoverCardController: React.FC = () => {
       setOpen(true);
       setAnchor(target);
       setAccountId(target.getAttribute('data-hover-card-account') ?? undefined);
+      setReference(
+        target.getAttribute('data-hover-card-reference') ?? undefined,
+      );
     };
 
     const close = () => {
@@ -66,6 +65,7 @@ export const HoverCardController: React.FC = () => {
       setOpen(false);
       setAnchor(null);
       setAccountId(undefined);
+      setReference(undefined);
     };
 
     const handleTouchStart = () => {
@@ -212,21 +212,22 @@ export const HoverCardController: React.FC = () => {
   ]);
 
   return (
-    <Overlay
-      rootClose
-      onHide={handleClose}
-      show={open}
-      target={anchor}
+    <Popover
+      onClose={handleClose}
+      isOpen={open}
+      reference={anchor}
       placement='bottom-start'
-      flip
       offset={offset}
-      popperConfig={popperConfig}
     >
       {({ props }) => (
         <div {...props} className='hover-card-controller'>
-          <HoverCardAccount accountId={accountId} ref={cardRef} />
+          <HoverCardAccount
+            accountId={accountId}
+            reference={reference}
+            ref={cardRef}
+          />
         </div>
       )}
-    </Overlay>
+    </Popover>
   );
 };

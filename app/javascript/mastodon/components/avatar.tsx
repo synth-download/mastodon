@@ -5,16 +5,17 @@ import { Link } from 'react-router-dom';
 
 import { useHovering } from 'mastodon/hooks/useHovering';
 import { autoPlayGif } from 'mastodon/initial_state';
-import type { Account } from 'mastodon/models/account';
+import type { Account, AccountShapeFull } from 'mastodon/models/account';
 
 import { useAccount } from '../hooks/useAccount';
 
 interface Props {
-  account:
-    | Pick<Account, 'id' | 'acct' | 'avatar' | 'avatar_static'>
-    | undefined; // FIXME: remove `undefined` once we know for sure its always there
+  account?: Pick<
+    Account | AccountShapeFull,
+    'id' | 'acct' | 'avatar' | 'avatar_static'
+  >;
   alt?: string;
-  size?: number;
+  size?: number | null;
   style?: React.CSSProperties;
   inline?: boolean;
   animate?: boolean;
@@ -40,11 +41,14 @@ export const Avatar: React.FC<Props> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const style = {
-    ...styleFromParent,
-    width: `${size}px`,
-    height: `${size}px`,
-  };
+  const style =
+    size !== null
+      ? {
+          ...styleFromParent,
+          width: `${size}px`,
+          height: `${size}px`,
+        }
+      : styleFromParent;
 
   const src = hovering || animate ? account?.avatar : account?.avatar_static;
 

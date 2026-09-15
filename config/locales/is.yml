@@ -4,6 +4,7 @@ is:
     about_mastodon_html: 'Samfélagsnet framtíðarinnar: Engar auglýsingar, ekkert eftirlit stórfyrirtækja, siðleg hönnun og engin miðstýring! Þú átt þín eigin gögn í Mastodon!'
     contact_missing: Ekki skilgreint
     contact_unavailable: Ekki til staðar
+    default_thumbnail_description: Tveir brosandi teiknimyndaloðfílar (sem líkjast fílum) henda pappírsskutlu á milli sín. Umhverfis þá er blár himinn og fljótandi plánetur með trjám og fleiri loðfílum á þeim.
     hosted_on: Mastodon hýst á %{domain}
     title: Um hugbúnaðinn
   accounts:
@@ -63,12 +64,18 @@ is:
       custom: Sérsniðið
       delete: Eyða gögnum
       deleted: Eytt
+      deletion_irreversible: Gögnum þessa notandaaðgangs hefur verið eytt óafturkvæmt.
+      deletion_reversible_hint_html: Þessi notandaaðgangur biður eftir að verða eytt og verða gögn hans fjarlægð að fullu þann %{date}.
       demote: Lækka í tign
       destroyed_msg: Gögn notandans %{username} eru núna í bið eftir að vera endanlega eytt
       disable: Gera óvirkt
       disable_sign_in_token_auth: Gera óvirka auðkenningu með teikni í tölvupósti
       disable_two_factor_authentication: Gera tveggja-þátta auðkenningu óvirka
       disabled: Óvirkt
+      discoverable:
+        disabled: Höfundur hefur ekki beðið um að vera finnanlegur
+        enabled: Höfundur hefur beðið um að vera finnanlegur
+        title: Finnanlegt
       display_name: Birtingarnafn
       domain: Lén
       edit: Breyta
@@ -78,6 +85,12 @@ is:
       enable_sign_in_token_auth: Virkja auðkenningu með teikni í tölvupósti
       enabled: Virkt
       enabled_msg: Tókst að affrysta aðgang notandans %{username}
+      follow_recommendations:
+        allowed: Leyft
+        suppress: Bæla öll meðmæli um að fylgjast með
+        suppressed: Bælt
+        title: Meðmæli um að fylgjast með
+        unsuppress: Endurheimta öll meðmæli um að fylgjast með
       followers: Fylgjendur
       follows: Fylgist með
       header: Haus
@@ -162,6 +175,12 @@ is:
       suspension_irreversible: Gögnunum á þessum notandaaðgangi hefur verið eytt óafturkræft. Þú getur tekið aðganginn úr frysti svo hægt sé að nota hann, en það mun ekki endurheimta neitt af þeim gögnum sem á honum voru áður.
       suspension_reversible_hint_html: Notandaaðgangurinn hefur verið settur í frysti og gögnunum á honum verður eytt að fullu þann %{date}. Þangað til væri hægt að endurheimta aðganginn úr frysti án nokkurra breytinga. Ef þú vilt eyða öllum gögnum af honum strax, geturðu gert það hér fyrir neðan.
       title: Notandaaðgangar
+      trends:
+        allow: Leyfa
+        allowed: Leyft
+        disallow: Ekki leyfa
+        disallowed: Ekki leyft
+        title: Vinsælar færslur
       unblock_email: Aflétta útilokun tölvupóstfangs
       unblocked_email_msg: Tókst að afbanna tölvupóstfang notandans %{username}
       unconfirmed_email: Óstaðfestur tölvupóstur
@@ -288,7 +307,11 @@ is:
         enable_relay_html: "%{name} virkjaði endurvarpann %{target}"
         enable_sign_in_token_auth_user_html: "%{name} gerði virka auðkenningu með teikni í tölvupósti fyrir %{target}"
         enable_user_html: "%{name} gerði innskráningu virka fyrir notandann %{target}"
+        listable_tag_html: má stinga uppá
         memorialize_account_html: "%{name} breytti notandaaðgangnum %{target} í minningargreinarsíðu"
+        not_listable_tag_html: mun ekki vera stungið uppá
+        not_trendable_tag_html: mun ekki birtast í vinsældum
+        not_usable_tag_html: má ekki nota
         promote_user_html: "%{name} hækkaði notandann %{target} í tign"
         publish_terms_of_service_html: "%{name} gaf út uppfærða þjónustuskilmála"
         reject_appeal_html: "%{name} hafnaði áfrýjun á ákvörðun umsjónarmanns frá %{target}"
@@ -301,6 +324,7 @@ is:
         sensitive_account_html: "%{name} merkti myndefni frá %{target} sem viðkvæmt"
         silence_account_html: "%{name} þaggaði niður í aðgangnum %{target}"
         suspend_account_html: "%{name} setti notandaaðganginn %{target} í frysti"
+        trendable_tag_html: má vera með í vinsældum
         unassigned_report_html: "%{name} fjarlægði úthlutun af kæru %{target}"
         unblock_email_account_html: "%{name} opnaði á tölvupóstfangið %{target}"
         unsensitive_account_html: "%{name} tók merkinguna viðkvæmt af myndefni frá %{target}"
@@ -313,8 +337,10 @@ is:
         update_ip_block_html: "%{name} breytti reglu fyrir IP-vistfangið %{target}"
         update_report_html: "%{name} uppfærði kæru %{target}"
         update_status_html: "%{name} uppfærði færslu frá %{target}"
+        update_tag_html: "%{name} breytti %{target} stillingum í: "
         update_user_role_html: "%{name} breytti hlutverki %{target}"
         update_username_block_html: "%{name} uppfærði reglu varðandi notendanöfn sem innihalda %{target}"
+        usable_tag_html: má nota;
       deleted_account: eyddur notandaaðgangur
       empty: Engar atvikaskrár fundust.
       filter_by_action: Sía eftir aðgerð
@@ -1007,13 +1033,17 @@ is:
       critical_update: Áríðandi - uppfærðu eins fljótt og auðið er
       description: Mælt er með því að þú haldir Mastodon-uppsetningunni þinni uppfærðri til að vera með nýjustu lagfæringar og eiginleika. Aukinheldur er mikilvægt að halda Mastodon uppfærðu til að komast hjá öryggisveilum. Af þessum ástæðum athugar Mastodon með uppfærslur á 30 mínútna fresti og mun gera þér viðvart í samræmi við stillingar þínar á tilkynningum í tölvupósti.
       documentation_link: Kanna nánar
+      nearing_eol: Stuðningur við kerfisgreinina sem þú ert að keyra mun hætta %{date}, íhugaðu að uppfæra.
       release_notes: Útgáfuupplýsingar
+      supported_until: Stuðningur endar þann %{date}
       title: Tiltækar uppfærslur
       type: Tegund
       types:
         major: Aðalútgáfa
         minor: Aukaútgáfa
         patch: Viðgerðauppfærsla - lagfæringar og ýmsar minniháttar breytingar
+      unsupported_branch: Kerfisgreinin sem þú ert að keyra er ekki með neinn stuðning lengur, uppfærðu kerfið við fyrsta tækifæri.
+      unsupported_since: Ekki stutt síðan %{date}
       version: Útgáfa
     statuses:
       account: Höfundur
@@ -1178,7 +1208,6 @@ is:
           one: Deilt af einum aðila síðustu vikuna
           other: Deilt af %{count} aðilum síðustu vikuna
         title: Vinsælir tenglar
-        usage_comparison: Deilt %{today} sinnum í dag, samanborið við %{yesterday} í gær
       not_allowed_to_trend: Ekki leyft að verða vinsælt
       only_allowed: Aðeins leyfð
       pending_review: Bíður eftir yfirlestri
@@ -1223,12 +1252,12 @@ is:
         trendable: Má vera með í vinsældum
         trending_rank: 'Vinsæl #%{rank}'
         usable: Má nota
-        usage_comparison: Notað %{today} sinnum í dag, samanborið við %{yesterday} í gær
         used_by_over_week:
           one: Notað af einum aðila síðustu vikuna
           other: Notað af %{count} aðilum síðustu vikuna
       title: Meðmæli og vinsælt
       trending: Vinsælt
+    update_available: Uppfærsla tiltæk
     username_blocks:
       add_new: Bæta við nýju
       block_registrations: Loka á nýskráningar
@@ -1278,6 +1307,15 @@ is:
     auto_close_registrations:
       body: Vegna skorts á virkni umsjónaraðila að undanförnu, hafa nýskráningar á %{instance} sjálfkrafa verið stilltar á að þarfnast samþykktar umsjónaraðila, til að koma í veg fyrir að %{instance} verði mögulega misnotað af óprúttnum aðilum. Þú getur skipt hvenær sem er aftur yfir í opnar nýskráningar.
       subject: Nýskráningar á %{instance} hafa sjálfkrafa verið stilltar á að krefjast samþykktar
+    end_of_support_out_of_support_warning:
+      body: Sú útgáfa Mastodon sem þú ert að keyra er ekki með neinn stuðning lengur. Við mælum með að þú uppfærir kerfið við fyrsta tækifæri!
+      subject: Mastodon %{branch} sem notuð er á %{instance} er ekki lengur með stuðning!
+    end_of_support_three_months_warning:
+      body: Sú útgáfa Mastodon sem þú ert að keyra hættir að fá stuðning eftir 3 mánuði. Þú gætir viljað uppfæra í nýrri kerfisgrein áður en að því kemur.
+      subject: Stuðningi við Mastodon %{branch} sem notuð er á %{instance} lýkur eftir 3 mánuði.
+    end_of_support_two_weeks_warning:
+      body: Sú útgáfa Mastodon sem þú ert að keyra hættir að fá stuðning eftir 2 vikur. Þú gætir viljað uppfæra í nýrri kerfisgrein áður en að því kemur.
+      subject: Stuðningi við Mastodon %{branch} sem notuð er á %{instance} lýkur eftir 2 vikur.
     new_appeal:
       actions:
         delete_statuses: að eyða færslum viðkomandi
@@ -1576,6 +1614,7 @@ is:
       content: Því miður, en eitthvað fór úrskeiðis á okkar enda.
       title: Þessi síða er ekki rétt
     '503': Ekki var hægt að afgreiða síðuna vegna tímabundinnar bilunar á vefþjóni.
+    go_home: Fara heim
     noscript_html: Til að nota vefútgáfu Mastodon þarftu að virkja JavaScript. Þú getur líka prófað eitt af Mastodon <a href="%{apps_path}">forritunum</a> fyrir stýrikerfið þitt.
   existing_username_validator:
     not_found: Fann ekki staðværan notanda með þetta notandanafn
@@ -1672,7 +1711,8 @@ is:
       incompatible_type: Ekki samhæfanlegt valinni tegund innflutnings
       invalid_csv_file: 'Ógild CSV-skrá. Villa: %{error}'
       invalid_json_file: 'Ógild JSON-skrá. Villa: %{error}'
-      over_rows_processing_limit: inniheldur meira en %{count} raðir
+      no_data: Þessi skrá inniheldur ekki nein gögn sem samsvata uppgefinni tegund innflutnings
+      status_not_found_warning: Sumar af síunum þínum fela tilteknar færslur sem þessi netþjónn kann ekki skil á. Þessar færslur verða ekki síaðar sjálfkrafa ef netþjónninn uppgötvar þær síðar.
       too_large: Skráin er of stór
     failures: Mistök
     imported: Flutt inn
@@ -1689,6 +1729,9 @@ is:
       bookmarks_html:
         one: Þú er í þann mund að fara að <strong>skipta út bókamerkjunum þínum</strong> með allt að <strong>%{count} færslu</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>skipta út bókamerkjunum þínum</strong> með allt að <strong>%{count} færslum</strong> úr <strong>%{filename}</strong>.
+      custom_filters_html:
+        one: Þú ert í þann mund að <strong>skipta út síunum þínum</strong> með efninu í <strong>%{filename}</strong>. Allt að <strong>%{count} síu</strong> verður bætt við nýjar síur.
+        other: Þú ert í þann mund að <strong>skipta út síunum þínum</strong> með efninu í <strong>%{filename}</strong>. Allt að <strong>%{count} síum</strong> verður bætt við nýjar síur.
       domain_blocking_html:
         one: Þú er í þann mund að fara að <strong>skipta út listanum þínum yfir útilokuð lén</strong> með allt að <strong>%{count} léni</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>skipta út listanum þínum yfir útilokuð lén</strong> með allt að <strong>%{count} lénum</strong> úr <strong>%{filename}</strong>.
@@ -1708,6 +1751,9 @@ is:
       bookmarks_html:
         one: Þú er í þann mund að fara að bæta við allt að <strong>%{count} færslu</strong> úr <strong>%{filename}</strong> við <strong>bókamerkin</strong> þín.
         other: Þú er í þann mund að fara að bæta við allt að <strong>%{count} færslum</strong> úr <strong>%{filename}</strong> við <strong>bókamerkin</strong> þín.
+      custom_filters_html:
+        one: Þú ert í þann mund að bæta við allt að <strong>%{count} síu</strong> úr <strong>%{filename}</strong> við <strong>síurnar þínar</strong>.
+        other: Þú ert í þann mund að bæta við allt að <strong>%{count} síum</strong> úr <strong>%{filename}</strong> við <strong>síurnar þínar</strong>.
       domain_blocking_html:
         one: Þú ert í þann mund að <strong>útiloka</strong> allt að <strong>%{count} lén</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>útiloka</strong> allt að <strong>%{count} lén</strong> úr <strong>%{filename}</strong>.
@@ -1816,7 +1862,6 @@ is:
     incoming_migrations_html: Til að flytjast af öðrum notandaaðgangi yfir á þennan, þarftu fyrst að <a href="%{path}">útbúa samnefni fyrir aðgang</a>.
     moved_msg: Notandaaðgangurinn þinn endurbeinist núna á %{acct} og er verið að yfirfæra fylgjendurna þína.
     not_redirecting: Notandaaðgangurinn þinn er ekki að endurbeinast á neinn annan aðgang.
-    on_cooldown: Þú hefur nýverið yfirfært aðganginn þinn. Þessi aðgerð verður tiltæk aftur eftir %{count} daga.
     past_migrations: Fyrri yfirfærslur
     proceed_with_move: Færa fylgjendur
     redirected_msg: Notandaaðgangurinn þinn endurbeinist núna á %{acct}.
@@ -1908,6 +1953,7 @@ is:
     administration_emails: Kerfisstjórnunartilkynningar í tölvupósti
     email_events: Atburðir fyrir tilkynningar í tölvupósti
     email_events_hint: 'Veldu þá atburði sem þú vilt fá tilkynningar í tölvupósti þegar þeir koma upp:'
+    moderation_emails: Tilkynningar umsjónarmanna í tölvupósti
   number:
     human:
       decimal_units:
@@ -1931,7 +1977,7 @@ is:
     next: Næsta
     older: Eldra
     prev: Fyrra
-    truncate: "&hellip;"
+    truncate_html: "&hellip;"
   polls:
     errors:
       already_voted: Þú hefur þegar greitt atkvæði í þessari könnun
@@ -2003,8 +2049,6 @@ is:
       account: Opinberar færslur frá @%{acct}
       tag: 'Opinberar færslur merktar #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Þú hefur farið fram úr hámarkinu með %{limit} áætlaðar færslur fyrir þennan dag
-    over_total_limit: Þú hefur farið fram úr hámarkinu með %{limit} áætlaðar færslur
     too_soon: dagsetning verður að vera fram í tímann
   self_destruct:
     lead_html: Því miður, <strong>%{domain}</strong> er að hætta starfsemi endanlega. Ef þú varst með aðgang þar, muntu ekki geta haldið áfram að nota hann, en þú getur áfram beðið um afrit af gögnunum þínum.
