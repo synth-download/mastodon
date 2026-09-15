@@ -36,8 +36,8 @@ interface ApiFeaturePolicyJSON {
 export interface BaseApiAccountJSON {
   acct: string;
   avatar: string;
-  avatar_description: string;
   avatar_static: string;
+  avatar_description: string;
   bot: boolean;
   created_at: string;
   discoverable?: boolean;
@@ -50,14 +50,17 @@ export interface BaseApiAccountJSON {
   following_count: number;
   group: boolean;
   header: string;
-  header_description: string;
   header_static: string;
+  header_description: string;
   id: string;
-  last_status_at: string;
+  last_status_at: string | null;
   locked: boolean;
+  show_media: boolean;
+  show_media_replies: boolean;
+  show_featured: boolean;
   noindex?: boolean;
   note: string;
-  roles?: ApiAccountJSON[];
+  roles?: ApiAccountRoleJSON[];
   statuses_count: number;
   uri: string;
   url?: string;
@@ -68,6 +71,8 @@ export interface BaseApiAccountJSON {
   remote_limit_reason?: string;
   memorial?: boolean;
   hide_collections: boolean;
+  email_subscriptions?: boolean;
+  invalid_handle?: boolean;
 }
 
 // See app/serializers/rest/muted_account_serializer.rb

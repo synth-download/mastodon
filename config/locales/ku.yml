@@ -544,7 +544,6 @@ ku:
       action_log: Tomarê çavdêriyê
       action_taken_by: Çalakî hate kirin ji aliyê
       actions:
-        delete_description_html: Şandiyên hatine ragihandin wê werin jêbirin û were tomarkirin da ku ji te re bibe alîkar ku tu ji hêla heman ajimêrê ve binpêkirinên pêşerojê bêtir bikî.
         mark_as_sensitive_description_html: Şandiyên hatine ragihandin wê werin nîşandan wekî hestyar û were tomarkirin da ku ji te re bibe alîkar ku tu ji hêla heman ajimêrê ve binpêkirinên pêşerojê bêtir bikî.
         other_description_html: Bêtir vebijêrkên ji bo kontrolkirina tevgera ajimêrê bibîne û pêwendiyê li ser ajimêra ragihandî kesane bike.
         resolve_description_html: Li hemberî ajimêra hatiye ragihandin wê tiştek pêk neyê, binpêkirin nayên tomarkirin û ragihandin wê were girtin.
@@ -559,7 +558,6 @@ ku:
         none: Ne yek
       comment_description_html: 'Bo bêtir zanyarî bidî, %{name} nivîsand:'
       created_at: Hate ragihandin
-      delete_and_resolve: Şandiyan jê bibe
       forwarded: Beralîkirî
       forwarded_to: Beralîkirî bo %{domain}
       mark_as_resolved: Wekî çareserkirî nîşan bide
@@ -765,7 +763,6 @@ ku:
           one: Di nava hefteya dawî de ji aliyê keskekî ve hate parvekirin
           other: Di nava hefteya dawî de ji aliyê %{count} ve hate parvekirin
         title: Girêdanên di rojevê de
-        usage_comparison: Îro %{today} car hate parvekirin, li gorî %{yesterday} duh
       only_allowed: Tenê yên mafdayî
       pending_review: Li benda nirxandinê ye
       preview_card_providers:
@@ -805,7 +802,6 @@ ku:
         trendable: Dikare di bin rojevan de xuya bibe
         trending_rank: 'Rojev #%{rank}'
         usable: Dikare were bikaranîn
-        usage_comparison: "%{today} car îro hate bikaranîn, li gorî %{yesterday} duh"
         used_by_over_week:
           one: Di nava hefteya dawî de ji aliyê kesekî ve hatiye bikaranîn
           other: Di nava hefteya dawî de ji %{count} kes ve hatiye bikaranîn
@@ -1036,9 +1032,6 @@ ku:
     lists: Rêzok
     mutes: Te bêdeng kir
     storage: Bîrdanaka medyayê
-  featured_tags:
-    add_new: Yeka nû tevlî bike
-    hint_html: "<strong> Hashtagên destnîşankirî çi ne? </strong> Ew bi eşkere li ser profîla te ya gelemperî têne xuyakirin û dihêlin ku mirov bi taybetî di binê wan hashtagan de li şandiyên te yên gelemperî bigere. Ew ji bo şopandina karên afirîner an projeyên demdirêj amûrek girîng in."
   filters:
     contexts:
       account: Profîl
@@ -1106,7 +1099,6 @@ ku:
   imports:
     errors:
       invalid_csv_file: 'Pelê CSV nederbasdar e. Çewtî: %{error}'
-      over_rows_processing_limit: ji %{count} zêdetir rêzok hene
     modes:
       merge: Bi hev re bike
       merge_long: Tomarên heyî bigire û yên nû lê zêde bike
@@ -1174,7 +1166,6 @@ ku:
     incoming_migrations_html: Ji bo ku tu ji ajimêrek din bar bikî vê yekê, pêşî divê tu <a href="%{path}">ajimêreke bi bernaveke çê bike </a>.
     moved_msg: Ajimêrate niha li %{acct} tê rêve kirin (beralîkirin) û şopînerên te têne livandin bo wê.
     not_redirecting: Ajimêra te niha bo ajimêreke din nayê beralîkirin.
-    on_cooldown: Te herî dawî dev ji ajimêra xwe berda. Ev fonksiyon dê di %{count} rojan de dîsa peyda bibe.
     past_migrations: Koçên berê
     proceed_with_move: Şopîneran bilivîne
     redirected_msg: Ajimêra te niha bo %{acct} tê beralîkirin.
@@ -1255,7 +1246,6 @@ ku:
     next: Pêş
     older: Kevntir
     prev: Paş
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Te berê deng dabû vê rapirsîyê
@@ -1304,9 +1294,6 @@ ku:
     descriptions:
       account: Şandiyên gelemperî ji @%{acct}
       tag: 'Şandiyên gelemperî yên nîşankirî #%{hashtag}'
-  scheduled_statuses:
-    over_daily_limit: Te sînorê %{limit} şandiyên demsazkirî yên ji bo îro derbas kir
-    over_total_limit: Te sînorê %{limit} şandiyên demsazkirî derbas kir
   sessions:
     activity: Çalakiya dawî
     browser: Gerok

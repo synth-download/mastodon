@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { defineMessages, injectIntl } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { withRouter } from 'react-router-dom';
 
@@ -26,10 +26,13 @@ import EmojiPickerDropdown from '../../features/compose/containers/emoji_picker_
 import { me, maxReactions, quickBoosting } from '../../initial_state';
 
 import { IconButton } from '../icon_button';
+import { injectIntl } from '../intl';
 import { RelativeTimestamp } from '../relative_timestamp';
 import { BoostButton } from '../status/boost_button';
 import { RemoveQuoteHint } from './remove_quote_hint';
-import { quoteItemState, selectStatusState } from '../status/boost_button_utils';
+import { quoteItemState } from '../status/boost_button_utils';
+import { selectStatusConditions } from '@/flavours/glitch/selectors/statuses';
+
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -70,7 +73,7 @@ const mapStateToProps = (state, { status }) => {
   const quotedStatusId = status.getIn(['quote', 'quoted_status']);
   return ({
     quotedAccountId: quotedStatusId ? state.getIn(['statuses', quotedStatusId, 'account']) : null,
-    statusQuoteState: selectStatusState(state, status),
+    statusQuoteState: selectStatusConditions(state, status.get('id')),
   });
 };
 
@@ -233,6 +236,7 @@ class StatusActionBar extends ImmutablePureComponent {
     const publicStatus       = ['public', 'unlisted'].includes(status.get('visibility'));
     const pinnableStatus     = ['public', 'unlisted', 'private'].includes(status.get('visibility'));
     const mutingConversation = status.get('muted');
+    const account            = status.get('account');
     const writtenByMe        = status.getIn(['account', 'id']) === me;
     const isRemote           = status.getIn(['account', 'username']) !== status.getIn(['account', 'acct']);
     const isQuotingMe        = quotedAccountId === me;
@@ -290,35 +294,38 @@ class StatusActionBar extends ImmutablePureComponent {
         menu.push({ text: intl.formatMessage(messages.delete), action: this.handleDeleteClick, dangerous: true });
         menu.push({ text: intl.formatMessage(messages.redraft), action: this.handleRedraftClick, dangerous: true });
       } else {
-        menu.push({ text: intl.formatMessage(messages.mention, { name: status.getIn(['account', 'username']) }), action: this.handleMentionClick });
-        menu.push({ text: intl.formatMessage(messages.direct, { name: status.getIn(['account', 'username']) }), action: this.handleDirectClick });
-        menu.push(null);
-
-        if (!this.props.onFilter) {
-          menu.push({ text: intl.formatMessage(messages.filter), action: this.handleFilterClick, dangerous: true });
+        if (!account.get('invalid_handle')) {
+          menu.push({ text: intl.formatMessage(messages.mention, { name: account.get('username') }), action: this.handleMentionClick });
+          menu.push({ text: intl.formatMessage(messages.direct, { name: account.get('username') }), action: this.handleDirectClick });
           menu.push(null);
         }
 
         if (isQuotingMe) {
-          menu.push({ text: intl.formatMessage(messages.revokeQuote, { name: status.getIn(['account', 'username']) }), action: this.handleRevokeQuoteClick, dangerous: true });
+          menu.push({ text: intl.formatMessage(messages.revokeQuote, { name: account.get('username') }), action: this.handleRevokeQuoteClick, dangerous: true });
         }
 
-        menu.push({ text: intl.formatMessage(messages.mute, { name: status.getIn(['account', 'username']) }), action: this.handleMuteClick, dangerous: true });
-        menu.push({ text: intl.formatMessage(messages.block, { name: status.getIn(['account', 'username']) }), action: this.handleBlockClick, dangerous: true });
-        menu.push({ text: intl.formatMessage(messages.report, { name: status.getIn(['account', 'username']) }), action: this.handleReport, dangerous: true });
+        if (!this.props.onFilter) {
+          menu.push(null);
+          menu.push({ text: intl.formatMessage(messages.filter), action: this.handleFilterClick, dangerous: true });
+          menu.push(null);
+        }
+
+        menu.push({ text: intl.formatMessage(messages.mute, { name: account.get('username') }), action: this.handleMuteClick, dangerous: true });
+        menu.push({ text: intl.formatMessage(messages.block, { name: account.get('username') }), action: this.handleBlockClick, dangerous: true });
+        menu.push({ text: intl.formatMessage(messages.report, { name: account.get('username') }), action: this.handleReport, dangerous: true });
 
         if (((permissions & PERMISSION_MANAGE_USERS) === PERMISSION_MANAGE_USERS && (accountAdminLink || statusAdminLink)) || (isRemote && (permissions & PERMISSION_MANAGE_FEDERATION) === PERMISSION_MANAGE_FEDERATION)) {
           menu.push(null);
           if ((permissions & PERMISSION_MANAGE_USERS) === PERMISSION_MANAGE_USERS) {
             if (accountAdminLink !== undefined) {
-              menu.push({ text: intl.formatMessage(messages.admin_account, { name: status.getIn(['account', 'username']) }), href: accountAdminLink(status.getIn(['account', 'id'])) });
+              menu.push({ text: intl.formatMessage(messages.admin_account, { name: account.get('username') }), href: accountAdminLink(status.getIn(['account', 'id'])) });
             }
             if (statusAdminLink !== undefined) {
               menu.push({ text: intl.formatMessage(messages.admin_status), href: statusAdminLink(status.getIn(['account', 'id']), status.get('id')) });
             }
           }
           if (isRemote && (permissions & PERMISSION_MANAGE_FEDERATION) === PERMISSION_MANAGE_FEDERATION) {
-            const domain = status.getIn(['account', 'acct']).split('@')[1];
+            const domain = account.get('acct').split('@')[1];
             menu.push({ text: intl.formatMessage(messages.admin_domain, { domain: domain }), href: `/admin/instances/${domain}` });
           }
         }
@@ -365,7 +372,7 @@ class StatusActionBar extends ImmutablePureComponent {
           />
         </div>
         <div className='status__action-bar__button-wrapper'>
-          <BoostButton status={status} counters={withCounters} />
+          <BoostButton statusId={status.get('id')} counters={withCounters} />
         </div>
         <div className='status__action-bar__button-wrapper'>
           <IconButton className='status__action-bar-button star-icon' animate active={status.get('favourited')} title={favouriteTitle} icon='star' iconComponent={status.get('favourited') ? StarIcon : StarBorderIcon} onClick={this.handleFavouriteClick} counter={withCounters ? status.get('favourites_count') : undefined} />
@@ -406,7 +413,9 @@ class StatusActionBar extends ImmutablePureComponent {
 
         <div className='status__action-bar-spacer' />
         <a href={status.get('url')} className='status__relative-time' target='_blank' rel='noopener'>
-          <RelativeTimestamp timestamp={status.get('created_at')} />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
+          <RelativeTimestamp
+            timestamp={status.get('created_at')}
+          />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
         </a>
       </div>
     );

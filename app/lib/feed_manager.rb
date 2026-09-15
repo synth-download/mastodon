@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'singleton'
-
 class FeedManager
   include Singleton
   include Redisable
@@ -12,7 +10,7 @@ class FeedManager
   # Number of items in the feed since last reblog of status
   # before the new reblog will be inserted. Must be <= MAX_ITEMS
   # or the tracking sets will grow forever
-  REBLOG_FALLOFF = 40
+  REBLOG_FALLOFF = 80
 
   # Execute block for every active account
   # @yield [Account]
@@ -92,7 +90,7 @@ class FeedManager
   def unpush_from_home(account, status, update: false)
     return false unless remove_from_feed(:home, account.id, status, aggregate_reblogs: account.user&.aggregates_reblogs?)
 
-    redis.publish("timeline:#{account.id}", Oj.dump(event: :delete, payload: status.id.to_s)) unless update
+    redis.publish("timeline:#{account.id}", { event: :delete, payload: status.id.to_s }.to_json) unless update
     true
   end
 
@@ -119,7 +117,7 @@ class FeedManager
   def unpush_from_list(list, status, update: false)
     return false unless remove_from_feed(:list, list.id, status, aggregate_reblogs: list.account.user&.aggregates_reblogs?)
 
-    redis.publish("timeline:list:#{list.id}", Oj.dump(event: :delete, payload: status.id.to_s)) unless update
+    redis.publish("timeline:list:#{list.id}", { event: :delete, payload: status.id.to_s }.to_json) unless update
     true
   end
 
@@ -142,7 +140,7 @@ class FeedManager
   def unpush_from_direct(account, status, update: false)
     return false unless remove_from_feed(:direct, account.id, status)
 
-    redis.publish("timeline:direct:#{account.id}", Oj.dump(event: :delete, payload: status.id.to_s)) unless update
+    redis.publish("timeline:direct:#{account.id}", { event: :delete, payload: status.id.to_s }.to_json) unless update
     true
   end
 

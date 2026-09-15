@@ -9,18 +9,14 @@ module SettingsHelper
     LanguagesHelper.sorted_locale_keys(I18n.available_locales)
   end
 
-  def featured_tags_hint(recently_used_tags)
-    recently_used_tags.present? &&
-      safe_join(
-        [
-          t('simple_form.hints.featured_tag.name'),
-          safe_join(
-            links_for_featured_tags(recently_used_tags),
-            ', '
-          ),
-        ],
-        ' '
-      )
+  def inline_qrcode_svg(code)
+    code
+      .as_svg(padding: 0, module_size: 4, use_path: true)
+      .html_safe # rubocop:disable Rails/OutputSafety
+  end
+
+  def user_settings_collection(value)
+    UserSettings.definition_for(value)&.in || []
   end
 
   def author_attribution_name(account)
@@ -63,17 +59,7 @@ module SettingsHelper
     )
   end
 
-  private
-
-  def links_for_featured_tags(tags)
-    tags.map { |tag| post_link_to_featured_tag(tag) }
-  end
-
-  def post_link_to_featured_tag(tag)
-    link_to(
-      "##{tag.display_name}",
-      settings_featured_tags_path(featured_tag: { name: tag.name }),
-      method: :post
-    )
+  def time_zone_options
+    ActiveSupport::TimeZone.all.map { |tz| ["(GMT#{tz.now.formatted_offset}) #{tz.name}", tz.tzinfo.name] }
   end
 end

@@ -551,7 +551,6 @@ sk:
       confirm: Potvrď
       confirm_action: Potvrď moderovací úkon proti @%{acct}
       created_at: Nahlásené
-      delete_and_resolve: Vymazať príspevky
       forwarded: Preposlané
       forwarded_to: Preposlané na %{domain}
       mark_as_resolved: Označiť ako vyriešené
@@ -935,8 +934,6 @@ sk:
       your_appeal_approved: Tvoja námietka bola schválená
       your_appeal_pending: Odoslal si námietku
   edit_profile:
-    basic_information: Základné informácie
-    hint_html: "<strong>Upravte, čo ľudia vidia vo vašom verejom profile a pri vašich príspevkoch.</strong> S vyplneným profilom a nahratou profilovou fotkou sa zvýšia šance, že vás iní ľudia budú sledovať a budú s vami komunikovať."
     other: Ostatné
   errors:
     '400': Požiadavka, ktorú si odoslal/a, bola buď nesprávna, alebo znehodnotená.
@@ -971,10 +968,8 @@ sk:
     mutes: Stíšil/a si
     storage: Úložisko médií
   featured_tags:
-    add_new: Pridať nový
     errors:
       limit: Už ste si predvolili najvyšší možný počet hashtagov
-    hint_html: "<strong>Zobrazte vo svojom profile vaše najvýznamnejšie hashtagy.</strong> Zvýraznené hashtagy majú viditeľné miesto vo vašom profile a umožňujú vám rýchly prístup k vašim príspevkom, aby ste mali svoje diela a dlhodobé projekty vždy poruke."
   filters:
     contexts:
       account: Profily
@@ -1016,7 +1011,6 @@ sk:
       other: Niečo ešte nieje celkom v poriadku! Prosím skontroluj %{count} chyby uvedené nižšie
   imports:
     errors:
-      over_rows_processing_limit: obsahuje viac než %{count} riadkov
       too_large: Súbor je príliš veľký
     failures: Zlyhaní(a)
     imported: Nahrané
@@ -1080,12 +1074,6 @@ sk:
       password: heslom
       webauthn: bezpečnostnými kľúčmi
     title: História overení
-  mail_subscriptions:
-    unsubscribe:
-      emails:
-        notification_emails:
-          reblog: e-mailové upozornenia na zdieľania
-      title: Ukonči odber
   media_attachments:
     validations:
       images_and_video: K príspevku ktorý už obsahuje obrázky nemôžeš priložiť video
@@ -1106,7 +1094,6 @@ sk:
     incoming_migrations_html: Ak sa chcete na tento účet presunúť z iného účtu, najprv si <a href="%{path}">vytvorte nový alias</a>.
     moved_msg: Tvoj účet teraz presmerováva na %{acct} a tvoji sledovatelia sú presúvaní tam.
     not_redirecting: Tvoj účet v súčasnosti nepresmerováva na žiaden iný účet.
-    on_cooldown: Účet si si presunul/a len nedávno. Táto vymoženosť bude znovu sprístupnená za %{count} dní.
     past_migrations: Predošlé presuny
     proceed_with_move: Presuň sledovateľov
     redirected_msg: Tvoj účet teraz presmerováva na %{acct}.
@@ -1226,9 +1213,6 @@ sk:
     descriptions:
       account: Verejné príspevky od @%{acct}
       tag: 'Verejné príspevky otagované #%{hashtag}'
-  scheduled_statuses:
-    over_daily_limit: Prekročil/a si denný limit %{limit} predplánovaných príspevkov
-    over_total_limit: Prekročil/a si limit %{limit} predplánovaných príspevkov
   sessions:
     activity: Posledná aktivita
     browser: Prehliadač

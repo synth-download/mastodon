@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import type { ApiMentionJSON } from '@/flavours/glitch/api_types/statuses';
+import { getCollectionPath } from '@/flavours/glitch/features/collections/utils';
 import { useAppSelector } from '@/flavours/glitch/store';
 import type { OnElementHandler } from '@/flavours/glitch/utils/html';
 import { decode as decodeIDNA } from 'flavours/glitch/utils/idna';
@@ -15,6 +16,7 @@ export interface HandledLinkProps {
   prevText?: string;
   hashtagAccountId?: string;
   mention?: Pick<ApiMentionJSON, 'id' | 'acct' | 'username'>;
+  collectionId?: string;
 }
 
 const textMatchesTarget = (text: string, origin: string, host: string) => {
@@ -111,17 +113,16 @@ export const HandledLink: FC<HandledLinkProps & ComponentProps<'a'>> = ({
   prevText,
   hashtagAccountId,
   mention,
+  collectionId,
   className,
   children,
   ...props
 }) => {
   const rewriteMentions = useAppSelector(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     (state) => state.local_settings.get('rewrite_mentions', 'no') as string,
   );
   const tagLinks = useAppSelector(
     (state) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       state.local_settings.get('tag_misleading_links', false) as string,
   );
 
@@ -173,9 +174,19 @@ export const HandledLink: FC<HandledLinkProps & ComponentProps<'a'>> = ({
     return (
       <Link
         className={classNames('mention', className)}
-        to={`/@${mention.acct}`}
+        to={{ pathname: `/@${mention.acct}`, state: { reference: 'status' } }}
         title={`@${mention.acct}`}
         data-hover-card-account={mention.id}
+        data-hover-card-reference='status'
+      >
+        {children}
+      </Link>
+    );
+  } else if (collectionId) {
+    return (
+      <Link
+        className={classNames(className)}
+        to={getCollectionPath(collectionId)}
       >
         {children}
       </Link>
@@ -209,15 +220,18 @@ export const HandledLink: FC<HandledLinkProps & ComponentProps<'a'>> = ({
 
 export const useElementHandledLink = ({
   hashtagAccountId,
+  hrefToCollectionId: hrefToCollection,
   hrefToMention,
 }: {
   hashtagAccountId?: string;
+  hrefToCollectionId?: (href: string) => string | undefined;
   hrefToMention?: (href: string) => ApiMentionJSON | undefined;
 } = {}) => {
   const onElement = useCallback<OnElementHandler>(
     (element, { key, ...props }, children) => {
       if (element instanceof HTMLAnchorElement) {
         const mention = hrefToMention?.(element.href);
+        const collectionId = hrefToCollection?.(element.href);
         return (
           <HandledLink
             {...props}
@@ -227,6 +241,7 @@ export const useElementHandledLink = ({
             prevText={element.previousSibling?.textContent ?? undefined}
             hashtagAccountId={hashtagAccountId}
             mention={mention}
+            collectionId={collectionId}
           >
             {children}
           </HandledLink>
@@ -234,7 +249,7 @@ export const useElementHandledLink = ({
       }
       return undefined;
     },
-    [hashtagAccountId, hrefToMention],
+    [hashtagAccountId, hrefToCollection, hrefToMention],
   );
   return { onElement };
 };

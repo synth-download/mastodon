@@ -57,8 +57,8 @@ RSpec.describe PostStatusService do
 
     it 'returns existing status when used twice with idempotency key' do
       account = Fabricate(:account)
-      status1 = subject.call(account, text: 'test', idempotency: 'meepmeep', scheduled_at: future)
-      status2 = subject.call(account, text: 'test', idempotency: 'meepmeep', scheduled_at: future)
+      status1 = described_class.new.call(account, text: 'test', idempotency: 'meepmeep', scheduled_at: future)
+      status2 = described_class.new.call(account, text: 'test', idempotency: 'meepmeep', scheduled_at: future)
       expect(status2.id).to eq status1.id
     end
 
@@ -175,7 +175,7 @@ RSpec.describe PostStatusService do
     status = subject.call(account, text: 'test status update')
 
     expect(ProcessMentionsService).to have_received(:new)
-    expect(mention_service).to have_received(:call).with(status, save_records: false)
+    expect(mention_service).to have_received(:call).with(status)
   end
 
   it 'safeguards mentions' do
@@ -207,6 +207,16 @@ RSpec.describe PostStatusService do
 
     expect(ProcessHashtagsService).to have_received(:new)
     expect(hashtags_service).to have_received(:call).with(status)
+  end
+
+  it 'processes tagged objects' do
+    account = Fabricate(:account)
+    collection = Fabricate(:collection)
+
+    status = subject.call(account, text: "test #{ActivityPub::TagManager.instance.uri_for(collection)} #{ActivityPub::TagManager.instance.uri_for(collection)}")
+
+    expect(status.tagged_objects.map(&:object))
+      .to contain_exactly(collection)
   end
 
   it 'gets distributed' do
@@ -331,8 +341,8 @@ RSpec.describe PostStatusService do
 
   it 'returns existing status when used twice with idempotency key' do
     account = Fabricate(:account)
-    status1 = subject.call(account, text: 'test', idempotency: 'meepmeep')
-    status2 = subject.call(account, text: 'test', idempotency: 'meepmeep')
+    status1 = described_class.new.call(account, text: 'test', idempotency: 'meepmeep')
+    status2 = described_class.new.call(account, text: 'test', idempotency: 'meepmeep')
     expect(status2.id).to eq status1.id
   end
 

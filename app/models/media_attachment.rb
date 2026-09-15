@@ -38,7 +38,10 @@ class MediaAttachment < ApplicationRecord
   enum :type, { image: 0, gifv: 1, video: 2, unknown: 3, audio: 4 }
   enum :processing, { queued: 0, in_progress: 1, complete: 2, failed: 3 }, prefix: true
 
-  MAX_DESCRIPTION_LENGTH = 1_500
+  SHORTCODE_LENGTH = 19
+
+  MAX_DESCRIPTION_LENGTH = 10_000
+  MAX_DESCRIPTION_HARD_LENGTH_LIMIT = 10_000
 
   IMAGE_LIMIT = (ENV['MAX_IMAGE_SIZE'] || 16.megabytes).to_i
   VIDEO_LIMIT = (ENV['MAX_VIDEO_SIZE'] || 99.megabytes).to_i
@@ -202,7 +205,7 @@ class MediaAttachment < ApplicationRecord
   remotable_attachment :thumbnail, IMAGE_LIMIT, suppress_errors: true, download_on_assign: false
 
   validates :account, presence: true
-  validates :description, length: { maximum: MAX_DESCRIPTION_LENGTH }
+  validates :description, length: { maximum: MAX_DESCRIPTION_LENGTH }, if: :local?
   validates :file, presence: true, if: :local?
   validates :thumbnail, absence: true, if: -> { local? && !audio_or_video? }
 
@@ -239,6 +242,10 @@ class MediaAttachment < ApplicationRecord
 
   def discarded?
     status&.discarded? || (status_id.present? && status.nil?)
+  end
+
+  def on_hold?
+    discarded? || account&.suspended?
   end
 
   def significantly_changed?
@@ -299,6 +306,10 @@ class MediaAttachment < ApplicationRecord
   after_post_process :set_meta
 
   class << self
+    def identified(identifier)
+      identifier.size == SHORTCODE_LENGTH ? find_by!(shortcode: identifier) : find(identifier)
+    end
+
     def supported_mime_types
       IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
     end

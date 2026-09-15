@@ -1,9 +1,12 @@
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 
+import formatjs from '@formatjs/unplugin/vite';
 import { optimizeLodashImports } from '@optimize-lodash/rollup-plugin';
+import babel from '@rolldown/plugin-babel';
 import legacy from '@vitejs/plugin-legacy';
 import react from '@vitejs/plugin-react';
+import browserslist from 'browserslist';
 import postcssPresetEnv from 'postcss-preset-env';
 import Compress from 'rollup-plugin-gzip';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -14,17 +17,14 @@ import {
   UserConfig,
 } from 'vite';
 import manifestSRI from 'vite-plugin-manifest-sri';
-import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { MastodonAssetsManifest } from './config/vite/plugin-assets-manifest';
-import { MastodonEmojiCompressed } from './config/vite/plugin-emoji-compressed';
 import { GlitchThemes as MastodonThemes } from './config/vite/plugin-glitch-themes';
-import { MastodonNameLookup } from './config/vite/plugin-name-lookup';
+import { MastodonServiceWorkerChunkPaths } from './config/vite/plugin-sw-chunk-paths';
 import { MastodonServiceWorkerLocales } from './config/vite/plugin-sw-locales';
 
-const jsRoot = path.resolve(__dirname, 'app/javascript');
+const jsRoot = path.resolve(import.meta.dirname, 'app/javascript');
 
 const cssAliasClasses: ReadonlyArray<string> = ['components', 'features'];
 
@@ -32,9 +32,7 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   const isProdBuild = mode === 'production' && command === 'build';
 
   let outDirName = 'packs-dev';
-  if (mode === 'test') {
-    outDirName = 'packs-test';
-  } else if (mode === 'production') {
+  if (mode === 'test' || mode === 'production') {
     outDirName = 'packs';
   }
   const outDir = path.resolve('public', outDirName);
@@ -42,8 +40,9 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   return {
     root: jsRoot,
     base: `/${outDirName}/`,
-    envDir: __dirname,
+    envDir: import.meta.dirname,
     resolve: {
+      tsconfigPaths: true,
       alias: {
         '~/': `${jsRoot}/`,
         '@/': `${jsRoot}/`,
@@ -105,10 +104,14 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
         // but it needs to be scoped to the whole domain
         'Service-Worker-Allowed': '/',
       },
-      hmr: {
+      hmr: true,
+      ws: {
         // Forcing the protocol to be insecure helps if you are proxying your dev server with SSL,
         // because Vite still tries to connect to localhost.
         protocol: 'ws',
+        // The client can't connect through the main Rails app proxy since it doesn't support
+        // WebSockets. It needs to connect directly to Vite's server, that's why we set the port again
+        clientPort: 3036,
       },
       port: 3036,
     },
@@ -122,7 +125,7 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
       assetsDir: 'assets',
       assetsInlineLimit: (filePath, _) =>
         /\.woff2?$/.exec(filePath) ? false : undefined,
-      rollupOptions: {
+      rolldownOptions: {
         input: await findEntrypoints(),
         output: {
           chunkFileNames({ facadeModuleId, name }) {
@@ -153,6 +156,14 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
             }
             return '[name]-[hash].js';
           },
+          entryFileNames({ name }) {
+            // If this is the service worker, don't add the hash to the name.
+            if (name === 'sw') {
+              return '[name].js';
+            }
+            // Otherwise, use the same value as chunkFileNames.
+            return '[name]-[hash].js';
+          },
         },
       },
     },
@@ -168,49 +179,25 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
       format: 'es',
     },
     plugins: [
-      tsconfigPaths({ projects: [path.resolve(__dirname, 'tsconfig.json')] }),
-      react({
-        babel: {
-          plugins: ['formatjs', 'transform-react-remove-prop-types'],
-        },
+      react(),
+      babel({
+        plugins: ['transform-react-remove-prop-types'],
       }),
+      formatjs(),
       MastodonThemes(),
       MastodonAssetsManifest(),
       MastodonServiceWorkerLocales(),
-      MastodonEmojiCompressed(),
+      MastodonServiceWorkerChunkPaths(),
       legacy({
         renderLegacyChunks: false,
         modernPolyfills: true,
+        modernTargets: browserslist.loadConfig({ path: process.cwd() }),
       }),
       isProdBuild && (Compress() as PluginOption),
       command === 'build' &&
         manifestSRI({
           manifestPaths: ['.vite/manifest.json'],
         }),
-      VitePWA({
-        srcDir: path.resolve(jsRoot, 'mastodon/service_worker'),
-        // We need to use injectManifest because we use our own service worker
-        strategies: 'injectManifest',
-        manifest: false,
-        injectRegister: false,
-        injectManifest: {
-          // Do not inject a manifest, we don't use precache
-          injectionPoint: undefined,
-          buildPlugins: {
-            vite: [
-              // Provide a virtual import with only the locales used in the ServiceWorker
-              MastodonServiceWorkerLocales(),
-              MastodonEmojiCompressed(),
-            ],
-          },
-        },
-        // Force the output location, because we have a symlink in `public/sw.js`
-        outDir: path.resolve(__dirname, 'public/packs'),
-        devOptions: {
-          enabled: true,
-          type: 'module',
-        },
-      }),
       svgr(),
       // Old library types need to be converted
       optimizeLodashImports() as PluginOption,
@@ -218,28 +205,19 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
         (visualizer({
           template: process.env.CI ? 'raw-data' : 'treemap',
         }) as PluginOption),
-      MastodonNameLookup(),
     ],
   } satisfies UserConfig;
 };
 
 async function findEntrypoints() {
-  const entrypoints: Record<string, string> = {};
+  const entrypoints: Record<string, string> = {
+    sw: path.resolve(jsRoot, 'mastodon/service_worker/sw.ts'),
+  };
 
-  // First, JS entrypoints
-  const jsEntrypointsDir = path.resolve(jsRoot, 'entrypoints');
-  const jsEntrypoints = await readdir(jsEntrypointsDir, {
-    withFileTypes: true,
-  });
-  const jsExtTest = /\.[jt]sx?$/;
-  for (const file of jsEntrypoints) {
-    if (file.isFile() && jsExtTest.test(file.name)) {
-      entrypoints[file.name.replace(jsExtTest, '')] = path.resolve(
-        jsEntrypointsDir,
-        file.name,
-      );
-    }
-  }
+  // Upstream adds files from `app/javascript/entrypoints` in there.
+  // In glitch-soc, `GlitchThemes` is taking care of that, so remove the
+  // upstream code to prevent processing the same file twice, which results
+  // in weird import cycles in the manifest.
 
   // Next, SCSS entrypoints
   const scssEntrypointsDir = path.resolve(jsRoot, 'styles/entrypoints');

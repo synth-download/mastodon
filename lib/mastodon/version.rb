@@ -9,7 +9,7 @@ module Mastodon
     end
 
     def minor
-      6
+      8
     end
 
     def patch
@@ -17,7 +17,7 @@ module Mastodon
     end
 
     def default_prerelease
-      'alpha.5'
+      'alpha.3'
     end
 
     def prerelease
@@ -45,7 +45,7 @@ module Mastodon
 
     def api_versions
       {
-        mastodon: 8,
+        mastodon: 11,
         glitch: 1,
         chuckya: 5,
         'net.iceshrimp.scheduled_boosts': 1,
