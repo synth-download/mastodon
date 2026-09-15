@@ -3,15 +3,23 @@
 import type { ReactNode, FC } from 'react';
 import { createContext, useId } from 'react';
 
+import classNames from 'classnames';
+
+import { A11yLiveRegion } from 'mastodon/components/a11y_live_region';
+import { CalloutInline } from 'mastodon/components/callout_inline';
+
 import classes from './fieldset.module.scss';
+import type { FieldStatus } from './form_field_wrapper';
+import { getFieldStatus } from './form_field_wrapper';
 import formFieldWrapperClasses from './form_field_wrapper.module.scss';
 
 interface FieldsetProps {
   legend: ReactNode;
   hint?: ReactNode;
   name?: string;
-  hasError?: boolean;
+  status?: FieldStatus | FieldStatus['variant'];
   layout?: 'vertical' | 'horizontal';
+  className?: string;
   children: ReactNode;
 }
 
@@ -26,39 +34,56 @@ export const Fieldset: FC<FieldsetProps> = ({
   legend,
   hint,
   name,
-  hasError,
+  status,
   layout,
+  className,
   children,
 }) => {
   const uniqueId = useId();
   const labelId = `${uniqueId}-label`;
   const hintId = `${uniqueId}-hint`;
+  const statusId = `${uniqueId}-status`;
   const fieldsetName = name || `${uniqueId}-fieldset-name`;
   const hasHint = !!hint;
 
+  const fieldStatus = getFieldStatus(status);
+  const hasStatusMessage = !!fieldStatus?.message;
+
+  const descriptionIds = [
+    hasHint ? hintId : '',
+    hasStatusMessage ? statusId : '',
+  ]
+    .filter((id) => !!id)
+    .join(' ');
+
   return (
     <fieldset
-      className={classes.fieldset}
-      data-has-error={hasError}
+      className={classNames(classes.fieldset, className)}
+      data-has-error={status === 'error'}
       aria-labelledby={labelId}
-      aria-describedby={hintId}
+      aria-describedby={descriptionIds}
     >
       <div className={formFieldWrapperClasses.labelWrapper}>
-        <div id={labelId} className={formFieldWrapperClasses.label}>
+        <div id={labelId} className={formFieldWrapperClasses.label} data-label>
           {legend}
         </div>
         {hasHint && (
-          <p id={hintId} className={formFieldWrapperClasses.hint}>
+          <p id={hintId} className={formFieldWrapperClasses.hint} data-hint>
             {hint}
           </p>
         )}
       </div>
 
-      <div className={classes.fieldsWrapper} data-layout={layout}>
+      <div className={classes.fieldsWrapper} data-layout={layout} data-fields>
         <FieldsetNameContext.Provider value={fieldsetName}>
           {children}
         </FieldsetNameContext.Provider>
       </div>
+
+      {/* Live region must be rendered even when empty */}
+      <A11yLiveRegion className={classes.status} id={statusId}>
+        {hasStatusMessage && <CalloutInline {...fieldStatus} />}
+      </A11yLiveRegion>
     </fieldset>
   );
 };

@@ -1,5 +1,3 @@
-import { isServerFeatureEnabled } from '@/flavours/glitch/utils/environment';
-
 export function EmojiPicker () {
   return import('../../emoji/emoji_picker');
 }
@@ -78,14 +76,7 @@ export function KeyboardShortcuts () {
   return import('../../keyboard_shortcuts');
 }
 
-export function PinnedStatuses () {
-  return import('../../pinned_statuses');
-}
-
 export function AccountTimeline () {
-  if (isServerFeatureEnabled('profile_redesign')) {
-    return import('../../account_timeline/v2');
-  }
   return import('../../account_timeline');
 }
 

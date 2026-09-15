@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import { useIdentity } from '@/flavours/glitch/identity_context';
-import { isClientFeatureEnabled } from '@/flavours/glitch/utils/environment';
 import {
   fetchRelationships,
   followAccount,
@@ -62,12 +61,14 @@ export const FollowButton: React.FC<{
   labelLength?: 'auto' | 'short' | 'long';
   className?: string;
   withUnmute?: boolean;
+  reference?: string;
 }> = ({
   accountId,
   compact,
   labelLength = 'auto',
   className,
   withUnmute = true,
+  reference,
 }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
@@ -125,9 +126,18 @@ export const FollowButton: React.FC<{
         }),
       );
     } else {
-      dispatch(followAccount(accountId));
+      // @ts-expect-error this action is not typed yet
+      dispatch(followAccount(accountId, { ref: reference }));
     }
-  }, [signedIn, relationship, accountId, withUnmute, account, dispatch]);
+  }, [
+    signedIn,
+    relationship,
+    accountId,
+    withUnmute,
+    account,
+    dispatch,
+    reference,
+  ]);
 
   const isNarrow = useBreakpoint('narrow');
   const useShortLabel =
@@ -171,23 +181,10 @@ export const FollowButton: React.FC<{
       'button--compact': compact,
     });
 
-    if (isClientFeatureEnabled('profile_editing')) {
-      return (
-        <Link to='/profile/edit' className={buttonClasses}>
-          {label}
-        </Link>
-      );
-    }
-
     return (
-      <a
-        href='/settings/profile'
-        target='_blank'
-        rel='noopener'
-        className={buttonClasses}
-      >
+      <Link to='/profile/edit' className={buttonClasses}>
         {label}
-      </a>
+      </Link>
     );
   }
 

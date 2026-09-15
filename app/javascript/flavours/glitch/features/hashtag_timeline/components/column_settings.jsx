@@ -1,17 +1,19 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
-import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
 import { NonceProvider } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import Toggle from 'react-toggle';
 
-import { maxFeedHashtags } from 'flavours/glitch/initial_state';
+import { maxFeedHashtags } from '@/flavours/glitch/initial_state';
+import { Toggle } from '@/flavours/glitch/components/form_fields/toggle_field';
+import { injectIntl } from '@/flavours/glitch/components/intl';
 
 import SettingToggle from '../../notifications/components/setting_toggle';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 
 const messages = defineMessages({
   placeholder: { id: 'hashtag.column_settings.select.placeholder', defaultMessage: 'Enter hashtags…' },
@@ -108,6 +110,16 @@ class ColumnSettings extends PureComponent {
   render () {
     const { settings, onChange } = this.props;
 
+    if (isRedesignEnabled()) {
+      return (
+        <div className='column-settings column-settings__hashtags'>
+          {this.modeSelect('any')}
+          {this.modeSelect('all')}
+          {this.modeSelect('none')}
+        </div>
+      )
+    }
+
     return (
       <div className='column-settings'>
         <section>
@@ -115,7 +127,7 @@ class ColumnSettings extends PureComponent {
             <SettingToggle settings={settings} settingPath={['local']} onChange={onChange} label={<FormattedMessage id='community.column_settings.local_only' defaultMessage='Local only' />} />
 
             <div className='setting-toggle'>
-              <Toggle id='hashtag.column_settings.tag_toggle' onChange={this.onToggle} checked={this.state.open} />
+              <Toggle id='hashtag.column_settings.tag_toggle' onChange={this.onToggle} checked={this.state.open} size={16} />
 
               <span className='setting-toggle__label'>
                 <FormattedMessage id='hashtag.column_settings.tag_toggle' defaultMessage='Include additional tags in this column' />

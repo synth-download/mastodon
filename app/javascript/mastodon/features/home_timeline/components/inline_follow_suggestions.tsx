@@ -16,12 +16,12 @@ import {
 } from 'mastodon/actions/suggestions';
 import type { ApiSuggestionSourceJSON } from 'mastodon/api_types/suggestions';
 import { Avatar } from 'mastodon/components/avatar';
+import { Badge, VerifiedBadge } from 'mastodon/components/badge';
 import { DisplayName } from 'mastodon/components/display_name';
 import { FollowButton } from 'mastodon/components/follow_button';
 import { Icon } from 'mastodon/components/icon';
 import { IconButton } from 'mastodon/components/icon_button';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
-import { VerifiedBadge } from 'mastodon/components/verified_badge';
 import { domain } from 'mastodon/initial_state';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
@@ -110,13 +110,12 @@ const Source: React.FC<{ id: ApiSuggestionSourceJSON }> = ({ id }) => {
   }
 
   return (
-    <div
+    <Badge
       className='inline-follow-suggestions__body__scrollable__card__text-stack__source'
       title={hint}
-    >
-      <Icon id='' icon={InfoIcon} />
-      {label}
-    </div>
+      label={label}
+      icon={<InfoIcon />}
+    />
   );
 };
 
@@ -143,13 +142,27 @@ const Card: React.FC<{
       />
 
       <div className='inline-follow-suggestions__body__scrollable__card__avatar'>
-        <Link to={`/@${account?.acct}`} data-hover-card-account={account?.id}>
+        <Link
+          to={{
+            pathname: `/@${account?.acct}`,
+            state: { reference: 'inline_suggestions' },
+          }}
+          data-hover-card-account={account?.id}
+          data-hover-card-reference='inline_suggestions'
+        >
           <Avatar account={account} size={72} />
         </Link>
       </div>
 
       <div className='inline-follow-suggestions__body__scrollable__card__text-stack'>
-        <Link to={`/@${account?.acct}`} data-hover-card-account={account?.id}>
+        <Link
+          to={{
+            pathname: `/@${account?.acct}`,
+            state: { reference: 'inline_suggestions' },
+          }}
+          data-hover-card-account={account?.id}
+          data-hover-card-reference='inline_suggestions'
+        >
           <DisplayName account={account} />
         </Link>
         {firstVerifiedField ? (
@@ -159,7 +172,7 @@ const Card: React.FC<{
         )}
       </div>
 
-      <FollowButton accountId={id} />
+      <FollowButton accountId={id} reference='inline_suggestions' />
     </div>
   );
 };
@@ -175,9 +188,7 @@ export const InlineFollowSuggestions: React.FC<{ hidden?: boolean }> = ({
   const suggestions = useAppSelector((state) => state.suggestions.items);
   const isLoading = useAppSelector((state) => state.suggestions.isLoading);
   const dismissed = useAppSelector(
-    (state) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      state.settings.getIn(['dismissed_banners', DISMISSIBLE_ID]) as boolean,
+    (state) => !!state.settings.getIn(['dismissed_banners', DISMISSIBLE_ID]),
   );
 
   useEffect(() => {
@@ -213,12 +224,12 @@ export const InlineFollowSuggestions: React.FC<{ hidden?: boolean }> = ({
       tabIndex={-1}
     >
       <div className='inline-follow-suggestions__header'>
-        <h3 id={uniqueId}>
+        <h2 id={uniqueId} className='inline-follow-suggestions__title'>
           <FormattedMessage
             id='follow_suggestions.who_to_follow'
             defaultMessage='Who to follow'
           />
-        </h3>
+        </h2>
 
         <div className='inline-follow-suggestions__header__actions'>
           <button className='link-button' onClick={handleDismiss} type='button'>

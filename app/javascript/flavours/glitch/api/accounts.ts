@@ -19,6 +19,11 @@ import type {
   ApiProfileUpdateParams,
 } from '../api_types/profile';
 
+export const apiGetAccounts = (ids: string[]) =>
+  apiRequestGet<ApiAccountJSON[]>('v1/accounts', {
+    id: ids,
+  });
+
 export const apiSubmitAccountNote = (id: string, value: string) =>
   apiRequestPost<ApiRelationshipJSON>(`v1/accounts/${id}/note`, {
     comment: value,
@@ -27,7 +32,8 @@ export const apiSubmitAccountNote = (id: string, value: string) =>
 export const apiFollowAccount = (
   id: string,
   params?: {
-    reblogs: boolean;
+    reblogs?: boolean;
+    ref?: string;
   },
 ) =>
   apiRequestPost<ApiRelationshipJSON>(`v1/accounts/${id}/follow`, {
@@ -67,5 +73,14 @@ export const apiGetFamiliarFollowers = (id: string) =>
 
 export const apiGetProfile = () => apiRequestGet<ApiProfileJSON>('v1/profile');
 
-export const apiPatchProfile = (params: ApiProfileUpdateParams) =>
+export const apiPatchProfile = (params: ApiProfileUpdateParams | FormData) =>
   apiRequestPatch<ApiProfileJSON>('v1/profile', params);
+
+export const apiDeleteProfileAvatar = () =>
+  apiRequestDelete('v1/profile/avatar');
+
+export const apiDeleteProfileHeader = () =>
+  apiRequestDelete('v1/profile/header');
+
+export const apiSubscribeByEmail = (id: string, email: string) =>
+  apiRequestPost(`v1/accounts/${id}/email_subscriptions`, { email });

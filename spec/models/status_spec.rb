@@ -9,8 +9,6 @@ RSpec.describe Status do
   let(:bob)   { Fabricate(:account, username: 'bob') }
   let(:other) { Fabricate(:status, account: bob, text: 'Skulls for the skull god! The enemy\'s gates are sideways!') }
 
-  it_behaves_like 'Status::Visibility'
-
   describe '#local?' do
     it 'returns true when no remote URI is set' do
       expect(subject.local?).to be true
@@ -248,7 +246,7 @@ RSpec.describe Status do
 
     describe 'on a status that ends with the local-only emoji' do
       before do
-        subject.text = "A toot #{subject.local_only_emoji}"
+        subject.text = 'A toot 👁'
       end
 
       context 'when the status originates from this instance' do
@@ -256,10 +254,10 @@ RSpec.describe Status do
           subject.account = local_account
         end
 
-        it 'is marked local-only' do
+        it 'is not marked local-only' do
           subject.save!
 
-          expect(subject).to be_local_only
+          expect(subject).to_not be_local_only
         end
       end
 

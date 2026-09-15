@@ -672,7 +672,6 @@ sl:
       action_log: Revizijski zapisnik
       action_taken_by: Dejanje, ki ga je sprejel
       actions:
-        delete_description_html: Prijavljene objave bodo izbrisane in ukrep bo zabeležen, da vam pomaga stopnjevati ukrepe ob naslednjih kršitvah z istega računa.
         mark_as_sensitive_description_html: Mediji v prijavljenih objavah bodo označeni kot občutljivi in ukrep bo zabeležen, da vam pomaga stopnjevati ukrepe ob naslednjih kršitvah z istega računa.
         other_description_html: Oglejte si več možnosti za nadzor vedenja računa in prilagodite komunikacijo s prijavljenim računom.
         resolve_description_html: Proti prijavljenemu računu ne bo izvedeno nobeno dejanje, noben ukrep ne bo zabeležen in prijava bo zaprta.
@@ -698,7 +697,6 @@ sl:
       confirm: Potrdi
       confirm_action: Potrdite dejanje moderiranja proti @%{acct}
       created_at: Prijavljeno
-      delete_and_resolve: Izbriši objave
       forwarded: Posredovano
       forwarded_replies_explanation: To poročilo je od oddaljenega uporabnika in se nanaša na oddaljeno vsebino. Posredovano vam je bilo, ker je vsebina, o kateri poroča, odgovor enemu od vaših uporabnikov.
       forwarded_to: Posredovano na %{domain}
@@ -868,10 +866,6 @@ sl:
         modes:
           authenticated: Samo overjeni uporabniki
           public: Vsi
-      landing_page:
-        values:
-          local_feed: Krajevni vir
-          trends: Trendi
       registrations:
         moderation_recommandation: Preden prijave odprete za vse poskrbite, da imate v ekipi moderatorjev zadosti aktivnih članov.
         preamble: Nadzirajte, kdo lahko ustvari račun na vašem strežniku.
@@ -1068,7 +1062,6 @@ sl:
           other: Delilo %{count} oseb v zadnjem tednu
           two: Delili %{count} osebi v zadnjem tednu
         title: Povezave v trendu
-        usage_comparison: Danes deljeno %{today}-krat, včeraj pa %{yesterday}-krat
       not_allowed_to_trend: Ni dovoljeno, da bi bilo v trendu
       only_allowed: Samo dovoljeni
       pending_review: Čakajoče na pregled
@@ -1115,7 +1108,6 @@ sl:
         trendable: Se lahko pojavi med trendi
         trending_rank: 'V trendu #%{rank}'
         usable: Je moč uporabiti
-        usage_comparison: Danes uporabljeno %{today}-krat, včeraj pa %{yesterday}-krat
         used_by_over_week:
           few: Uporabile %{count} osebe v zadnjem tednu
           one: Uporabila %{count} oseba v zadnjem tednu
@@ -1227,7 +1219,6 @@ sl:
   application_mailer:
     notification_preferences: Spremenite e-poštne nastavitve
     salutation: "%{name},"
-    settings: 'Spremenite e-poštne nastavitve: %{link}'
     unsubscribe: Odjavi od naročnine
     view: 'Pogled:'
     view_profile: Ogled profila
@@ -1410,8 +1401,6 @@ sl:
       your_appeal_pending: Oddali ste pritožbo
       your_appeal_rejected: Vaša pritožba je bila zavržena
   edit_profile:
-    basic_information: Osnovni podatki
-    hint_html: "<strong>Prilagodite, kaj ljudje vidijo na vašem javnem profilu in poleg vaših objav.</strong> Drugi vam bodo raje sledili nazaj in z vami klepetali, če boste imeli izpolnjen profil in nastavljeno profilno sliko."
     other: Drugo
   emoji_styles:
     auto: Samodejno
@@ -1450,10 +1439,8 @@ sl:
     mutes: Utišani
     storage: Shranjeni mediji
   featured_tags:
-    add_new: Dodaj novo
     errors:
       limit: Ste že dodali največje število ključnikov
-    hint_html: "<strong>Kaj so izpostavljeni ključniki?</strong> Prikazani so vidno na vašem javnem profilu in ljudem omogočajo brskanje po vaših javnih objavah posebej pod temi ključniki. So odlično orodje za spremljanje ustvarjalnih del ali dolgoročnih projektov."
   filters:
     contexts:
       account: Profili
@@ -1539,7 +1526,6 @@ sl:
       empty: Prazna datoteka CSV
       incompatible_type: Nezdružljivo z izbrano vrsto uvoza
       invalid_csv_file: 'Neveljavna datoteka CSV. Napaka: %{error}'
-      over_rows_processing_limit: vsebuje več kot %{count} vrstic
       too_large: Datoteka je prevelika
     failures: Neuspehi
     imported: Uvoženo
@@ -1685,21 +1671,6 @@ sl:
     failed_sign_in_html: Spodletela prijava z metodo %{method} iz %{ip} (%{browser})
     successful_sign_in_html: Uspešna prijava z metodo %{method} iz %{ip} (%{browser})
     title: Zgodovina overjanja
-  mail_subscriptions:
-    unsubscribe:
-      action: Da, odjavi me
-      complete: Odjavljeni
-      confirmation_html: Ali se res želite odjaviti od prejemanja %{type} za Mastodon na %{domain} na svojo e-pošto %{email}? Kadarkoli se lahko znova prijavite iz svojih <a href="%{settings_path}">nastavitev e-poštnih obvestil</a>.
-      emails:
-        notification_emails:
-          favourite: e-sporočil z obvestili o priljubljenosti
-          follow: e-sporočil z obvestili o sledenju
-          follow_request: e-sporočil o zahtevah za sledenje
-          mention: e-sporočil z obvestili o omembah
-          reblog: e-sporočil z obvestili o izpostavljanju
-      resubscribe_html: Če ste se odjavili po pomoti, se lahko znova prijavite iz svojih <a href="%{settings_path}">nastavitev e-poštnih obvestil</a>.
-      success_html: Nič več ne boste prejemali %{type} za Mastodon na %{domain} na svoj e-naslov %{email}.
-      title: Odjavi od naročnine
   media_attachments:
     validations:
       images_and_video: Videoposnetka ni mogoče priložiti objavi, ki že vsebuje slike
@@ -1722,7 +1693,6 @@ sl:
     incoming_migrations_html: Če se želite preseliti iz drugega računa na tega, morate najprej <a href="%{path}">ustvariti vzdevek računa</a>.
     moved_msg: Vaš račun se zdaj preusmerja na %{acct} in vaši sledilci so preseljeni.
     not_redirecting: Vaš račun trenutno ne preusmerja na noben drug račun.
-    on_cooldown: Nedavno ste migrirali svoj račun. Funkcija bo znova na voljo čez %{count} dni.
     past_migrations: Pretekle migracije
     proceed_with_move: Premakni sledilce
     redirected_msg: Vaš račun se zdaj preusmerja na %{acct}.
@@ -1811,7 +1781,6 @@ sl:
     next: Naprej
     older: Starejše
     prev: Nazaj
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Na tej anketi ste že glasovali
@@ -1879,8 +1848,6 @@ sl:
       account: Javne objave @%{acct}
       tag: 'Javne objave s ključnikom #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Za ta dan ste presegli omejitev %{limit} načrtovanih objav
-    over_total_limit: Presegli ste omejitev %{limit} načrtovanih objav
     too_soon: datum mora biti v prihodnosti
   self_destruct:
     lead_html: Na žalost se <strong>%{domain}</strong> za vedno zapira. Če ste tu imeli svoj račun, ga v prihodnje ne boste mogli več uporabljati. Zahtevate lahko kopijo svojih podatkov.

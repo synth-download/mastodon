@@ -1,18 +1,16 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import type { FC, ReactNode } from 'react';
 
-import { Account } from '@/flavours/glitch/components/account';
-import type { ColumnRef } from '@/flavours/glitch/components/column';
+import { AccountListItem } from '@/flavours/glitch/components/account_list_item';
 import { Column } from '@/flavours/glitch/components/column';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import ScrollableList from '@/flavours/glitch/components/scrollable_list';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useAccountVisibility } from '@/flavours/glitch/hooks/useAccountVisibility';
 import { useLayout } from '@/flavours/glitch/hooks/useLayout';
 
 import { ProfileColumnHeader } from '../../account/components/profile_column_header';
-import { AccountHeader } from '../../account_timeline/components/account_header';
 
 import { RemoteHint } from './remote';
 
@@ -26,10 +24,12 @@ interface AccountListProps {
   accountId?: string | null;
   append?: ReactNode;
   emptyMessage: ReactNode;
+  header?: ReactNode;
   footer?: ReactNode;
   list?: AccountList | null;
   loadMore: () => void;
   prependAccountId?: string | null;
+  withoutFollowsYouBadge?: boolean;
   scrollKey: string;
 }
 
@@ -37,10 +37,12 @@ export const AccountList: FC<AccountListProps> = ({
   accountId,
   append,
   emptyMessage,
+  header,
   footer,
   list,
   loadMore,
   prependAccountId,
+  withoutFollowsYouBadge,
   scrollKey,
 }) => {
   const account = useAccount(accountId);
@@ -54,21 +56,28 @@ export const AccountList: FC<AccountListProps> = ({
     }
     const children =
       list?.items.map((followerId) => (
-        <Account key={followerId} id={followerId} />
+        <AccountListItem
+          key={followerId}
+          accountId={followerId}
+          withBio={false}
+          badge={withoutFollowsYouBadge ? false : null}
+          reference='profile'
+        />
       )) ?? [];
 
     if (prependAccountId) {
       children.unshift(
-        <Account key={prependAccountId} id={prependAccountId} minimal />,
+        <AccountListItem
+          key={prependAccountId}
+          accountId={prependAccountId}
+          withBio={false}
+          badge={withoutFollowsYouBadge ? false : null}
+          reference='profile'
+        />,
       );
     }
     return children;
-  }, [prependAccountId, list, forceEmptyState]);
-
-  const columnRef = useRef<ColumnRef>(null);
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
+  }, [prependAccountId, list, forceEmptyState, withoutFollowsYouBadge]);
 
   const { multiColumn } = useLayout();
 
@@ -88,18 +97,15 @@ export const AccountList: FC<AccountListProps> = ({
   const domain = account.acct.split('@')[1];
 
   return (
-    <Column ref={columnRef}>
-      <ProfileColumnHeader
-        onClick={handleHeaderClick}
-        multiColumn={multiColumn}
-      />
+    <Column>
+      <ProfileColumnHeader multiColumn={multiColumn} />
 
       <ScrollableList
         scrollKey={scrollKey}
         hasMore={!forceEmptyState && list?.hasMore}
         isLoading={list?.isLoading ?? true}
         onLoadMore={loadMore}
-        prepend={<AccountHeader accountId={accountId} hideTabs />}
+        prepend={header}
         alwaysPrepend
         append={append ?? <RemoteHint domain={domain} url={account.url} />}
         emptyMessage={emptyMessage}

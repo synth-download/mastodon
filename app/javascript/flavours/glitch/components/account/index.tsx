@@ -21,15 +21,16 @@ import { initMuteModal } from 'flavours/glitch/actions/mutes';
 import { apiFollowAccount } from 'flavours/glitch/api/accounts';
 import { Avatar } from 'flavours/glitch/components/avatar';
 import { AvatarOverlay } from 'flavours/glitch/components/avatar_overlay';
+import { VerifiedBadge } from 'flavours/glitch/components/badge';
 import { Button } from 'flavours/glitch/components/button';
 import { FollowersCounter } from 'flavours/glitch/components/counters';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
+import { AnimateEmojiProvider } from 'flavours/glitch/components/emoji/context';
 import { FollowButton } from 'flavours/glitch/components/follow_button';
 import { RelativeTimestamp } from 'flavours/glitch/components/relative_timestamp';
 import { ShortNumber } from 'flavours/glitch/components/short_number';
 import { Skeleton } from 'flavours/glitch/components/skeleton';
-import { VerifiedBadge } from 'flavours/glitch/components/verified_badge';
 import { useIdentity } from 'flavours/glitch/identity_context';
 import { me } from 'flavours/glitch/initial_state';
 import type { MenuItem } from 'flavours/glitch/models/dropdown_menu';
@@ -79,7 +80,9 @@ interface AccountProps {
   withMenu?: boolean;
   withBorder?: boolean;
   extraAccountInfo?: React.ReactNode;
+  className?: string;
   children?: React.ReactNode;
+  reference?: string;
 }
 
 export const Account: React.FC<AccountProps> = ({
@@ -93,7 +96,9 @@ export const Account: React.FC<AccountProps> = ({
   withMenu = true,
   withBorder = true,
   extraAccountInfo,
+  className,
   children,
+  reference,
 }) => {
   const intl = useIntl();
   const { signedIn } = useIdentity();
@@ -172,7 +177,7 @@ export const Account: React.FC<AccountProps> = ({
                 modalProps: {
                   accountId: id,
                   onConfirm: () => {
-                    apiFollowAccount(id)
+                    apiFollowAccount(id, { ref: reference })
                       .then((relationship) => {
                         dispatch(
                           followAccountSuccess({
@@ -228,6 +233,7 @@ export const Account: React.FC<AccountProps> = ({
     defaultAction,
     isRemote,
     signedIn,
+    reference,
   ]);
 
   if (hidden) {
@@ -272,7 +278,7 @@ export const Account: React.FC<AccountProps> = ({
       />
     );
   } else {
-    button = <FollowButton accountId={id} />;
+    button = <FollowButton accountId={id} reference={reference} />;
   }
 
   let muteTimeRemaining: React.ReactNode;
@@ -280,7 +286,7 @@ export const Account: React.FC<AccountProps> = ({
   if (account?.mute_expires_at) {
     muteTimeRemaining = (
       <>
-        · <RelativeTimestamp timestamp={account.mute_expires_at} futureDate />
+        · <RelativeTimestamp hasFuture timestamp={account.mute_expires_at} />
       </>
     );
   }
@@ -302,7 +308,7 @@ export const Account: React.FC<AccountProps> = ({
 
   return (
     <div
-      className={classNames('account', {
+      className={classNames('account', className, {
         'account--minimal': minimal,
         'account--without-border': !withBorder,
       })}
@@ -317,11 +323,18 @@ export const Account: React.FC<AccountProps> = ({
             className='account__display-name focusable'
             title={account?.acct}
             href={account?.url}
-            to={`/@${account?.acct}`}
+            to={{ pathname: `/@${account?.acct}`, state: { reference } }}
             data-hover-card-account={id}
+            data-hover-card-reference={reference}
           >
             <div className='account__avatar-wrapper'>
-              {account ? statusAvatar : <Skeleton width={size} height={size} />}
+              <AnimateEmojiProvider>
+                {account ? (
+                  statusAvatar
+                ) : (
+                  <Skeleton width={size} height={size} />
+                )}
+              </AnimateEmojiProvider>
             </div>
 
             <div className='account__contents'>

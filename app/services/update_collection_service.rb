@@ -7,7 +7,8 @@ class UpdateCollectionService
     @collection = collection
     @collection.update!(params)
 
-    distribute_update_activity if Mastodon::Feature.collections_federation_enabled?
+    notify_about_update
+    distribute_update_activity
   end
 
   private
@@ -15,7 +16,11 @@ class UpdateCollectionService
   def distribute_update_activity
     return unless relevant_attributes_changed?
 
-    ActivityPub::AccountRawDistributionWorker.perform_async(activity_json, @collection.account.id)
+    ActivityPub::CollectionRawDistributionWorker.perform_async(activity_json, @collection.id)
+  end
+
+  def notify_about_update
+    NotifyOfCollectionUpdateService.new.call(@collection)
   end
 
   def activity_json

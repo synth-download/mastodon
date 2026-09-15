@@ -654,7 +654,6 @@ ia:
       action_log: Registro de inspection
       action_taken_by: Mesura prendite per
       actions:
-        delete_description_html: Le messages reportate essera delite e un sanction essera registrate pro adjutar te a prender mesuras adequate in caso de futur infractiones committite desde le mesme conto.
         mark_as_sensitive_description_html: Le files multimedial in le messages reportate essera marcate como sensibile e un sanction essera registrate pro adjutar te a prender mesuras adequate in caso de futur infractiones committite desde le mesme conto.
         other_description_html: Vider plus optiones pro controlar le comportamento del conto e personalisar le communication al conto signalate.
         resolve_description_html: Necun mesura essera prendite contra le conto denunciate, necun sanction registrate, e le reporto essera claudite.
@@ -680,7 +679,6 @@ ia:
       confirm: Confirmar
       confirm_action: Confirmar le mesura de moderation contra %{acct}
       created_at: Reportate
-      delete_and_resolve: Deler le messages
       forwarded: Reexpedite
       forwarded_replies_explanation: Iste reporto proveni de un usator remote e concerne contento remote. Illo te ha essite reexpedite perque le contento reportate es in responsa a un usator tue.
       forwarded_to: Reexpedite a %{domain}
@@ -853,11 +851,6 @@ ia:
           authenticated: Solmente usatores authenticate
           disabled: Requirer un rolo de usator specific
           public: Omnes
-      landing_page:
-        values:
-          about: A proposito
-          local_feed: Canal local
-          trends: Tendentias
       registrations:
         moderation_recommandation: Per favor assecura te de haber un equipa de moderation adequate e reactive ante de aperir le inscription a omnes!
         preamble: Controla qui pote crear un conto sur tu servitor.
@@ -1052,7 +1045,6 @@ ia:
           one: Compartite per un persona le septimana passate
           other: Compartite per %{count} personas le septimana passate
         title: Ligamines in tendentia
-        usage_comparison: Compartite %{today} vices hodie, in comparation con le %{yesterday} de heri
       not_allowed_to_trend: Non autorisate a apparer in tendentias
       only_allowed: Solo permittites
       pending_review: Attende revision
@@ -1075,7 +1067,7 @@ ia:
         no_status_selected: Necun message in tendentia ha essite cambiate perque necun ha essite seligite
         not_discoverable: Le autor non ha optate pro esser discoperibile
         shared_by:
-          one: Compartite o marcate como favorite un vice
+          one: Compartite o favorite un vice
           other: Compartite o marcate como favorite %{friendly_count} vices
         title: Messages in tendentia
       tags:
@@ -1097,7 +1089,6 @@ ia:
         trendable: Pote apparer sub tendentias
         trending_rank: 'Tendentia #%{rank}'
         usable: Pote esser usate
-        usage_comparison: Usate %{today} vices hodie, in comparation con le %{yesterday} de heri
         used_by_over_week:
           one: Usate per un persona in le ultime septimana
           other: Usate per %{count} personas in le ultime septimana
@@ -1207,7 +1198,6 @@ ia:
   application_mailer:
     notification_preferences: Cambiar preferentias de e-mail
     salutation: "%{name},"
-    settings: 'Cambiar preferentias de e-mail: %{link}'
     unsubscribe: Cancellar subscription
     view: 'Visita:'
     view_profile: Vider profilo
@@ -1383,8 +1373,6 @@ ia:
       your_appeal_pending: Tu ha submittite un appello
       your_appeal_rejected: Tu appello ha essite rejectate
   edit_profile:
-    basic_information: Information basic
-    hint_html: "<strong>Personalisa lo que le personas vide sur tu profilo public e presso tu messages.</strong> Il es plus probabile que altere personas te seque e interage con te quando tu ha un profilo complete e un photo."
     other: Alteres
   emoji_styles:
     auto: Automatic
@@ -1424,10 +1412,8 @@ ia:
     mutes: Tu ha silentiate
     storage: Immagazinage multimedial
   featured_tags:
-    add_new: Adder nove
     errors:
       limit: Tu ha jam mittite in evidentia le maxime numero de hashtags
-    hint_html: "<strong>Monstra tu plus importante hashtags sur tu profilo.</strong> Un excellente instrumento pro tener tracia de tu labores creative e projectos de longe termino, le hashtags que tu mitte in evidentia appare prominentemente sur tu profilo e permitte le accesso rapide a tu proprie messages."
   filters:
     contexts:
       account: Profilos
@@ -1499,7 +1485,6 @@ ia:
       empty: File CSV vacue
       incompatible_type: Incompatibile con le typo de importation seligite
       invalid_csv_file: 'File CSV non valide. Error: %{error}'
-      over_rows_processing_limit: contine plus de %{count} lineas
       too_large: Le file es troppo grande
     failures: Fallimentos
     imported: Importate
@@ -1620,21 +1605,6 @@ ia:
     failed_sign_in_html: Tentativa de authentication fallite con %{method} ab %{ip} (%{browser})
     successful_sign_in_html: Apertura de session succedite con %{method} desde %{ip} (%{browser})
     title: Historia de authentication
-  mail_subscriptions:
-    unsubscribe:
-      action: Si, cancellar subscription
-      complete: Desubscribite
-      confirmation_html: Es tu secur de voler cancellar le subscription al %{type} de Mastodon sur %{domain} pro tu adresse de e-mail %{email}? Tu pote sempre resubscriber te a partir del <a href="%{settings_path}">parametros de notification in e-mail</a>.
-      emails:
-        notification_emails:
-          favourite: notificationes de favorites in e-mail
-          follow: notificationes de sequimento in e-mail
-          follow_request: requestas de sequimento in e-mail
-          mention: notificationes de mentiones in e-mail
-          reblog: notificationes de impulsos in e-mail
-      resubscribe_html: Si tu ha cancellate le subscription in error, tu pote resubscriber te a partir del <a href="%{settings_path}">parametros de notification in e-mail</a>.
-      success_html: Tu non recipera plus %{type} pro Mastodon sur %{domain} a tu adresse de e-mail %{email}.
-      title: Desubcriber
   media_attachments:
     validations:
       images_and_video: Impossibile annexar un video a un message que jam contine imagines
@@ -1657,7 +1627,6 @@ ia:
     incoming_migrations_html: Pro migrar de un altere conto a iste, primo tu debe <a href="%{path}">crear un alias de conto</a>.
     moved_msg: Tu conto es ora redirigite a %{acct} e le transferentia de tu sequitores es in curso.
     not_redirecting: Tu conto actualmente non es redirigite a un altere conto.
-    on_cooldown: Tu ha recentemente migrate tu conto. Iste function essera disponibile de novo in %{count} dies.
     past_migrations: Migrationes passate
     proceed_with_move: Transferer sequitores
     redirected_msg: Tu conto es ora redirigite a %{acct}.
@@ -1744,7 +1713,6 @@ ia:
     next: Sequente
     older: Plus ancian
     prev: Previe
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Tu jam ha votate in iste sondage
@@ -1814,8 +1782,6 @@ ia:
       account: Messages public de @%{acct}
       tag: 'Messages public con hashtag #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Tu ha excedite le limite de %{limit} messages programmate pro hodie
-    over_total_limit: Tu ha excedite le limite de %{limit} messages programmate
     too_soon: le data debe esser in le futuro
   self_destruct:
     lead_html: Infortunatemente, <strong>%{domain}</strong> tosto claudera permanentemente. Si tu habeva un conto illac, tu non potera continuar a usar lo, ma tu pote ancora requestar un copia de tu datos.

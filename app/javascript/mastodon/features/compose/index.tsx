@@ -2,12 +2,17 @@ import { useEffect, useCallback } from 'react';
 
 import { useIntl, defineMessages } from 'react-intl';
 
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import type { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 
+import { Helmet } from '@unhead/react/helmet';
+
 import elephantUIPlane from '@/images/elephant_ui_plane.svg';
+import { Column } from '@/mastodon/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/mastodon/components/column/header';
+import { ColumnHeader } from '@/mastodon/components/column_header';
+import { isRedesignEnabled } from '@/mastodon/utils/environment';
 import EditIcon from '@/material-icons/400-24px/edit_square.svg?react';
 import PeopleIcon from '@/material-icons/400-24px/group.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
@@ -16,10 +21,12 @@ import MenuIcon from '@/material-icons/400-24px/menu.svg?react';
 import NotificationsIcon from '@/material-icons/400-24px/notifications-fill.svg?react';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
 import SettingsIcon from '@/material-icons/400-24px/settings.svg?react';
-import { mountCompose, unmountCompose } from 'mastodon/actions/compose';
+import {
+  changeComposing,
+  mountCompose,
+  unmountCompose,
+} from 'mastodon/actions/compose';
 import { openModal } from 'mastodon/actions/modal';
-import { Column } from 'mastodon/components/column';
-import { ColumnHeader } from 'mastodon/components/column_header';
 import { Icon } from 'mastodon/components/icon';
 import { mascot, reduceMotion } from 'mastodon/initial_state';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
@@ -51,10 +58,7 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const columns = useAppSelector(
-    (state) =>
-      (state.settings as ImmutableMap<string, unknown>).get(
-        'columns',
-      ) as ImmutableList<ColumnMap>,
+    (state) => state.settings.get('columns') as ImmutableList<ColumnMap>,
   );
 
   useEffect(() => {
@@ -63,6 +67,10 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
     return () => {
       dispatch(unmountCompose());
     };
+  }, [dispatch]);
+
+  const handleFocus = useCallback(() => {
+    dispatch(changeComposing(true));
   }, [dispatch]);
 
   const handleLogoutClick = useCallback(
@@ -86,12 +94,11 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
 
   if (multiColumn) {
     return (
-      <div
-        className='drawer'
-        role='region'
-        aria-label={intl.formatMessage(navbarMessages.publish)}
-      >
-        <nav className='drawer__header'>
+      <div className='drawer'>
+        <nav
+          className='drawer__header'
+          aria-label={intl.formatMessage(navbarMessages.advancedUiQuickLinks)}
+        >
           <Link
             to='/getting-started'
             className='drawer__tab'
@@ -162,8 +169,12 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
 
         <Search singleColumn={false} />
 
-        <div className='drawer__pager'>
-          <div className='drawer__inner'>
+        <div
+          className='drawer__pager'
+          role='region'
+          aria-label={intl.formatMessage(navbarMessages.publish)}
+        >
+          <div className='drawer__inner' onFocus={handleFocus}>
             <ComposeFormContainer />
 
             <div className='drawer__inner__mastodon with-zig-zag-decoration'>
@@ -180,16 +191,27 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
       bindToDocument={!multiColumn}
       label={intl.formatMessage(navbarMessages.publish)}
     >
-      <ColumnHeader
-        icon='pencil'
-        iconComponent={EditIcon}
-        title={intl.formatMessage(navbarMessages.publish)}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          withBackButton
+          title={intl.formatMessage(navbarMessages.publish)}
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='pencil'
+          iconComponent={EditIcon}
+          title={intl.formatMessage(navbarMessages.publish)}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
 
       <div className='scrollable'>
-        <ComposeFormContainer />
+        <ComposeFormContainer
+          // This is fine on this single-purpose view
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus
+        />
       </div>
 
       <Helmet>

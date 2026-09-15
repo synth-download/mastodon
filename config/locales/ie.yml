@@ -561,7 +561,6 @@ ie:
       action_log: Jurnale de audit
       action_taken_by: Action fat de
       actions:
-        delete_description_html: Li raportat postas va esser deletet e un admoniment va esser registrat por auxiliar te escalar si hay futuri infractiones del sam conto.
         mark_as_sensitive_description_html: Li medie in li raportat postas va esser marcat quam sensitiv e un admoniment va esser registrat por auxiliar te escalar si hay futuri infractiones del sam conto.
         other_description_html: Vider plu optiones por controlar li conduida del conto e customisar comunication al raportat conto.
         resolve_description_html: Null action va esser fat contra li raportat conto, null admoniment registrat, e li raporte va esser cludet.
@@ -585,7 +584,6 @@ ie:
       confirm: Confirmar
       confirm_action: Confirmar moderatori action contra @%{acct}
       created_at: Raportat
-      delete_and_resolve: Deleter postas
       forwarded: Reinviat
       forwarded_replies_explanation: Ti-ci raporte es de un lontan usator e pri lontan contenete. It ha esset reinviat a vos pro que li raportat contenete es un response a un de tui usatores.
       forwarded_to: Misset anc a %{domain}
@@ -862,7 +860,6 @@ ie:
           one: Partit de un person durant li ultim semane
           other: Partit de %{count} persones durant li ultim semane
         title: Ligamentes in tendentie
-        usage_comparison: Partit %{today} vezes hodie, in comparation a %{yesterday} yer
       not_allowed_to_trend: Ne permisset esser in tendentie
       only_allowed: Solmen li permissetes
       pending_review: Sub inspection
@@ -903,7 +900,6 @@ ie:
         trendable: Posse aparir in tendenties
         trending_rank: 'Tendentie #%{rank}'
         usable: Permisset
-        usage_comparison: 'Usat hodie: %{today} vez(es), yer: %{yesterday}'
         used_by_over_week:
           one: Usat de un person durant li ultim semane
           other: Usat de %{count} persones durant li ultim semane
@@ -1141,8 +1137,6 @@ ie:
       your_appeal_pending: Tu ha fat un apelle
       your_appeal_rejected: Tui apelle ha esset rejectet
   edit_profile:
-    basic_information: Basic information
-    hint_html: "<strong>Customisa ti quel gente vide sur tui public profil e apu tui postas.</strong> Altri persones es plu probabil sequer te e interacter con te si tu have un detalliat profil e un profil-image."
     other: Altri
   errors:
     '400': Li demande quel tu inviat esset ínvalid o misformat.
@@ -1178,10 +1172,8 @@ ie:
     mutes: Tu silentia
     storage: Inmagasination de medie
   featured_tags:
-    add_new: Adjunter un nov
     errors:
       limit: Tu ja ha pinglat li maxim númere de hashtags
-    hint_html: "<strong>Pinglar tui max important hashtags sur tui profil.</strong> Un bonissim maniere de mantener un registre de tui ovres e projectes, pinglat hashtags es monstrat prominentmen sur tui profil e permisse rapid accesse a tui propri postas."
   filters:
     contexts:
       account: Profiles
@@ -1253,7 +1245,6 @@ ie:
       empty: li file es vacui
       incompatible_type: Íncompatibil con li selectet specie de importation
       invalid_csv_file: 'Ínvalid file CSV. Errore: %{error}'
-      over_rows_processing_limit: contene plu quam %{count} lineas
       too_large: li file es tro grand
     failures: Fallites
     imported: Importat
@@ -1328,11 +1319,6 @@ ie:
     failed_sign_in_html: Fallit prova de apertion de session per %{method} de %{ip} (%{browser})
     successful_sign_in_html: Successosi apertion de session per %{method} de %{ip} (%{browser})
     title: Historie de autentication
-  mail_subscriptions:
-    unsubscribe:
-      action: Yes, desabonnar
-      complete: Desabonnat
-      title: Desabonnar
   media_attachments:
     validations:
       images_and_video: On ne posse atachar un video a un posta quel ja contene images
@@ -1354,7 +1340,6 @@ ie:
     incoming_migrations_html: Por mover de un altri conto a ti-ci, erstmen tu deve <a href="%{path}">crear un alias de conto</a>.
     moved_msg: Tui conto nu redirecte a %{acct} e tui sequitores es in li processu de esser movet.
     not_redirecting: Tui conto redirecte a null altri conto actualmen.
-    on_cooldown: Tu ha recentmen migrat tui conto. Ti function va esser disponibil denov pos %{count} dies.
     past_migrations: Passat migrationes
     proceed_with_move: Translocar sequitores
     redirected_msg: Tui conto nu have un redirection a %{acct}.
@@ -1435,7 +1420,6 @@ ie:
     next: Seq
     older: Plu old
     prev: Prec
-    truncate: "&hellip;"
   polls:
     errors:
       already_voted: Tu ja votat in ti-ci balotation
@@ -1501,9 +1485,6 @@ ie:
     descriptions:
       account: Public postas de @%{acct}
       tag: 'Public postas con li hashtag #%{hashtag}'
-  scheduled_statuses:
-    over_daily_limit: Tu ha atinget li límite de %{limit} planat postas por hodie
-    over_total_limit: Tu ha atinget li límite de %{limit} planat postas
   self_destruct:
     lead_html: Ínfortunatmen, <strong>%{domain}</strong> va bentost permanentmen cluder. Si tu havet un conto ta, tu ne va posser continuar usar it, ma tu ancor posse demandar un archive de tui data.
     title: Ti-ci servitor va cluder bentost

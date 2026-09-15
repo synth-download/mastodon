@@ -3,13 +3,14 @@ import type { FC } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
+import { Callout } from '@/mastodon/components/callout';
 import { LoadingIndicator } from '@/mastodon/components/loading_indicator';
 import { Tag } from '@/mastodon/components/tags/tag';
 import { useAccount } from '@/mastodon/hooks/useAccount';
 import { useCurrentAccountId } from '@/mastodon/hooks/useAccountId';
 import type { TagData } from '@/mastodon/reducers/slices/profile_edit';
 import {
-  addFeaturedTag,
+  addFeaturedTags,
   deleteFeaturedTag,
   fetchProfile,
   fetchSuggestedTags,
@@ -28,17 +29,22 @@ import classes from './styles.module.scss';
 const messages = defineMessages({
   columnTitle: {
     id: 'account_edit_tags.column_title',
-    defaultMessage: 'Edit featured hashtags',
+    defaultMessage: 'Edit Tags',
   },
 });
 
 const selectTags = createAppSelector(
-  [(state) => state.profileEdit],
-  (profileEdit) => ({
+  [
+    (state) => state.profileEdit,
+    (state) =>
+      state.server.server.item?.configuration.accounts.max_featured_tags ?? 0,
+  ],
+  (profileEdit, maxTags) => ({
     tags: profileEdit.profile?.featuredTags ?? [],
     tagSuggestions: profileEdit.tagSuggestions ?? [],
     isLoading: !profileEdit.profile || !profileEdit.tagSuggestions,
     isPending: profileEdit.isPending,
+    maxTags,
   }),
 );
 
@@ -47,7 +53,7 @@ export const AccountEditFeaturedTags: FC = () => {
   const account = useAccount(accountId);
   const intl = useIntl();
 
-  const { tags, tagSuggestions, isLoading, isPending } =
+  const { tags, tagSuggestions, isLoading, isPending, maxTags } =
     useAppSelector(selectTags);
 
   const dispatch = useAppDispatch();
@@ -67,6 +73,8 @@ export const AccountEditFeaturedTags: FC = () => {
     return <AccountEditEmptyColumn notFound={!accountId} />;
   }
 
+  const canAddMoreTags = tags.length < maxTags;
+
   return (
     <AccountEditColumn
       title={intl.formatMessage(messages.columnTitle)}
@@ -79,9 +87,9 @@ export const AccountEditFeaturedTags: FC = () => {
           tagName='p'
         />
 
-        <AccountEditTagSearch />
+        {canAddMoreTags && <AccountEditTagSearch />}
 
-        {tagSuggestions.length > 0 && (
+        {tagSuggestions.length > 0 && canAddMoreTags && (
           <div className={classes.tagSuggestions}>
             <FormattedMessage
               id='account_edit_tags.suggestions'
@@ -91,6 +99,15 @@ export const AccountEditFeaturedTags: FC = () => {
               <SuggestedTag name={tag.name} key={tag.id} disabled={isPending} />
             ))}
           </div>
+        )}
+
+        {!canAddMoreTags && (
+          <Callout icon={false} className={classes.maxTagsWarning}>
+            <FormattedMessage
+              id='account_edit_tags.max_tags_reached'
+              defaultMessage='You have reached the maximum number of featured hashtags.'
+            />
+          </Callout>
         )}
 
         {isLoading && <LoadingIndicator />}
@@ -128,7 +145,7 @@ const SuggestedTag: FC<{ name: string; disabled?: boolean }> = ({
 }) => {
   const dispatch = useAppDispatch();
   const handleAddTag = useCallback(() => {
-    void dispatch(addFeaturedTag({ name }));
+    void dispatch(addFeaturedTags({ names: [name] }));
   }, [dispatch, name]);
   return <Tag name={name} onClick={handleAddTag} disabled={disabled} />;
 };

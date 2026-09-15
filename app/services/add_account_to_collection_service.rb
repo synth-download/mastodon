@@ -11,10 +11,9 @@ class AddAccountToCollectionService
 
     @collection_item = create_collection_item
 
-    if Mastodon::Feature.collections_federation_enabled?
-      distribute_add_activity if @account.local?
-      distribute_feature_request_activity if @account.remote?
-    end
+    notify_local_user if @account.local?
+    distribute_add_activity if @account.local?
+    distribute_feature_request_activity if @account.remote?
 
     @collection_item
   end
@@ -22,14 +21,16 @@ class AddAccountToCollectionService
   private
 
   def create_collection_item
-    @collection.collection_items.create!(
-      account: @account,
-      state: :accepted
-    )
+    state = @account.local? ? :accepted : :pending
+    @collection.collection_items.create!(account: @account, state:)
+  end
+
+  def notify_local_user
+    LocalNotificationWorker.perform_async(@account.id, @collection_item.id, @collection_item.class.name, 'added_to_collection')
   end
 
   def distribute_add_activity
-    ActivityPub::AccountRawDistributionWorker.perform_async(add_activity_json, @collection.account_id)
+    ActivityPub::CollectionRawDistributionWorker.perform_async(add_activity_json, @collection.id)
   end
 
   def distribute_feature_request_activity
