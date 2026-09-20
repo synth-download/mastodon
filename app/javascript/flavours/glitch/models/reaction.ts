@@ -1,6 +1,7 @@
 import type { ApiStatusReactionJSON } from 'flavours/glitch/api_types/reaction';
 
-export interface StatusReaction extends Omit<ApiStatusReactionJSON, 'account'> {
+type StatusReactionShape = Required<ApiStatusReactionJSON>;
+export interface StatusReaction extends Omit<StatusReactionShape, 'account'> {
   account: string;
 }
 
