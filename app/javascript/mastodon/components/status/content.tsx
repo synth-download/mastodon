@@ -1,4 +1,3 @@
-import type React from 'react';
 import { useCallback, useState } from 'react';
 
 import { FormattedMessage } from 'react-intl';
@@ -18,7 +17,7 @@ import { EmojiHTML } from '../emoji/html';
 import { useHandlersForStatus } from './hooks';
 import classes from './styles.module.scss';
 
-const MAX_HEIGHT = 706; // 22px * 32 (+ 2px padding at the top)
+const MAX_LINES = 35;
 
 export const StatusContent: React.FC<
   {
@@ -46,13 +45,15 @@ export const StatusContent: React.FC<
         return;
       }
 
+      const { lineHeight } = getComputedStyle(node);
+      const lineHeightPx = parseFloat(lineHeight);
+      const maxHeight = lineHeightPx * MAX_LINES;
+
       setCollapsed(
-        (node.clientHeight > MAX_HEIGHT ||
-          node.scrollWidth > node.clientWidth) &&
-          !status.spoiler_text,
+        node.clientHeight > maxHeight || node.scrollWidth > node.clientWidth,
       );
     },
-    [collapsed, status.spoiler_text],
+    [collapsed],
   );
 
   const htmlHandlers = useHandlersForStatus(status);
@@ -61,41 +62,52 @@ export const StatusContent: React.FC<
 
   const isCollapsed = !!onReadMore && collapsible && collapsed;
 
-  return (
-    <div
-      {...props}
-      className={classNames(
-        className,
-        classes.content,
-        isCollapsed && classes.collapsed,
-      )}
-      ref={onRef}
-    >
-      <EmojiHTML
-        className={classes.contentText}
-        ref={onRef}
-        lang={language}
-        htmlString={
-          statusContent ?? status.translation?.contentHtml ?? status.contentHtml
-        }
-        extraEmojis={status.emojis}
-        {...htmlHandlers}
-      />
+  const style = {
+    '--max-height': `${MAX_LINES}lh`,
+    ...props.style,
+  } as React.CSSProperties;
 
-      {children}
+  return (
+    <>
+      <div
+        {...props}
+        className={classNames(
+          className,
+          classes.content,
+          isCollapsed && classes.collapsed,
+        )}
+        style={style}
+        ref={onRef}
+      >
+        <EmojiHTML
+          className={classes.contentText}
+          ref={onRef}
+          lang={language}
+          htmlString={
+            statusContent ??
+            status.translation?.contentHtml ??
+            status.contentHtml
+          }
+          extraEmojis={status.emojis}
+          {...htmlHandlers}
+        />
+
+        {children}
+      </div>
 
       {isCollapsed && (
         <Button
           size='sm'
-          clipPadding
-          variant='ghost'
           onClick={onReadMore}
           trailingIcon={CaretRightIcon}
           className={classes.contentReadMore}
         >
-          <FormattedMessage id='status.read_more' defaultMessage='Read more' />
+          <FormattedMessage
+            id='status.view_post'
+            defaultMessage='View full post'
+          />
         </Button>
       )}
-    </div>
+    </>
   );
 };

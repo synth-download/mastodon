@@ -6,7 +6,7 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import {
   ArrowsClockwiseIcon,
   BookmarkSimpleIcon,
-  ChatCircleTextIcon,
+  ChatCircleIcon,
   DotsThreeIcon,
   HeartIcon,
   QuotesIcon,
@@ -70,10 +70,10 @@ import {
   MenuList,
   MenuTrigger,
 } from '../menu';
-import { RemoveQuoteHint } from '../status_action_bar/remove_quote_hint';
 
 import { boostItemState, quoteItemState } from './boost_button_utils';
 import { useStatusContext } from './hooks';
+import { RemoveQuoteHint } from './legacy/action_bar/remove_quote_hint';
 import classes from './styles.module.scss';
 
 interface StatusActionBarProps {
@@ -221,7 +221,7 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
         clipPadding
         variant='ghost'
         title={intl.formatMessage(messages.replyAll)}
-        leadingIcon={ChatCircleTextIcon}
+        leadingIcon={ChatCircleIcon}
         onClick={handleReplyClick}
       >
         {withCounters && status.replies_count}

@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { difference } from 'lodash';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import ImmutablePureComponent from 'react-immutable-pure-component';
+import { ImmutablePureComponent } from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
 
 import ChatIcon from '@/material-icons/400-24px/chat.svg?react';
@@ -23,17 +23,17 @@ import { Icon }  from 'flavours/glitch/components/icon';
 import { injectIntl } from '@/flavours/glitch/components/intl';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import { ScrollContainer } from 'flavours/glitch/containers/scroll_container';
-import BundleColumnError from 'flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from 'flavours/glitch/features/ui/components/bundle_column_error';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
-import { initBlockModal } from '../../actions/blocks';
+import { initBlockModal } from '@/flavours/glitch/actions/blocks';
 import {
   replyCompose,
   mentionCompose,
   directCompose,
-} from '../../actions/compose';
+} from '@/flavours/glitch/actions/compose';
 import {
   toggleFavourite,
   bookmark,
@@ -43,10 +43,10 @@ import {
   unpin,
   addReaction,
   removeReaction,
-} from '../../actions/interactions';
-import { openModal } from '../../actions/modal';
-import { initMuteModal } from '../../actions/mutes';
-import { initReport } from '../../actions/reports';
+} from '@/flavours/glitch/actions/interactions';
+import { openModal } from '@/flavours/glitch/actions/modal';
+import { initMuteModal } from '@/flavours/glitch/actions/mutes';
+import { initReport } from '@/flavours/glitch/actions/reports';
 import {
   fetchStatus,
   muteStatus,
@@ -57,12 +57,12 @@ import {
   revealStatus,
   translateStatus,
   undoStatusTranslation,
-} from '../../actions/statuses';
-import { setStatusQuotePolicy } from '../../actions/statuses_typed';
-import { textForScreenReader, defaultMediaVisibility } from '../../components/status';
-import { StatusQuoteManager } from '../../components/status_quoted';
-import { deleteModal } from '../../initial_state';
-import { makeGetStatus, makeGetPictureInPicture } from '../../selectors';
+} from '@/flavours/glitch/actions/statuses';
+import { setStatusQuotePolicy } from '@/flavours/glitch/actions/statuses_typed';
+import { textForScreenReader, defaultMediaVisibility } from '@/flavours/glitch/components/status/legacy/status';
+import { Status as StatusComponent } from '@/flavours/glitch/components/status';
+import { deleteModal } from '@/flavours/glitch/initial_state';
+import { makeGetStatus, makeGetPictureInPicture } from '@/flavours/glitch/selectors';
 import { getAncestorsIds, getDescendantsIds } from 'flavours/glitch/selectors/contexts';
 import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from '../ui/util/fullscreen';
 
@@ -505,7 +505,7 @@ class Status extends ImmutablePureComponent {
     const { params: { statusId } } = this.props;
 
     return list.map((id, i) => (
-      <StatusQuoteManager
+      <StatusComponent
         key={id}
         id={id}
         expanded={this.state.threadExpanded}
@@ -623,18 +623,18 @@ class Status extends ImmutablePureComponent {
       onTranslate: this.handleHotkeyTranslate,
     };
 
-    const pageTitle = status.visibility === 'direct' ? (
+    const pageTitle = status.get('visibility') === 'direct' ? (
       <FormattedMessage
-        id='status.title'
-        defaultMessage='Post by {name}'
+        id='status.title.message'
+        defaultMessage='Message by {name}'
         values={{
           name: <DisplayNameSimple account={account} />
         }}
       />
     ) : (
       <FormattedMessage
-        id='status.title.message'
-        defaultMessage='Message by {name}'
+        id='status.title'
+        defaultMessage='Post by {name}'
         values={{
           name: <DisplayNameSimple account={account} />
         }}

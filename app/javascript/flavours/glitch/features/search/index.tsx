@@ -19,7 +19,7 @@ import { Account } from 'flavours/glitch/components/account';
 import { CompatibilityHashtag as Hashtag } from 'flavours/glitch/components/hashtag';
 import { Icon } from 'flavours/glitch/components/icon';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import { StatusQuoteManager } from 'flavours/glitch/components/status_quoted';
+import { Status } from 'flavours/glitch/components/status';
 import { Search } from 'flavours/glitch/features/compose/components/search';
 import { useSearchParam } from 'flavours/glitch/hooks/useSearchParam';
 import type { Hashtag as HashtagType } from 'flavours/glitch/models/tags';
@@ -59,7 +59,7 @@ const renderHashtags = (hashtags: HashtagType[]) =>
 
 const renderStatuses = (statusIds: string[]) =>
   hidePeek<string>(statusIds).map((id) => (
-    <StatusQuoteManager contextType='search' key={id} id={id} />
+    <Status contextType='search' key={id} id={id} />
   ));
 
 type SearchType = 'all' | ApiSearchType;
@@ -217,7 +217,7 @@ export const SearchResults: React.FC<{ multiColumn: boolean }> = ({
                   onClickMore={handleSelectStatuses}
                 >
                   {results.statuses.slice(0, INITIAL_DISPLAY).map((id) => (
-                    <StatusQuoteManager contextType='search' key={id} id={id} />
+                    <Status contextType='search' key={id} id={id} />
                   ))}
                 </SearchSection>
               )}
