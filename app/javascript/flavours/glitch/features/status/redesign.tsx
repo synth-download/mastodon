@@ -6,28 +6,38 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { useParams } from 'react-router';
 
+import { BookmarkSimpleIcon } from '@phosphor-icons/react';
 import { Helmet } from '@unhead/react/helmet';
 
+import { statusInteraction } from '@/flavours/glitch/actions/interactions_typed';
+import { ToggleIconButton } from '@/flavours/glitch/components/button/redesign';
 import { Column } from '@/flavours/glitch/components/column';
 import {
   ColumnHeader,
   ColumnSettingsMenu,
 } from '@/flavours/glitch/components/column_header';
 import { DisplayNameSimple } from '@/flavours/glitch/components/display_name/simple';
+import { useIconWeight } from '@/flavours/glitch/components/icon';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import {
   FOCUS_TARGET,
   NavigationFocusTarget,
 } from '@/flavours/glitch/components/navigation_focus_target';
+import { StatusActionItem } from '@/flavours/glitch/components/status/action_bar';
+import {
+  useStatusMenuActions,
+  useTextForScreenReader,
+} from '@/flavours/glitch/components/status/hooks';
 import { StatusRedesign as Status } from '@/flavours/glitch/components/status/status';
 import { ScrollContainer } from '@/flavours/glitch/containers/scroll_container';
 import type { ShouldUpdateScrollFn } from '@/flavours/glitch/containers/scroll_container/default_should_update_scroll';
 import { useExpandedStatus } from '@/flavours/glitch/hooks/useStatus';
+import type { ExpandedStatusShape } from '@/flavours/glitch/models/status';
 import {
   getAncestorsIds,
   getDescendantsIds,
 } from '@/flavours/glitch/selectors/contexts';
-import { useAppSelector } from '@/flavours/glitch/store';
+import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
 import { BundleColumnError } from '../ui/components/bundle_column_error';
 import { useColumnsContext } from '../ui/util/columns_context';
@@ -86,6 +96,8 @@ export const StatusPage: React.FC = () => {
     getDescendantsIds(state, statusId),
   );
 
+  const screenReaderText = useTextForScreenReader({ statusId });
+
   const statusFocusRef = useRef<HTMLDivElement>(null);
   const shouldUpdateScroll: ShouldUpdateScrollFn = useCallback(
     (prevLocation, location) => {
@@ -106,6 +118,21 @@ export const StatusPage: React.FC = () => {
       return false;
     },
     [],
+  );
+
+  const dispatch = useAppDispatch();
+  const handleBookmarkClick = useCallback(() => {
+    dispatch(
+      statusInteraction({
+        statusId,
+        intent: 'bookmark',
+        contextType: 'detailed',
+      }),
+    );
+  }, [dispatch, statusId]);
+  const bookmarkIcon = useIconWeight(
+    BookmarkSimpleIcon,
+    status?.bookmarked && 'fill',
   );
 
   if (isLoading) {
@@ -166,17 +193,37 @@ export const StatusPage: React.FC = () => {
         withBackButton
         title={columnTitle}
         extraButtons={
-          <ColumnSettingsMenu
-            label={
-              <FormattedMessage
-                id='status.options'
-                defaultMessage='Post options'
-              />
-            }
-          >
-            WIP: This menu will contain post actions from the new Status
-            component
-          </ColumnSettingsMenu>
+          <>
+            <ToggleIconButton
+              size='sm'
+              variant='ghost'
+              active={status.bookmarked}
+              icon={bookmarkIcon}
+              onClick={handleBookmarkClick}
+            >
+              {!status.bookmarked ? (
+                <FormattedMessage
+                  id='status.bookmark'
+                  defaultMessage='Bookmark'
+                />
+              ) : (
+                <FormattedMessage
+                  id='status.remove_bookmark'
+                  defaultMessage='Remove bookmark'
+                />
+              )}
+            </ToggleIconButton>
+            <ColumnSettingsMenu
+              label={
+                <FormattedMessage
+                  id='status.options'
+                  defaultMessage='Post options'
+                />
+              }
+            >
+              <StatusMenuItems status={status} />
+            </ColumnSettingsMenu>
+          </>
         }
       />
 
@@ -204,6 +251,7 @@ export const StatusPage: React.FC = () => {
             className={classes.mainStatus}
             tabIndex={0}
             ref={statusFocusRef}
+            aria-label={screenReaderText}
           >
             <Status id={statusId} contextType='detailed' />
           </NavigationFocusTarget>
@@ -215,10 +263,17 @@ export const StatusPage: React.FC = () => {
           )}
 
           <div className={classes.threadEnd}>
-            <FormattedMessage
-              id='status.thread_end'
-              defaultMessage='You’ve reached the end of the conversation.'
-            />
+            {descendantIds.length > 0 ? (
+              <FormattedMessage
+                id='status.thread_end'
+                defaultMessage='You’ve reached the end of the conversation.'
+              />
+            ) : (
+              <FormattedMessage
+                id='status.thread_none'
+                defaultMessage='Nothing else has been added to the conversation yet.'
+              />
+            )}
           </div>
 
           <RefreshController
@@ -239,6 +294,16 @@ export const StatusPage: React.FC = () => {
       </Helmet>
     </Column>
   );
+};
+
+const StatusMenuItems: React.FC<{ status: ExpandedStatusShape }> = ({
+  status,
+}) => {
+  const menu = useStatusMenuActions({ status, contextType: 'detailed' });
+
+  return menu.map((item, index) => (
+    <StatusActionItem key={index} item={item} />
+  ));
 };
 
 const StatusRelativeList: React.FC<{
