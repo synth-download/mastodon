@@ -49,7 +49,7 @@ class Api::V1::Statuses::ReactionsController < Api::V1::Statuses::BaseController
   def select_reactions
     StatusReaction.select(
       [:name, :custom_emoji_id, 'COUNT(*) as count'].tap do |values|
-        values << StatusReaction.value_for_reaction_me_column(current_account&.id, @react.id)
+        values << StatusReaction.value_for_reaction_me_column(current_account&.id, @react&.id)
       end
     ).where(status_id: @status.id)
   end
