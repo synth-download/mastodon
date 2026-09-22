@@ -19,11 +19,11 @@ import {
 import { DisplayNameSimple } from '@/flavours/glitch/components/display_name/simple';
 import { useIconWeight } from '@/flavours/glitch/components/icon';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
+import { LegacyDropdownMenuItems } from '@/flavours/glitch/components/menu';
 import {
   FOCUS_TARGET,
   NavigationFocusTarget,
 } from '@/flavours/glitch/components/navigation_focus_target';
-import { StatusActionItem } from '@/flavours/glitch/components/status/action_bar';
 import {
   useStatusMenuActions,
   useTextForScreenReader,
@@ -301,9 +301,7 @@ const StatusMenuItems: React.FC<{ status: ExpandedStatusShape }> = ({
 }) => {
   const menu = useStatusMenuActions({ status, contextType: 'detailed' });
 
-  return menu.map((item, index) => (
-    <StatusActionItem key={index} item={item} />
-  ));
+  return <LegacyDropdownMenuItems items={menu} />;
 };
 
 const StatusRelativeList: React.FC<{
