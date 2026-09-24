@@ -11,6 +11,7 @@ import { emojiMartSearch } from '@/flavours/glitch/features/emoji/picker';
 import { recoverHashtags } from 'flavours/glitch/utils/hashtag';
 
 import { showAlert, showAlertForError } from './alerts';
+import { isStandaloneComposePath } from './compose_path';
 import { emojiUse } from './emojis';
 import { importFetchedAccounts, importFetchedStatus } from './importer';
 import { openModal } from './modal';
@@ -289,9 +290,7 @@ export function submitCompose(successCallback, overridePrivacy) {
         'Idempotency-Key': getState().getIn(['compose', 'idempotencyKey']),
       },
     }).then(function (response) {
-      if ((browserHistory.location.pathname === '/publish' || browserHistory.location.pathname === '/statuses/new')
-          && window.history.state
-          && !getState().getIn(['compose', 'advanced_options', 'threaded_mode'])) {
+      if (isStandaloneComposePath(browserHistory.location.pathname) && window.history.state && !getState().getIn(['compose', 'advanced_options', 'threaded_mode'])) {
         browserHistory.goBack();
       }
 
