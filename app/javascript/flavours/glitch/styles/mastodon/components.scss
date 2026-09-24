@@ -4713,6 +4713,10 @@ a.status-card {
   align-items: center;
   gap: 8px;
 
+  html[data-redesign='true'] & {
+    border-inline: none;
+  }
+
   &__checkbox .check-box {
     display: flex;
   }
