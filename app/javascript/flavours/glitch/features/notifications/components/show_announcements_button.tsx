@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { NewspaperIcon } from '@phosphor-icons/react';
 
-import { toggleShowAnnouncements } from '@/flavours/glitch/actions/announcements';
+import { showAnnouncements } from '@/flavours/glitch/actions/announcements';
 import { closeModal } from '@/flavours/glitch/actions/modal';
 import { Button } from '@/flavours/glitch/components/button/redesign';
 import { useAppDispatch } from '@/flavours/glitch/store';
@@ -14,18 +14,18 @@ import { useHasAnnouncements } from '../../announcements/hooks';
 
 export const ShowAnnouncementsButton: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAnnouncements, showAnnouncements } = useHasAnnouncements({
+  const { hasAnnouncements, shouldShowAnnouncements } = useHasAnnouncements({
     fetch: false,
   });
 
   const handleClick = useCallback(() => {
-    dispatch(toggleShowAnnouncements());
+    dispatch(showAnnouncements());
     dispatch(
       closeModal({ modalType: 'NOTIFICATION_SETTINGS', ignoreFocus: false }),
     );
   }, [dispatch]);
 
-  if (!isRedesignEnabled() || !hasAnnouncements || showAnnouncements) {
+  if (!isRedesignEnabled() || !hasAnnouncements || shouldShowAnnouncements) {
     return null;
   }
 
