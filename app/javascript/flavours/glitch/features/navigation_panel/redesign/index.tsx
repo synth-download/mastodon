@@ -26,6 +26,7 @@ import { openNewComposer } from '@/flavours/glitch/reducers/slices/composer';
 import { getOrderedLists } from '@/flavours/glitch/selectors/lists';
 import { selectUnreadNotificationGroupsCount } from '@/flavours/glitch/selectors/notifications';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
+import { invokeVirtualIosKeyboard } from '@/flavours/glitch/utils/invoke_virtual_ios_keyboard';
 import FediIcon from '@/images/icons/icon_fediverse.svg?react';
 
 import { NavigationAccountCardAndMenu } from './account_card_and_menu';
@@ -151,6 +152,7 @@ export const RedesignNavigationPanel: React.FC<{
                 state: { focusTarget: FOCUS_TARGET.SEARCH },
               }}
               iconComponent={MagnifyingGlassIcon}
+              onClick={invokeVirtualIosKeyboard}
             >
               <FormattedMessage
                 id='tabs_bar.explore'
