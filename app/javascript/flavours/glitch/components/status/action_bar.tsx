@@ -1,59 +1,27 @@
-import type React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+
+import classNames from 'classnames';
 
 import {
   ArrowsClockwiseIcon,
   BookmarkSimpleIcon,
-  ChatCircleTextIcon,
+  ChatCircleIcon,
   DotsThreeIcon,
   HeartIcon,
   QuotesIcon,
   ShareFatIcon,
 } from '@phosphor-icons/react';
 
-import {
-  muteAccount,
-  unblockAccount,
-  unmuteAccount,
-} from '@/flavours/glitch/actions/accounts';
-import { initBlockModal } from '@/flavours/glitch/actions/blocks';
-import {
-  directCompose,
-  mentionCompose,
-} from '@/flavours/glitch/actions/compose';
-import {
-  initDomainBlockModal,
-  unblockDomain,
-} from '@/flavours/glitch/actions/domain_blocks';
-import type { StatusInteractionIntent } from '@/flavours/glitch/actions/interactions';
 import { statusInteraction } from '@/flavours/glitch/actions/interactions';
 import { fetchStatus } from '@/flavours/glitch/actions/statuses';
 import { useCurrentAccountId } from '@/flavours/glitch/hooks/useAccountId';
-import { useRelationship } from '@/flavours/glitch/hooks/useRelationship';
-import { useStatus } from '@/flavours/glitch/hooks/useStatus';
-import { useIdentity } from '@/flavours/glitch/identity_context';
+import { useAccountStatus } from '@/flavours/glitch/hooks/useStatus';
 import { quickBoosting } from '@/flavours/glitch/initial_state';
-import type { Account } from '@/flavours/glitch/models/account';
-import type { MenuItem as DropdownItem } from '@/flavours/glitch/models/dropdown_menu';
-import type { Relationship } from '@/flavours/glitch/models/relationship';
-import type { StatusShape } from '@/flavours/glitch/models/status';
-import {
-  PERMISSION_MANAGE_FEDERATION,
-  PERMISSION_MANAGE_USERS,
-} from '@/flavours/glitch/permissions';
-import type {
-  StatusConditions,
-  StatusInteractionsAllowed,
-} from '@/flavours/glitch/selectors/statuses';
-import {
-  selectStatusConditions,
-  selectStatusInteractionsAllowed,
-} from '@/flavours/glitch/selectors/statuses';
-import type { AppDispatch } from '@/flavours/glitch/store';
+import type { AccountStatusShape } from '@/flavours/glitch/models/status';
+import { selectStatusConditions } from '@/flavours/glitch/selectors/statuses';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
-import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 
 import {
   Button,
@@ -65,87 +33,30 @@ import { iconWeight, useIconWeight } from '../icon';
 import {
   Menu,
   MenuItem,
-  MenuItemDivider,
-  MenuItemLink,
   MenuList,
   MenuTrigger,
+  LegacyDropdownMenuItems,
 } from '../menu';
-import { RemoveQuoteHint } from '../status_action_bar/remove_quote_hint';
 
 import { boostItemState, quoteItemState } from './boost_button_utils';
-import { useStatusContext } from './hooks';
+import { useStatusContext, useStatusMenuActions } from './hooks';
+import { RemoveQuoteHint } from './legacy/action_bar/remove_quote_hint';
 import classes from './styles.module.scss';
 
 interface StatusActionBarProps {
   statusId: string;
   withDismiss?: boolean;
   withCounters?: boolean;
+  /** Only show methods to respond (reply, boost, like) and not sharing, bookmarking, and the overflow menu. */
+  onlyResponses?: boolean;
 }
 
 const messages = defineMessages({
-  delete: { id: 'status.delete', defaultMessage: 'Delete' },
-  redraft: { id: 'status.redraft', defaultMessage: 'Delete & re-draft' },
-  edit: { id: 'status.edit', defaultMessage: 'Edit' },
-  direct: { id: 'status.direct', defaultMessage: 'Privately mention @{name}' },
-  mention: { id: 'status.mention', defaultMessage: 'Mention @{name}' },
-  mute: { id: 'account.mute', defaultMessage: 'Mute @{name}' },
-  block: { id: 'account.block', defaultMessage: 'Block @{name}' },
-  reply: { id: 'status.reply', defaultMessage: 'Reply' },
-  share: { id: 'status.share', defaultMessage: 'Share' },
   replyAll: { id: 'status.replyAll', defaultMessage: 'Reply to thread' },
-  favourite: { id: 'status.favourite', defaultMessage: 'Favorite' },
+  favourite: { id: 'status.like', defaultMessage: 'Like' },
   removeFavourite: {
-    id: 'status.remove_favourite',
-    defaultMessage: 'Remove from favorites',
-  },
-  open: { id: 'status.open', defaultMessage: 'Expand this status' },
-  report: { id: 'status.report', defaultMessage: 'Report @{name}' },
-  muteConversation: {
-    id: 'status.mute_conversation',
-    defaultMessage: 'Mute conversation',
-  },
-  unmuteConversation: {
-    id: 'status.unmute_conversation',
-    defaultMessage: 'Unmute conversation',
-  },
-  pin: { id: 'status.pin', defaultMessage: 'Pin on profile' },
-  unpin: { id: 'status.unpin', defaultMessage: 'Unpin from profile' },
-  embed: { id: 'status.embed', defaultMessage: 'Get embed code' },
-  admin_account: {
-    id: 'status.admin_account',
-    defaultMessage: 'Open moderation interface for @{name}',
-  },
-  admin_status: {
-    id: 'status.admin_status',
-    defaultMessage: 'Open this post in the moderation interface',
-  },
-  admin_domain: {
-    id: 'status.admin_domain',
-    defaultMessage: 'Open moderation interface for {domain}',
-  },
-  copy: { id: 'status.copy', defaultMessage: 'Copy link to post' },
-  blockDomain: {
-    id: 'account.block_domain',
-    defaultMessage: 'Block domain {domain}',
-  },
-  unblockDomain: {
-    id: 'account.unblock_domain',
-    defaultMessage: 'Unblock domain {domain}',
-  },
-  unmute: { id: 'account.unmute', defaultMessage: 'Unmute @{name}' },
-  unblock: { id: 'account.unblock', defaultMessage: 'Unblock @{name}' },
-  filter: { id: 'status.filter', defaultMessage: 'Filter this post' },
-  openOriginalPage: {
-    id: 'account.open_original_page',
-    defaultMessage: 'Open original page',
-  },
-  revokeQuote: {
-    id: 'status.revoke_quote',
-    defaultMessage: 'Remove my post from @{name}’s post',
-  },
-  quotePolicyChange: {
-    id: 'status.quote_policy_change',
-    defaultMessage: 'Change who can quote',
+    id: 'status.unlike',
+    defaultMessage: 'Unlike',
   },
 });
 
@@ -153,8 +64,9 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
   statusId,
   withDismiss,
   withCounters,
+  onlyResponses,
 }) => {
-  const status = useStatus(statusId);
+  const status = useAccountStatus(statusId);
   const quotedAccountId = useAppSelector(
     (state) =>
       state.statuses.getIn([status?.quote?.quoted_status, 'account']) ?? null,
@@ -214,14 +126,14 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
   const shouldShowQuoteRemovalHint =
     isQuotingMe && contextType === 'notifications';
 
-  return (
-    <div className={classes.actions}>
+  const responseButtons = (
+    <>
       <Button
         size='sm'
         clipPadding
         variant='ghost'
         title={intl.formatMessage(messages.replyAll)}
-        leadingIcon={ChatCircleTextIcon}
+        leadingIcon={ChatCircleIcon}
         onClick={handleReplyClick}
       >
         {withCounters && status.replies_count}
@@ -238,10 +150,20 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
         title={favouriteTitle}
         leadingIcon={favouriteIcon}
         onClick={handleFavouriteClick}
-        className={classes.actionsButtonGap}
+        className={classNames(!onlyResponses && classes.actionsButtonGap)}
       >
         {withCounters && status.favourites_count}
       </ToggleButton>
+    </>
+  );
+
+  if (onlyResponses) {
+    return <div className={classes.actions}>{responseButtons}</div>;
+  }
+
+  return (
+    <div className={classes.actions}>
+      {responseButtons}
 
       {isPublic && (
         <IconButton
@@ -260,14 +182,13 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
         active={status.bookmarked}
         icon={bookmarkIcon}
         onClick={handleBookmarkClick}
-        aria-pressed={status.bookmarked}
       >
         {!status.bookmarked ? (
-          <FormattedMessage id='status.bookmark' defaultMessage='Bookmark' />
+          <FormattedMessage id='status.save' defaultMessage='Save' />
         ) : (
           <FormattedMessage
-            id='status.remove_bookmark'
-            defaultMessage='Remove bookmark'
+            id='status.remove_from_saved'
+            defaultMessage='Remove from Saved'
           />
         )}
       </ToggleIconButton>
@@ -362,60 +283,14 @@ const QuotesFilledIcon = iconWeight(QuotesIcon, 'fill');
 
 const StatusActionMenu: React.FC<{
   dismissQuoteHint: () => void;
-  status: StatusShape;
+  status: AccountStatusShape;
   withDismiss?: boolean;
 }> = ({ status, dismissQuoteHint, withDismiss }) => {
-  const account = useAppSelector((state) => state.accounts.get(status.account));
   const { contextType } = useStatusContext();
-  const { permissions } = useIdentity();
-  const relationship = useRelationship(account?.id);
-  const intl = useIntl();
   const dispatch = useAppDispatch();
 
-  const conditions = useAppSelector((state) =>
-    selectStatusConditions(state, status.id),
-  );
-  const interactions = useAppSelector((state) =>
-    selectStatusInteractionsAllowed(state, status.id),
-  );
-  const statusInteractionFactory = useCallback(
-    (intent: StatusInteractionIntent) => {
-      return () => {
-        dispatch(
-          statusInteraction({ statusId: status.id, contextType, intent }),
-        );
-      };
-    },
-    [contextType, dispatch, status.id],
-  );
+  const menu = useStatusMenuActions({ status, contextType, withDismiss });
 
-  const menu = useMemo(
-    () =>
-      getMenuItems({
-        status,
-        account,
-        conditions,
-        interactions,
-        onStatusInteraction: statusInteractionFactory,
-        withDismiss,
-        permissions,
-        intl,
-        relationship,
-        dispatch,
-      }),
-    [
-      status,
-      account,
-      conditions,
-      interactions,
-      statusInteractionFactory,
-      withDismiss,
-      permissions,
-      intl,
-      relationship,
-      dispatch,
-    ],
-  );
   const onOpen = useCallback(() => {
     // Replicates needsStatusRefresh of the Dropdown component.
     if (quickBoosting && !status.quote_approval) {
@@ -439,306 +314,8 @@ const StatusActionMenu: React.FC<{
       </MenuTrigger>
 
       <MenuList placement='top-end'>
-        {menu.map((item, index) => (
-          <StatusActionItem key={index} item={item} />
-        ))}
+        <LegacyDropdownMenuItems items={menu} />
       </MenuList>
     </Menu>
   );
 };
-
-const StatusActionItem: React.FC<{ item: DropdownItem }> = ({ item }) => {
-  if (!item) {
-    return <MenuItemDivider />;
-  }
-
-  const commonProps = {
-    icon: item.icon,
-    disabled: item.disabled,
-    destructive: item.dangerous,
-    children: item.text,
-    description: item.description,
-  } as const;
-
-  if ('to' in item) {
-    return <MenuItemLink {...commonProps} to={item.to} as='link' />;
-  } else if ('href' in item) {
-    return <MenuItemLink {...commonProps} href={item.href} as='a' />;
-  }
-
-  return <MenuItem {...commonProps} onClick={item.action} />;
-};
-
-interface MenuItemsParams {
-  status: StatusShape;
-  account?: Account;
-  conditions: StatusConditions;
-  interactions: StatusInteractionsAllowed;
-  onStatusInteraction: (intent: StatusInteractionIntent) => () => void;
-  withDismiss?: boolean;
-  permissions: number;
-  intl: ReturnType<typeof useIntl>;
-  relationship?: Relationship | null;
-  dispatch: AppDispatch;
-}
-
-function getMenuItems({
-  status,
-  account,
-  conditions,
-  interactions,
-  onStatusInteraction,
-  withDismiss,
-  permissions,
-  intl,
-  relationship,
-  dispatch,
-}: MenuItemsParams) {
-  const menu: DropdownItem[] = [];
-
-  const statusId = status.id;
-  const statusUrl = status.url ?? status.uri;
-  const { isPublic, isLocal, isLoggedIn, isMine } = conditions;
-
-  menu.push({
-    text: intl.formatMessage(messages.open),
-    to: `/@${account?.acct}/${statusId}`,
-  });
-
-  if (isPublic && !isLocal) {
-    menu.push({
-      text: intl.formatMessage(messages.openOriginalPage),
-      href: statusUrl,
-    });
-  }
-
-  menu.push({
-    text: intl.formatMessage(messages.copy),
-    action: onStatusInteraction('copy'),
-  });
-
-  if (isPublic && 'share' in navigator) {
-    menu.push({
-      text: intl.formatMessage(messages.share),
-      action: () => {
-        void navigator.share({
-          url: statusUrl,
-        });
-      },
-    });
-  }
-
-  if (interactions.embed) {
-    menu.push({
-      text: intl.formatMessage(messages.embed),
-      action: onStatusInteraction('embed'),
-    });
-  }
-
-  if (!isLoggedIn) {
-    return menu;
-  }
-
-  if (quickBoosting) {
-    menu.push(null);
-    const quoteItem = quoteItemState(conditions);
-    menu.push({
-      text: intl.formatMessage(quoteItem.title),
-      description: quoteItem.meta
-        ? intl.formatMessage(quoteItem.meta)
-        : undefined,
-      disabled: quoteItem.disabled,
-      action: onStatusInteraction('quote'),
-    });
-  }
-
-  menu.push(null);
-
-  if (interactions.pin) {
-    menu.push({
-      text: intl.formatMessage(status.pinned ? messages.unpin : messages.pin),
-      action: onStatusInteraction('pin'),
-    });
-    menu.push(null);
-  }
-
-  if (interactions.mute || withDismiss) {
-    menu.push({
-      text: intl.formatMessage(
-        status.muted ? messages.unmuteConversation : messages.muteConversation,
-      ),
-      action: onStatusInteraction('mute'),
-    });
-    if (interactions.editQuotePolicy && !isRedesignEnabled()) {
-      menu.push({
-        text: intl.formatMessage(messages.quotePolicyChange),
-        action: onStatusInteraction('editQuotePolicy'),
-      });
-    }
-    menu.push(null);
-  }
-
-  if (interactions.edit && interactions.delete && interactions.redraft) {
-    menu.push({
-      text: intl.formatMessage(messages.edit),
-      action: onStatusInteraction('edit'),
-    });
-    menu.push({
-      text: intl.formatMessage(messages.delete),
-      action: onStatusInteraction('delete'),
-      dangerous: true,
-    });
-    menu.push({
-      text: intl.formatMessage(messages.redraft),
-      action: onStatusInteraction('redraft'),
-      dangerous: true,
-    });
-  }
-
-  if (isMine || !account) {
-    // Add the filter to handle the edge case of not having account data.
-    if (interactions.filter) {
-      menu.push(null);
-      menu.push({
-        text: intl.formatMessage(messages.filter),
-        action: onStatusInteraction('filter'),
-        dangerous: true,
-      });
-    }
-    return menu;
-  }
-
-  if (!account.invalid_handle) {
-    menu.push({
-      text: intl.formatMessage(messages.mention, {
-        name: account.username,
-      }),
-      action: () => {
-        dispatch(mentionCompose(account));
-      },
-    });
-    menu.push({
-      text: intl.formatMessage(messages.direct, {
-        name: account.username,
-      }),
-      action: () => {
-        dispatch(directCompose(account));
-      },
-    });
-    menu.push(null);
-  }
-
-  if (interactions.revokeQuote) {
-    menu.push({
-      text: intl.formatMessage(messages.revokeQuote, {
-        name: account.username,
-      }),
-      action: onStatusInteraction('revokeQuote'),
-      dangerous: true,
-    });
-  }
-
-  const isMuted = !!relationship?.get('muting');
-  menu.push({
-    text: intl.formatMessage(isMuted ? messages.unmute : messages.mute, {
-      name: account.username,
-    }),
-    action: () => {
-      if (isMuted) {
-        dispatch(unmuteAccount(account.id));
-      } else {
-        dispatch(muteAccount(account.id));
-      }
-    },
-    dangerous: !isMuted,
-  });
-
-  const isBlocking = !!relationship?.blocking;
-  menu.push({
-    text: intl.formatMessage(isBlocking ? messages.unblock : messages.block, {
-      name: account.username,
-    }),
-    action: () => {
-      if (isBlocking) {
-        dispatch(unblockAccount(account.id));
-      } else {
-        dispatch(initBlockModal(account));
-      }
-    },
-    dangerous: !isBlocking,
-  });
-
-  if (interactions.filter) {
-    menu.push(null);
-    menu.push({
-      text: intl.formatMessage(messages.filter),
-      action: onStatusInteraction('filter'),
-      dangerous: true,
-    });
-  }
-  menu.push(null);
-
-  menu.push({
-    text: intl.formatMessage(messages.report, {
-      name: account.username,
-    }),
-    action: onStatusInteraction('report'),
-    dangerous: true,
-  });
-
-  const domain = account.acct.split('@')[1];
-
-  if (!isLocal) {
-    menu.push(null);
-
-    const isDomainBlocking = !!relationship?.domain_blocking;
-    menu.push({
-      text: intl.formatMessage(
-        isDomainBlocking ? messages.unblockDomain : messages.blockDomain,
-        { domain },
-      ),
-      action: () => {
-        if (isDomainBlocking) {
-          dispatch(unblockDomain(domain));
-        } else {
-          dispatch(initDomainBlockModal(account));
-        }
-      },
-      dangerous: !isDomainBlocking,
-    });
-  }
-
-  const canManageUsers =
-    (permissions & PERMISSION_MANAGE_USERS) === PERMISSION_MANAGE_USERS;
-  const canManageFederation =
-    (permissions & PERMISSION_MANAGE_FEDERATION) ===
-      PERMISSION_MANAGE_FEDERATION && !isLocal;
-
-  if (!canManageUsers && !canManageFederation) {
-    return menu;
-  }
-
-  menu.push(null);
-  if (canManageUsers) {
-    menu.push({
-      text: intl.formatMessage(messages.admin_account, {
-        name: account.username,
-      }),
-      href: `/admin/accounts/${status.account}`,
-    });
-    menu.push({
-      text: intl.formatMessage(messages.admin_status),
-      href: `/admin/accounts/${status.account}/statuses/${status.id}`,
-    });
-  }
-  if (canManageFederation) {
-    menu.push({
-      text: intl.formatMessage(messages.admin_domain, {
-        domain,
-      }),
-      href: `/admin/instances/${domain}`,
-    });
-  }
-
-  return menu;
-}
