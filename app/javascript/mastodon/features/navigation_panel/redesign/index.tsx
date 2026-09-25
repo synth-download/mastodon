@@ -2,8 +2,6 @@ import { useCallback, useEffect } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import { Link } from 'react-router-dom';
-
 import {
   PenNibIcon,
   HouseIcon,
@@ -29,6 +27,9 @@ import { openNewComposer } from '@/mastodon/reducers/slices/composer';
 import { getOrderedLists } from '@/mastodon/selectors/lists';
 import { selectUnreadNotificationGroupsCount } from '@/mastodon/selectors/notifications';
 import { useAppDispatch, useAppSelector } from '@/mastodon/store';
+import { invokeVirtualIosKeyboard } from '@/mastodon/utils/invoke_virtual_ios_keyboard';
+
+import { useHasAnnouncements } from '../../announcements/hooks';
 
 import { NavigationAccountCardAndMenu } from './account_card_and_menu';
 import { NavigationFooterLinks } from './footer_links';
@@ -77,6 +78,15 @@ function useFollowedHashtags() {
   return { followedHashtags: tags };
 }
 
+export function useNotificationsCount() {
+  const unreadNotificationsCount = useAppSelector(
+    selectUnreadNotificationGroupsCount,
+  );
+  const { unreadAnnouncementCount } = useHasAnnouncements();
+
+  return unreadNotificationsCount + unreadAnnouncementCount;
+}
+
 const isFediverseFeedsLinkActive = (
   match: unknown,
   { pathname }: { pathname: string },
@@ -98,9 +108,7 @@ export const RedesignNavigationPanel: React.FC<{
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const { signedIn } = useIdentity();
-  const notificationsCount = useAppSelector(
-    selectUnreadNotificationGroupsCount,
-  );
+  const notificationsCount = useNotificationsCount();
 
   const openComposer = useCallback(() => {
     dispatch(closeNavigation());
@@ -153,6 +161,7 @@ export const RedesignNavigationPanel: React.FC<{
                 state: { focusTarget: FOCUS_TARGET.SEARCH },
               }}
               iconComponent={MagnifyingGlassIcon}
+              onClick={invokeVirtualIosKeyboard}
             >
               <FormattedMessage
                 id='tabs_bar.explore'
@@ -178,44 +187,26 @@ export const RedesignNavigationPanel: React.FC<{
                   defaultMessage='Custom Feeds'
                 />
               }
-              emptyMessage={
-                <>
-                  <FormattedMessage
-                    id='tabs_bar.custom_feeds_empty'
-                    defaultMessage='You have no custom feeds yet.'
-                  />{' '}
-                  <Link to='/lists/new'>
-                    <FormattedMessage
-                      id='tabs_bar.create_custom_feed'
-                      defaultMessage='Create Feed'
-                    />
-                  </Link>
-                </>
-              }
             >
-              {customFeeds.length > 0 && (
-                <>
-                  <NavigationLink
-                    key='new'
-                    to='/lists/new'
-                    iconComponent={PlusIcon}
-                  >
-                    <FormattedMessage
-                      id='tabs_bar.create_custom_feed'
-                      defaultMessage='Create Feed'
-                    />
-                  </NavigationLink>
-                  {customFeeds.map((feed) => (
-                    <NavigationLink
-                      key={feed.id}
-                      to={`/lists/${feed.id}`}
-                      iconComponent={RssSimpleIcon}
-                    >
-                      {feed.title}
-                    </NavigationLink>
-                  ))}
-                </>
-              )}
+              <NavigationLink
+                key='new'
+                to='/lists/new'
+                iconComponent={PlusIcon}
+              >
+                <FormattedMessage
+                  id='tabs_bar.create_custom_feed'
+                  defaultMessage='Create Feed'
+                />
+              </NavigationLink>
+              {customFeeds.map((feed) => (
+                <NavigationLink
+                  key={feed.id}
+                  to={`/lists/${feed.id}`}
+                  iconComponent={RssSimpleIcon}
+                >
+                  {feed.title}
+                </NavigationLink>
+              ))}
             </ListSection>
 
             {followedHashtags.length > 0 && (
