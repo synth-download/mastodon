@@ -2,8 +2,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Link } from 'react-router-dom';
 
+import { StatusLikeActiveIcon } from '@/flavours/glitch/components/status/icons';
 import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
-import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import type { NotificationGroupFavourite } from 'flavours/glitch/models/notification_group';
 import { useAppSelector } from 'flavours/glitch/store';
 
@@ -117,7 +117,7 @@ export const NotificationFavourite: React.FC<{
   return (
     <NotificationGroupWithStatus
       type='favourite'
-      icon={StarIcon}
+      icon={StatusLikeActiveIcon}
       iconId='star'
       accountIds={notification.sampleAccountIds}
       statusId={notification.statusId}
