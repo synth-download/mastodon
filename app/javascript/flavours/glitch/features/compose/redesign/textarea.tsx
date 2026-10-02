@@ -21,6 +21,7 @@ import { TextArea } from '@/flavours/glitch/components/form_fields';
 import { normalizeKey } from '@/flavours/glitch/components/hotkeys/utils';
 import { useScrollSensor } from '@/flavours/glitch/hooks/useScrollSensor';
 import {
+  clearComposerErrors,
   clearComposerFocusRequest,
   COMPOSER_TEXTAREA_ID,
 } from '@/flavours/glitch/reducers/slices/composer';
@@ -142,6 +143,7 @@ export const ComposeTextarea: React.FC<ComposeTextareaProps> = ({
   const onChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback(
     (event) => {
       dispatch(changeCompose(event.target.value));
+      dispatch(clearComposerErrors());
       onTextChange(event);
     },
     [dispatch, onTextChange],

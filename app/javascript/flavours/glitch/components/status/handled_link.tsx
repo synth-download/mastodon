@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import type { ApiMentionJSON } from '@/flavours/glitch/api_types/statuses';
 import { getCollectionPath } from '@/flavours/glitch/features/collections/utils';
 import { useAppSelector } from '@/flavours/glitch/store';
-import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
+import { isRedesignStatusEnabled } from '@/flavours/glitch/utils/environment';
 import type { OnElementHandler } from '@/flavours/glitch/utils/html';
 import { decodeIDNA } from 'flavours/glitch/utils/links';
 
@@ -148,7 +148,7 @@ export const HandledLink: FC<HandledLinkProps & ComponentProps<'a'>> = ({
   ) {
     const hashtag = text.slice(1).trim();
 
-    if (isRedesignEnabled()) {
+    if (isRedesignStatusEnabled()) {
       return (
         <HashtagMenu tagId={hashtag} accountId={hashtagAccountId}>
           <MenuTrigger as='button' className={classes.hashtag}>

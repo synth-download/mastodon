@@ -17,6 +17,10 @@
   cursor: pointer;
 }
 
+.variantFeed {
+  border-bottom: var(--border-thin);
+}
+
 .variantPage {
   padding: var(--space-2) var(--space-4);
   cursor: auto;
@@ -184,7 +188,8 @@
     margin-block-end: 1em;
   }
 
-  a {
+  a,
+  button {
     color: var(--color-text-brand);
   }
 }
