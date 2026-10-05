@@ -63,7 +63,7 @@ RSpec.describe 'The well-known node-info endpoints' do
 
     let(:expected_metadata) do
       {
-        nodeName:	'Mastodon Glitch Edition',
+        nodeName:	'Chuckya',
         nodeDescription:	'',
         optInServerDirectory: 'true',
         optInServerRecommendation: false,
