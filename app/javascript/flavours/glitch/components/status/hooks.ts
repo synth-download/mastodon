@@ -166,7 +166,7 @@ export function useStatusHandlers({
       const target = event.target;
       if (
         !(target instanceof HTMLElement) ||
-        target.closest('a, button') ||
+        target.closest('a, button, dialog') ||
         contextType === 'detailed' ||
         window.getSelection()?.type === 'Range'
       ) {
