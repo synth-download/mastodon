@@ -6,6 +6,7 @@ import {
   apiRevokeQuote,
   apiGetQuotes,
 } from '@/flavours/glitch/api/interactions';
+import { browserHistory } from '@/flavours/glitch/components/router';
 import type { StatusContextType } from '@/flavours/glitch/components/status/types';
 import type { VisibilityModalCallback } from '@/flavours/glitch/features/ui/components/visibility_modal';
 import type {
@@ -81,6 +82,11 @@ const messages = defineMessages({
   },
 });
 
+function navigateHomeAfterDelete() {
+  // Avoid the multi-column UI scrolling away from the composer
+  browserHistory.push('/', { preventMultiColumnAutoScroll: 'true' });
+}
+
 export const statusInteraction = createAppThunk(
   (
     {
@@ -151,18 +157,22 @@ export const statusInteraction = createAppThunk(
             dispatch(showAlert({ message: messages.copied }));
           });
         return;
-      case 'delete':
+      case 'delete': {
+        // The detailed view no longer has a status to show once it's deleted.
+        const onDeleteSuccess =
+          contextType === 'detailed' ? navigateHomeAfterDelete : undefined;
         if (!deleteModal) {
-          void dispatch(deleteStatus(statusId));
+          void dispatch(deleteStatus(statusId)).then(onDeleteSuccess);
         } else {
           dispatch(
             openModal({
               modalType: 'CONFIRM_DELETE_STATUS',
-              modalProps: { statusId },
+              modalProps: { statusId, onDeleteSuccess },
             }),
           );
         }
         return;
+      }
       case 'edit': {
         const composerText = state.compose.get('text');
         if (typeof composerText === 'string' && composerText.trim()) {

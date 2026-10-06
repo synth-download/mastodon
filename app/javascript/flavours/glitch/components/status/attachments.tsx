@@ -1,4 +1,11 @@
-import { lazy, Suspense, useCallback, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -140,7 +147,7 @@ const MediaAttachments: React.FC<{
       'media_attachments',
     ]) as Immutable.List<MediaAttachment>;
   });
-  const { contextType } = useStatusContext();
+  const { contextType, registerHotkeyCallback } = useStatusContext();
   const mediaFilters = useAppSelector((state) =>
     selectMediaFilters(state, { statusId, contextType }),
   );
@@ -166,6 +173,10 @@ const MediaAttachments: React.FC<{
       return !prev;
     });
   }, []);
+
+  useEffect(() => {
+    registerHotkeyCallback?.('toggleSensitive', handleToggleMediaVisibility);
+  }, [handleToggleMediaVisibility, registerHotkeyCallback]);
 
   const dispatch = useAppDispatch();
   const handleOpenMedia: OnOpenMediaCallback = useCallback(
