@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Log out' do
+RSpec.describe 'Log out', feature: :redesign do
   include ProfileStories
 
   before do
