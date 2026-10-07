@@ -12,13 +12,13 @@ import {
   COMPOSE_REPLY,
   COMPOSE_SET_STATUS,
   directCompose,
-  replyComposeById,
   resetCompose,
   submitCompose,
 } from '@/flavours/glitch/actions/compose';
 import {
   changeComposeVisibility,
   PRIVATE_QUOTE_MODAL_ID,
+  replyComposeById,
 } from '@/flavours/glitch/actions/compose_typed';
 import { openModal } from '@/flavours/glitch/actions/modal';
 import { REDRAFT } from '@/flavours/glitch/actions/statuses';
@@ -204,7 +204,7 @@ export const openNewComposer = createAppThunk(
         dispatch(requestComposerFocus());
       }
     } else if (payload.type === 'reply') {
-      dispatch(replyComposeById(payload.toStatusId));
+      dispatch(replyComposeById({ statusId: payload.toStatusId }));
     } else {
       dispatch(requestComposerFocus());
     }

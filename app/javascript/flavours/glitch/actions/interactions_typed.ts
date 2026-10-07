@@ -19,11 +19,11 @@ import {
 } from '@/flavours/glitch/store/typed_functions';
 
 import { deleteModal } from '../initial_state';
+import { selectComposerIsChanged } from '../reducers/slices/composer';
 import { selectStatusInteractions } from '../selectors/statuses';
 
 import { showAlert, showGenericAlert } from './alerts';
-import { replyComposeById } from './compose';
-import { quoteComposeById } from './compose_typed';
+import { replyComposeById, quoteComposeById } from './compose_typed';
 import { importFetchedStatus, importFetchedStatuses } from './importer';
 import {
   bookmark,
@@ -141,6 +141,8 @@ export const statusInteraction = createAppThunk(
       return;
     }
 
+    const isComposerDirty = selectComposerIsChanged(state);
+
     // Handle intents for all statuses.
     switch (intent) {
       case 'bookmark':
@@ -174,8 +176,7 @@ export const statusInteraction = createAppThunk(
         return;
       }
       case 'edit': {
-        const composerText = state.compose.get('text');
-        if (typeof composerText === 'string' && composerText.trim()) {
+        if (isComposerDirty) {
           dispatch(
             openModal({
               modalType: 'CONFIRM_EDIT_STATUS',
@@ -263,7 +264,7 @@ export const statusInteraction = createAppThunk(
         }
         return;
       case 'reply':
-        dispatch(replyComposeById(statusId));
+        dispatch(replyComposeById({ statusId }));
         return;
       case 'report':
         dispatch(
