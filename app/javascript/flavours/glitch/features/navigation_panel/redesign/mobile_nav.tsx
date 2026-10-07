@@ -31,9 +31,12 @@ import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import { trendsEnabled } from '@/flavours/glitch/initial_state';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
-import { invokeVirtualIosKeyboard } from '@/flavours/glitch/utils/invoke_virtual_ios_keyboard';
 
-import { RedesignNavigationPanel, useNotificationsCount } from '.';
+import {
+  RedesignNavigationPanel,
+  useNotificationsCount,
+  handleSearchLinkClick,
+} from '.';
 import { AccountMenuItems } from './account_card_and_menu';
 import { LogoLockup } from './header';
 import classes from './mobile_nav.module.scss';
@@ -64,7 +67,7 @@ export const RedesignMobileNavigation: React.FC = () => {
                 state: { focusTarget: FOCUS_TARGET.SEARCH },
               }}
               iconComponent={MagnifyingGlassIcon}
-              onClick={invokeVirtualIosKeyboard}
+              onClick={handleSearchLinkClick}
             >
               <FormattedMessage id='tabs_bar.search' defaultMessage='Search' />
             </MobileNavLink>
