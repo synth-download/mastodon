@@ -1,10 +1,15 @@
-import { lazy, Suspense, useCallback, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-
-import { WarningIcon } from '@phosphor-icons/react';
 
 import { openModal } from '@/flavours/glitch/actions/modal';
 import type { DeployPictureInPictureCallback } from '@/flavours/glitch/actions/picture_in_picture';
@@ -29,7 +34,6 @@ import { decodeIDNA } from '@/flavours/glitch/utils/links';
 
 import { Avatar } from '../avatar';
 import { Button } from '../button/redesign';
-import { Callout } from '../callout/redesign';
 import { Card, CardActions, CardBody, CardTitle } from '../card';
 import { DisplayName } from '../display_name';
 import { RelativeTimestamp } from '../relative_timestamp';
@@ -55,6 +59,7 @@ export const StatusAttachments: React.FC<{
       <MediaAttachments
         statusId={statusId}
         accountId={status.account.id}
+        statusHidden={status.hidden && !!status.spoiler_text}
         sensitive={status.sensitive}
         language={status.translation?.language ?? status.language}
         attachment={attachment}
@@ -117,6 +122,7 @@ const Video = lazy(() => import('@/flavours/glitch/features/video'));
 const MediaAttachments: React.FC<{
   statusId: string;
   accountId: string;
+  statusHidden: boolean;
   sensitive: boolean;
   language: string;
   attachment: MediaAttachmentShape;
@@ -125,6 +131,7 @@ const MediaAttachments: React.FC<{
 }> = ({
   statusId,
   accountId,
+  statusHidden,
   sensitive,
   language,
   attachment,
@@ -140,7 +147,7 @@ const MediaAttachments: React.FC<{
       'media_attachments',
     ]) as Immutable.List<MediaAttachment>;
   });
-  const { contextType } = useStatusContext();
+  const { contextType, registerHotkeyCallback } = useStatusContext();
   const mediaFilters = useAppSelector((state) =>
     selectMediaFilters(state, { statusId, contextType }),
   );
@@ -166,6 +173,10 @@ const MediaAttachments: React.FC<{
       return !prev;
     });
   }, []);
+
+  useEffect(() => {
+    registerHotkeyCallback?.('toggleSensitive', handleToggleMediaVisibility);
+  }, [handleToggleMediaVisibility, registerHotkeyCallback]);
 
   const dispatch = useAppDispatch();
   const handleOpenMedia: OnOpenMediaCallback = useCallback(
@@ -239,8 +250,8 @@ const MediaAttachments: React.FC<{
   }
 
   const wrapperProps = {
-    sensitive,
     visible: showMedia,
+    statusHidden,
     onToggle: handleToggleMediaVisibility,
     aspectRatio,
     mediaFilters,
@@ -308,8 +319,8 @@ const MediaAttachments: React.FC<{
 };
 
 const MediaAttachmentWrapper: React.FC<{
-  sensitive: boolean;
   visible: boolean;
+  statusHidden: boolean;
   onToggle: () => void;
   type?: 'gallery' | 'video' | 'audio';
   children: React.ReactNode;
@@ -317,8 +328,8 @@ const MediaAttachmentWrapper: React.FC<{
   mediaFilters: string[];
   wrapperRef: React.RefObject<HTMLDivElement | null>;
 }> = ({
-  sensitive,
   visible,
+  statusHidden,
   type = 'gallery',
   onToggle,
   children,
@@ -326,63 +337,41 @@ const MediaAttachmentWrapper: React.FC<{
   mediaFilters,
   wrapperRef,
 }) => {
-  let message = (
-    <FormattedMessage id='status.media_hidden' defaultMessage='Media hidden' />
-  );
-  if (sensitive) {
-    message = (
-      <FormattedMessage
-        id='status.sensitive_warning'
-        defaultMessage='Sensitive content'
-      />
-    );
-  } else if (mediaFilters.length > 0) {
-    message = (
-      <FormattedMessage
-        id='filter_warning.matches_filter'
-        defaultMessage='Matches filter “<span>{title}</span>”'
-        values={{
-          title: mediaFilters.join(', '),
-          span: (chunks) => <span className='filter-name'>{chunks}</span>,
-        }}
-      />
-    );
-  }
-
-  const showSpoiler = sensitive || mediaFilters.length > 0 || !visible;
-
   return (
-    <div className={classes.galleryWrapper} ref={wrapperRef}>
-      {showSpoiler && (
-        <Callout
-          className={classes.gallerySpoiler}
-          icon={WarningIcon}
-          actionClick={onToggle}
-          actionText={
-            visible ? (
-              <FormattedMessage
-                id='content_warning.media.hide_short'
-                defaultMessage='Hide media'
-              />
-            ) : (
-              <FormattedMessage
-                id='content_warning.media.show_short'
-                defaultMessage='Show media'
-              />
-            )
-          }
-        >
-          {message}
-        </Callout>
+    <div
+      ref={wrapperRef}
+      data-color-scheme='dark'
+      className={classes.galleryWrapper}
+    >
+      {!visible && !statusHidden && (
+        <div className={classes.gallerySpoiler}>
+          {mediaFilters.length > 0 && (
+            <FormattedMessage
+              id='filter_warning.matches_filter'
+              defaultMessage='Matches filter “<span>{title}</span>”'
+              tagName='p'
+              values={{
+                title: mediaFilters.join(', '),
+                span: (chunks) => <span>{chunks}</span>,
+              }}
+            />
+          )}
+          <Button size='sm' variant='solid' onClick={onToggle}>
+            <FormattedMessage
+              id='content_warning.media.show_short'
+              defaultMessage='Show media'
+            />
+          </Button>
+        </div>
       )}
       <div
-        data-color-scheme='dark'
         className={classNames(
           mainClasses.contentWrapper,
           classes.galleryContent,
           !visible && mainClasses.hasContentWarning,
           !visible && classes.galleryHideButtons,
-          showSpoiler && classes.galleryHideActions,
+          !visible && classes.galleryHideActions,
+          mediaFilters.length > 0 && classes.galleryFilterBlur,
         )}
       >
         <Suspense
